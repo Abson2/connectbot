@@ -1,0 +1,497 @@
+/*
+ * ConnectBot: simple, powerful, open-source SSH client for Android
+ * Copyright 2025-2026 Kenny Root
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.connectbot.data
+
+import android.content.Context
+import androidx.room.withTransaction
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.connectbot.data.dao.HostDao
+import org.connectbot.data.dao.KnownHostDao
+import org.connectbot.data.dao.PortForwardDao
+import org.connectbot.data.entity.AutomationAction
+import org.connectbot.data.entity.AutomationActionType
+import org.connectbot.data.entity.Host
+import org.connectbot.data.entity.KnownHost
+import org.connectbot.data.entity.PortForward
+import org.connectbot.data.keyboard.KeyboardMacro
+import org.connectbot.data.keyboard.MacroFormat
+import org.connectbot.di.CoroutineDispatchers
+import org.connectbot.util.SecurePasswordStorage
+import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
+
+/**
+ * Repository for managing SSH host configurations and connections.
+ * Handles host CRUD operations, known hosts, and port forwards.
+ *
+ * @param context Application context for accessing schema assets
+ * @param database The Room database instance for export/import operations
+ * @param hostDao The DAO for accessing host data
+ * @param portForwardDao The DAO for accessing port forward data
+ * @param knownHostDao The DAO for accessing known host data
+ */
+@Singleton
+class HostRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val database: ConnectBotDatabase,
+    private val hostDao: HostDao,
+    private val portForwardDao: PortForwardDao,
+    private val knownHostDao: KnownHostDao,
+    private val securePasswordStorage: SecurePasswordStorage,
+    private val dispatchers: CoroutineDispatchers,
+) {
+    fun observeSharedMacros() = database.keyboardDao().observeMacros()
+
+    suspend fun getSharedMacro(id: UUID) = database.keyboardDao().macros().find { it.id == id }
+
+    fun observeAutomation(hostId: UUID) = database.automationActionDao().observeByHost(hostId)
+
+    suspend fun getAutomation(hostId: UUID) = database.automationActionDao().getByHost(hostId)
+
+    suspend fun saveAutomation(hostId: UUID, actions: List<AutomationAction>) = withContext(dispatchers.io) {
+        database.withTransaction {
+            actions.filter { it.type == AutomationActionType.RUN_MACRO }.forEach { action ->
+                val macro = requireNotNull(database.keyboardDao().macros().find { it.id == action.macroId }) { "The selected macro no longer exists" }
+                MacroFormat.decode(macro.document)
+            }
+            database.automationActionDao().replace(hostId, actions)
+        }
+    }
+
+    suspend fun saveAutomationWithMacros(hostId: UUID, actions: List<AutomationAction>, macros: List<KeyboardMacro>) = withContext(dispatchers.io) {
+        database.withTransaction {
+            macros.filter { macro -> actions.any { it.macroId == macro.id } }.forEach {
+                require(it.name.isNotBlank())
+                MacroFormat.decode(it.document)
+                database.keyboardDao().saveMacro(it)
+            }
+            saveAutomation(hostId, actions)
+        }
+    }
+
+    /** Duplicate settings atomically, allocating fresh action identities and remapping forwards. */
+    suspend fun duplicateHostSettings(sourceId: UUID, newHost: Host): Host = database.withTransaction {
+        val savedHost = saveHost(newHost.copy(id = UUID.randomUUID(), postLogin = null))
+        val forwardIds = getPortForwardsForHost(sourceId).associate { forward ->
+            forward.id to savePortForward(forward.copy(id = UUID.randomUUID(), hostId = savedHost.id)).id
+        }
+        saveAutomation(
+            savedHost.id,
+            getAutomation(sourceId).map { action ->
+                action.copy(
+                    id = UUID.randomUUID(),
+                    hostId = savedHost.id,
+                    forwardId = action.forwardId?.let { forwardIds[it] },
+                )
+            },
+        )
+        savedHost
+    }
+
+    private companion object {
+        val RSA_HOST_KEY_ALGORITHMS = listOf("rsa-sha2-512", "rsa-sha2-256", "ssh-rsa")
+    }
+
+    // ============================================================================
+    // Host Operations
+    // ============================================================================
+
+    /**
+     * Observe all hosts reactively.
+     *
+     * @return Flow of host list that updates automatically
+     */
+    fun observeHosts(): Flow<List<Host>> = hostDao.observeAll()
+
+    /**
+     * Observe all hosts sorted by color reactively.
+     *
+     * @return Flow of host list sorted by color
+     */
+    fun observeHostsSortedByColor(): Flow<List<Host>> = hostDao.observeAllSortedByColor()
+
+    /**
+     * Observe a specific host reactively.
+     *
+     * @param hostId The host ID
+     * @return Flow of host that updates automatically
+     */
+    fun observeHost(hostId: UUID): Flow<Host?> = hostDao.observeById(hostId)
+
+    /**
+     * Get all hosts.
+     *
+     * @param sortedByColor If true, hosts will be grouped by color
+     * @return List of all hosts
+     */
+    suspend fun getHosts(sortedByColor: Boolean = false): List<Host> = if (sortedByColor) {
+        // For now, sort by color in memory
+        // TODO: Add a proper DAO query for this
+        hostDao.getAll().sortedBy { it.color }
+    } else {
+        hostDao.getAll()
+    }
+
+    /**
+     * Find a host by its unique ID.
+     *
+     * @param hostId The host ID
+     * @return The host, or null if not found
+     */
+    suspend fun findHostById(hostId: UUID): Host? = withContext(dispatchers.io) {
+        hostDao.getById(hostId)?.let { return@withContext it }
+        val db = database.openHelper.readableDatabase
+        val redirectsExist = db.query("SELECT 1 FROM sqlite_master WHERE type='table' AND name='sync_host_redirects'").use { it.moveToFirst() }
+        if (!redirectsExist) return@withContext null
+        val redirected = db.query("SELECT new_id FROM sync_host_redirects WHERE old_id=?", arrayOf(hostId.toString())).use { if (it.moveToFirst()) UUID.fromString(it.getString(0)) else null }
+        redirected?.let { hostDao.getById(it) }
+    }
+
+    /**
+     * Get all SSH hosts that can be used as jump hosts.
+     *
+     * @return List of SSH hosts
+     */
+    suspend fun getSshHosts(): List<Host> = hostDao.getSshHosts()
+
+    /**
+     * Observe all SSH hosts (for jump host selection UI).
+     *
+     * @return Flow of SSH hosts
+     */
+    fun observeSshHosts(): Flow<List<Host>> = hostDao.observeSshHosts()
+
+    /**
+     * Find a host by its unique ID (blocking version for Java interop).
+     *
+     * @param hostId The host ID
+     * @return The host, or null if not found
+     */
+    fun findHostByIdBlocking(hostId: UUID): Host? = runBlocking {
+        findHostById(hostId)
+    }
+
+    /**
+     * Save a host (insert or update).
+     *
+     * @param host The host to save
+     * @return The saved host with updated ID
+     */
+    suspend fun saveHost(host: Host): Host {
+        val saved = host.copy(isTemporary = false)
+        if (hostDao.getById(host.id) == null) hostDao.insert(saved) else hostDao.update(saved)
+        return saved
+    }
+
+    /**
+     * Delete a host.
+     *
+     * @param host The host to delete
+     */
+    suspend fun deleteHost(host: Host) {
+        hostDao.delete(host)
+        // Also clean up any saved password for this host
+        securePasswordStorage.deletePassword(host.id)
+    }
+
+    /**
+     * Update the last connected time for a host.
+     *
+     * @param host The host to update
+     */
+    suspend fun touchHost(host: Host) {
+        if (host.isTemporary) {
+            // Temporary sessions do not have a persisted record
+            return
+        }
+        hostDao.updateLastConnect(host.id, System.currentTimeMillis())
+    }
+
+    // ============================================================================
+    // Port Forward Operations
+    // ============================================================================
+
+    /**
+     * Observe port forwards for a host reactively.
+     *
+     * @param hostId The host ID
+     * @return Flow of port forwards that updates automatically
+     */
+    fun observePortForwardsForHost(hostId: UUID): Flow<List<PortForward>> = portForwardDao.observeByHost(hostId)
+
+    /**
+     * Get all port forwards for a host.
+     *
+     * @param hostId The host ID
+     * @return List of port forwards
+     */
+    suspend fun getPortForwardsForHost(hostId: UUID): List<PortForward> = portForwardDao.getByHost(hostId)
+
+    /** Get one port forward for editing. */
+    suspend fun getPortForwardById(id: UUID): PortForward? = portForwardDao.getById(id)
+
+    /**
+     * Save a port forward (insert or update).
+     *
+     * @param portForward The port forward to save
+     * @return The saved port forward with updated ID
+     */
+    suspend fun savePortForward(portForward: PortForward): PortForward {
+        val parent = hostDao.getById(portForward.hostId) ?: error("Host no longer exists")
+        val saved = portForward.copy(repositoryId = parent.repositoryId)
+        if (portForwardDao.getById(saved.id) == null) portForwardDao.insert(saved) else portForwardDao.update(saved)
+        return saved
+    }
+
+    /**
+     * Delete a port forward.
+     *
+     * @param portForward The port forward to delete
+     */
+    suspend fun deletePortForward(portForward: PortForward) {
+        portForwardDao.delete(portForward)
+    }
+
+    // ============================================================================
+    // Known Host Operations
+    // ============================================================================
+
+    fun observeKnownHostsForHost(hostId: UUID): Flow<List<KnownHost>> = knownHostDao.observeByHostId(hostId)
+
+    suspend fun getKnownHostsForHost(hostId: UUID): List<KnownHost> = knownHostDao.getByHostId(hostId)
+
+    /**
+     * Get the list of host key algorithms known for a specific host.
+     *
+     * @param hostId The host ID
+     * @return List of algorithm names
+     */
+    suspend fun getHostKeyAlgorithmsForHost(hostId: UUID): List<String> {
+        val knownHosts = knownHostDao.getByHostId(hostId)
+        return knownHosts
+            .flatMap { expandHostKeyAlgorithms(it.hostKeyAlgo) }
+            .distinct()
+    }
+
+    private fun expandHostKeyAlgorithms(algorithm: String): List<String> = when (algorithm) {
+        "rsa-sha2-512", "rsa-sha2-256", "ssh-rsa" -> RSA_HOST_KEY_ALGORITHMS
+        else -> listOf(algorithm)
+    }
+
+    /**
+     * Save a known host key to the database.
+     *
+     * @param host The Host entity to associate with this known host key
+     * @param hostname The hostname
+     * @param port The port
+     * @param serverHostKeyAlgorithm The key algorithm (e.g., "ssh-rsa")
+     * @param serverHostKey The public key bytes
+     */
+    suspend fun saveKnownHost(
+        host: Host,
+        hostname: String,
+        port: Int,
+        serverHostKeyAlgorithm: String,
+        serverHostKey: ByteArray,
+    ) = withContext(dispatchers.io) {
+        // Temporary hosts are never inserted into the hosts
+        // table, so persisting a known_hosts row keyed by host.id would break
+        // the foreign key constraint (issue #2060).
+        if (host.isTemporary) {
+            return@withContext
+        }
+        // Check if this exact key already exists for this host
+        val existing = knownHostDao.getByHostIdAlgoAndKey(
+            host.id,
+            serverHostKeyAlgorithm,
+            serverHostKey,
+        )
+        // If it does not exist or exists but has a different hostname and port, add it.
+        if (existing == null || existing.hostname != hostname || existing.port != port) {
+            // Insert new key - this allows multiple keys per algorithm for key rotation
+            val knownHost = KnownHost(
+                hostId = host.id,
+                repositoryId = if (host.repositoryId == EntityIds.LOCAL) EntityIds.LOCAL else database.openHelper.readableDatabase.query("SELECT role FROM sync_repositories WHERE id=?", arrayOf(host.repositoryId.toString())).use { if (it.moveToFirst() && it.getString(0) != "reader") host.repositoryId else EntityIds.LOCAL },
+                hostname = hostname,
+                port = port,
+                hostKeyAlgo = serverHostKeyAlgorithm,
+                hostKey = serverHostKey,
+            )
+            knownHostDao.insert(knownHost)
+        }
+    }
+
+    /**
+     * Remove a known host key from the database.
+     *
+     * @param hostId The host ID
+     * @param serverHostKeyAlgorithm The key algorithm
+     * @param serverHostKey The public key bytes, or null to remove all keys for the algorithm
+     */
+    suspend fun removeKnownHost(
+        hostId: UUID,
+        serverHostKeyAlgorithm: String,
+        serverHostKey: ByteArray?,
+    ) {
+        if (serverHostKey == null) {
+            expandHostKeyAlgorithms(serverHostKeyAlgorithm)
+                .forEach { knownHostDao.deleteByHostIdAndAlgo(hostId, it) }
+            return
+        }
+
+        // Find the exact key to remove
+        val knownHost = knownHostDao.getByHostIdAlgoAndKey(
+            hostId,
+            serverHostKeyAlgorithm,
+            serverHostKey,
+        )
+        if (knownHost != null) {
+            knownHostDao.delete(knownHost)
+        }
+    }
+
+    /**
+     * Delete all known host keys for a specific host configuration.
+     * Use this when the user wants to forget all stored host keys and
+     * re-verify on next connection.
+     *
+     * @param hostId The host ID
+     */
+    suspend fun deleteKnownHostsForHost(hostId: UUID) {
+        knownHostDao.deleteByHostId(hostId)
+    }
+
+    /**
+     * Delete one stored host key. The key will need to be verified again the next
+     * time it is presented by the server.
+     */
+    suspend fun deleteKnownHost(knownHost: KnownHost) {
+        knownHostDao.delete(knownHost)
+    }
+
+    // ============================================================================
+    // Export/Import Operations
+    // ============================================================================
+
+    /**
+     * Export all hosts and their port forwards to JSON string.
+     * Uses schema-driven serialization that automatically adapts to database schema changes.
+     *
+     * @param pretty If true, format JSON with indentation
+     * @return Pair of JSON string and export counts (hosts and profiles)
+     */
+    suspend fun exportHostsToJson(pretty: Boolean = true): Pair<String, ExportCounts> = HostConfigJson.exportToJson(context, database, pretty)
+
+    /**
+     * Import hosts from JSON string.
+     * Uses schema-driven deserialization that automatically handles:
+     * - Field mapping based on database schema
+     * - Foreign key ID remapping
+     * - Conflict resolution via unique constraints
+     *
+     * @param jsonString The JSON string containing host configurations
+     * @return Import counts for hosts and profiles
+     * @throws org.json.JSONException if JSON is invalid
+     * @throws IllegalArgumentException if schema version is incompatible
+     */
+    suspend fun importHostsFromJson(jsonString: String): ImportCounts = HostConfigJson.importFromJson(context, database, jsonString)
+
+    // ============================================================================
+    // Blocking Methods for Java Interop
+    // ============================================================================
+
+    /**
+     * Save a known host key (blocking version for Java interop).
+     */
+    fun saveKnownHostBlocking(
+        host: Host,
+        hostname: String,
+        port: Int,
+        serverHostKeyAlgorithm: String,
+        serverHostKey: ByteArray,
+    ) = runBlocking {
+        saveKnownHost(host, hostname, port, serverHostKeyAlgorithm, serverHostKey)
+    }
+
+    /**
+     * Get known hosts for a specific host (blocking version for Java interop).
+     */
+    fun getKnownHostsForHostBlocking(hostId: UUID): List<KnownHost> = runBlocking {
+        getKnownHostsForHost(hostId)
+    }
+
+    /**
+     * Get host key algorithms for a host (blocking version for Java interop).
+     */
+    fun getHostKeyAlgorithmsForHostBlocking(hostId: UUID): List<String> = runBlocking {
+        getHostKeyAlgorithmsForHost(hostId)
+    }
+
+    /**
+     * Remove a known host key (blocking version for Java interop).
+     */
+    fun removeKnownHostBlocking(
+        hostId: UUID,
+        serverHostKeyAlgorithm: String,
+        serverHostKey: ByteArray?,
+    ) = runBlocking {
+        removeKnownHost(hostId, serverHostKeyAlgorithm, serverHostKey)
+    }
+
+    /**
+     * Find a host by selection criteria (blocking version for Java interop).
+     *
+     * This method attempts to find a host matching the given criteria.
+     * It tries to match by nickname first (most specific), then falls back
+     * to matching by protocol, username, hostname, and port.
+     *
+     * @param selection Map of field names to values (e.g., "nickname", "protocol", "hostname", etc.)
+     * @return The matching host, or null if not found
+     */
+    suspend fun findHost(selection: Map<String, String>): Host? {
+        // Try to find by nickname first (most specific)
+        val nickname = selection["nickname"]
+        if (nickname != null) {
+            val allHosts = hostDao.getAll()
+            allHosts.find { it.nickname == nickname && (selection["hostname"] == null || it.hostname == selection["hostname"]) && (selection["username"] == null || it.username == selection["username"]) }?.let { return it }
+        }
+
+        // Fall back to finding by protocol, username, hostname, port
+        val protocol = selection["protocol"]
+        val hostname = selection["hostname"]
+        val username = selection["username"]
+        val portStr = selection["port"]
+        val port = portStr?.toIntOrNull()
+
+        if (protocol != null && hostname != null) {
+            val allHosts = hostDao.getAll()
+            allHosts.find { host ->
+                host.protocol == protocol &&
+                    host.hostname == hostname &&
+                    (username == null || host.username == username) &&
+                    (port == null || host.port == port)
+            }?.let { return it }
+        }
+
+        return null
+    }
+}

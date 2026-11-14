@@ -1,132 +1,150 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-  <string name="app_desc">Một client SSH mã nguồn mở đơn giản và mạnh mẽ</string>
-  <string name="service_desc">Duy trì các kết nối SSH và các mã pubkeys đã nạp</string>
-  <string name="title_hosts_list">Các máy chủ</string>
-  <string name="title_pubkey_list">Pubkeys</string>
-  <string name="title_port_forwards_list">Cổng chuyển tiếp (port forwards)</string>
-  <string name="title_host_editor">Chỉnh sửa máy chủ (Host)</string>
-  <string name="title_help">Help (trợ giúp)</string>
-  <string name="title_colors">Màu sắc</string>
-  <string name="title_color_picker">Chọn một màu</string>
-  <string name="title_settings">Thiết lập cấu hình</string>
-  <string name="title_pubkey_generate">Tạo khoá</string>
-  <string name="help_intro">Hãy chọn một trong các topic bên dưới để biết thêm thông tin của từng subject cụ thể.</string>
-  <string name="terms_and_conditions">Các điều khoản &amp; điều kiện sử dụng</string>
-  <string name="hints">Gợi ý</string>
-  <string name="host_shortcuts_header">Phím tắt cho Host</string>
-  <string name="host_shortcuts_content">Nhấn giữ lâu lên desktop trên app Android của bạn để tạo ra các shortcuts đến những host SSH thường dùng.</string>
-  <string name="scroll_hints_header">Cuộn trang lên / Cuộn trang xuống</string>
-  <string name="scroll_hints_content">Khi ở local termial buffer history, vuốt lên ở phía bên phải màn hình để có thể cuộn lên và xuống màn hình đó.</string>
-  <string name="scrolling_back">Đang cuộn trang về trước (cuộn lên)</string>
-  <string name="scrolling_forward">Đang cuộn trang về sau (cuộn xuống)</string>
-  <string name="page_updn_header">Về trang trước / Về trang sau</string>
-  <string name="page_updn_content">Chú ý: tính năng này phải được kích hoạt trong settings</string>
-  <string name="page_up">Trang trên</string>
-  <string name="page_down">Trang dưới</string>
-  <string name="switching_hosts_header">Đổi Hosts</string>
-  <string name="switching_hosts_content">Vuốt ngang màn hình để chuyển đổi giữa các Host hiện đang kết nối.</string>
-  <string name="next_host">Host tiếp theo</string>
-  <string name="prev_host">Host trước</string>
-  <string name="keyboard_shortcuts">Phím tắt bấm nhanh</string>
-  <string name="increase_font_size">Tăng kích cỡ phông chữ</string>
-  <string name="increase_font_shortcut">Ctrl và phím +</string>
-  <string name="decrease_font_size">Giảm kích cỡ phông chữ</string>
-  <string name="decrease_font_shortcut">Ctrl và phím -</string>
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_desc">Client SSH mã nguồn mở, đơn giản và mạnh mẽ.</string>
+  <string name="service_desc">Duy trì kết nối SSH và các khoá đã nạp</string>
+  <string name="app_copyright">Bản quyền © Kenny Root</string>
+  <string name="title_pubkey_list">Khoá</string>
+  <string name="title_port_forwards_list">Chuyển tiếp cổng</string>
+  <string name="title_help">Trợ Giúp</string>
+  <string name="title_eula">Giấy phép</string>
+  <string name="title_color_picker">Chọn màu</string>
+  <string name="title_settings">Cài Đặt</string>
+  <string name="title_pubkey_generate">Tạo Khoá</string>
+  <string name="terms_and_conditions">Điều khoản &amp; Điều kiện sử dụng</string>
+  <string name="hints">Gợi Ý</string>
+  <string name="keyboard_shortcuts">Phím Tắt Bàn Phím</string>
+  <string name="increase_font_size">Tăng Kích Thước Phông Chữ</string>
+  <string name="increase_font_shortcut">Ctrl và +</string>
+  <string name="decrease_font_size">Giảm Kích Thước Phông Chữ</string>
+  <string name="decrease_font_shortcut">Ctrl và -</string>
   <string name="paste_shortcut">Ctrl-Shift-V</string>
-  <string name="pubkey_generate">Tạo</string>
-  <string name="pubkey_delete">Xoá key</string>
+  <string name="pubkey_generate">Tạo Khoá</string>
+  <string name="pubkey_delete">Xoá khoá</string>
   <string name="pubkey_gather_entropy">Thu thập thông tin ngẫu nhiên (Entropy)</string>
   <string name="pubkey_touch_prompt">Chạm vào hộp thoại này để thu thập thông tin ngẫu nhiên: hoàn thành %1$d%%</string>
-  <string name="pubkey_touch_hint">Để đảm bảo tính ngẫu nhiên khi tạo key, hãy di chuyển ngón tay bạn một cách ngẫu nhiên trên khắp box bên dưới.</string>
-  <string name="pubkey_generating">Đang tạo cặp khoá (key pair) ...</string>
-  <string name="pubkey_copy_private">Copy khoá bí mật (private key)</string>
-  <string name="pubkey_copy_public">Copy khoá công khai (public key)</string>
-  <string name="pubkey_list_empty">Chọn \"Menu\" để tạo mới \\n\nhoặc import bộ khoá bí mật &amp; công khai (key pairs)</string>
-  <string name="pubkey_unknown_format">Không hiểu định dạng</string>
-  <string name="pubkey_change_password">Thay đổi mật khẩu</string>
-  <string name="pubkey_list_pick">Chọn từ thẻ nhớ SD card</string>
-  <string name="pubkey_import_parse_problem">Sự cố khi phân tích khoá cá nhân được nhập</string>
-  <string name="pubkey_unlock">Mở khoá</string>
-  <string name="pubkey_failed_add">Sai mật khẩu cho key \'%1$s\'. Quá trình xác thực thất bại.</string>
-  <string name="pubkey_memory_load">Load vào bộ nhớ</string>
-  <string name="pubkey_memory_unload">Unload từ bộ nhớ</string>
-  <string name="pubkey_load_on_start">Tải khóa (key) khi khởi động</string>
+  <string name="pubkey_touch_hint">Để đảm bảo tính ngẫu nhiên trong quá trình tạo khóa, hãy di chuyển ngón tay của bạn một cách ngẫu nhiên trên hộp bên dưới.</string>
+  <string name="pubkey_generating">Đang tạo cặp khoá...</string>
+  <string name="pubkey_copy_private">Sao chép khóa riêng tư</string>
+  <string name="pubkey_copy_private_openssh">Sao chép khóa riêng (OpenSSH)</string>
+  <string name="pubkey_copy_private_pem">Sao chép khóa riêng (PEM)</string>
+  <string name="pubkey_copy_private_encrypted">Sao chép khóa riêng tư (đã mã hóa)</string>
+  <string name="pubkey_copy_public">Sao chép khóa công khai</string>
+  <string name="pubkey_export_public">Xuất khóa công khai</string>
+  <string name="pubkey_export_private">Xuất khóa riêng</string>
+  <string name="pubkey_export_private_openssh">Xuất khóa riêng (OpenSSH)</string>
+  <string name="pubkey_export_private_pem">Xuất khóa riêng (định dạng PEM)</string>
+  <string name="pubkey_export_private_encrypted">Xuất khóa riêng (đã mã hóa)</string>
+  <string name="pubkey_export_set_passphrase">Đặt mật khẩu xuất.</string>
+  <string name="pubkey_export_passphrase_message">Nhập mật khẩu để mã hóa khóa đã xuất.</string>
+  <string name="pubkey_export_confirm_passphrase">Xác nhận mật khẩu.</string>
+  <string name="pubkey_export_passphrase_mismatch">Mật khẩu không khớp</string>
+  <string name="pubkey_import_encrypted_title">Nhập khóa đã mã hóa</string>
+  <string name="pubkey_import_encrypted_message">Nhập mật khẩu để giải mã khóa \'%1$s\' (%2$s)</string>
+  <string name="pubkey_import_button">Nhập</string>
+  <string name="pubkey_import_encrypt_key">Mã hóa khóa để lưu trữ</string>
+  <string name="pubkey_import_reuse_password">Sử dụng cùng một mật khẩu để mã hóa.</string>
+  <string name="pubkey_import_new_password">Mật khẩu mới</string>
+  <string name="pubkey_import_confirm_password">Xác nhận mật khẩu</string>
+  <string name="pubkey_change_password">Đổi mật khẩu</string>
+  <string name="pubkey_unlock">Mở khóa khóa</string>
+  <string name="pubkey_unlock_message">Nhập mật khẩu để mở khóa \'%1$s\'</string>
+  <string name="pubkey_nickname_exists">Một khóa có tên này đã tồn tại</string>
+  <string name="pubkey_load_on_start">Tải khóa khi khởi động</string>
   <string name="pubkey_confirm_use">Xác nhận trước khi sử dụng</string>
-  <string name="portforward_list_empty">Chạm vào \"Menu\" để tạo mới\\n\ncổng chuyển tiếp (port forward)</string>
-  <string name="portforward_edit">Chỉnh sửa cổng chuyển tiếp (port forward)</string>
-  <string name="portforward_delete">Xoá cổng chuyển tiếp (port forward)</string>
-  <string name="prompt_nickname">Nickname</string>
-  <string name="prompt_nickname_hint_pubkey">Nickname để gợi nhắc pubkey</string>
-  <string name="prompt_source_port">Cổng nguồn</string>
+  <string name="portforward_edit">Chỉnh sửa cổng chuyển tiếp</string>
+  <string name="portforward_delete">Xoá cổng chuyển tiếp</string>
+  <string name="prompt_nickname">Biệt danh</string>
+  <string name="prompt_source_port">Cổng nguồn:</string>
   <string name="prompt_destination">Đích:</string>
   <string name="prompt_old_password">Mật khẩu cũ:</string>
-  <string name="prompt_password">Mật khẩu</string>
-  <string name="prompt_again">(nhập lại 1 lần nữa)</string>
-  <string name="prompt_type">Kiểu:</string>
-  <string name="prompt_password_can_be_blank">Chú ý: mật khẩu có thể rỗng</string>
+  <string name="prompt_username">Tên người dùng:</string>
+  <string name="prompt_password">Mật khẩu:</string>
+  <string name="prompt_again">(nhập lại)</string>
+  <string name="prompt_type">Loại:</string>
+  <string name="prompt_password_can_be_blank">Lưu ý: mật khẩu có thể để trống</string>
   <string name="prompt_bits">Bits:</string>
-  <string name="prompt_pubkey_password">Mật khẩu của key \'%1$s\'</string>
-  <string name="prompt_allow_agent_to_use_key">"Có cho phép Host từ xa sử dụng khóa  \'%1$s\'?"</string>
-  <string name="host_verification_failure_warning_header">CẢNH BÁO: ĐỊNH DANH CỦA HOST TRUY CẬP TỪ XA ĐÃ BỊ THAY ĐỔI!</string>
-  <string name="host_verification_failure_warning">CÓ DẤU HIỆU CÓ NGƯỜI ĐANG THỰC HIỆN ĐIỀU BẤT THƯỜNG!\nHiện có ai đó đang truy xuất kết nối của bạn (man-in-the-middle attack)!\nCũng có thể khoá (key) của Host đã bị thay đổi.</string>
-  <string name="prompt_host_disconnected">Host đã mất kết nối.\nĐóng phiên làm việc?</string>
-  <string name="prompt_continue_connecting">Bạn có muốn\ntiếp tục kết nối?</string>
-  <string name="host_authenticity_warning">Xác thực của host \'%1$s\' không thể thực hiện được.</string>
-  <string name="host_fingerprint">Máy chủ %1$s key fingerprint là %2$s</string>
-  <string name="alert_passwords_do_not_match_msg">Các mật khẩu không khớp nhau</string>
+  <string name="prompt_pubkey_password">Mật khẩu của khóa \'%1$s\'</string>
+  <string name="prompt_allow_agent_to_use_key">Cho phép máy chủ từ xa\nsử dụng khóa \'%1$s\'?</string>
+  <string name="host_verification_failure_warning_header">CẢNH BÁO: NHẬN DẠNG MÁY CHỦ TỪ XA ĐÃ THAY ĐỔI!</string>
+  <string name="host_verification_failure_warning">CÓ THỂ AI ĐÓ ĐANG LÀM ĐIỀU GÌ ĐÓ BẤT THƯỜNG!\nCó thể ai đó đang nghe lén bạn ngay lúc này (tấn công man-in-the-middle)!\nCũng có thể là khóa máy chủ vừa mới bị thay đổi.</string>
+  <string name="prompt_continue_connecting">Bạn có chắc chắn muốn\ntiếp tục kết nối không?</string>
+  <string name="host_authenticity_warning">Không thể xác định tính xác thực của máy chủ \'%1$s\'.</string>
+  <string name="host_fingerprint">Dấu vân tay khóa của máy chủ %1$s là %2$s</string>
+  <string name="host_key_verification_title">Xác minh khóa máy chủ</string>
+  <string name="fingerprint_format_header">Định dạng dấu vân tay</string>
+  <string name="host_key_type_and_size">%1$s %2$d bit</string>
+  <string name="fingerprint_copy_description">Sao chép dấu vân tay vào bộ nhớ tạm</string>
+  <string name="alert_passwords_do_not_match_msg">Mật khẩu không khớp!</string>
   <string name="alert_wrong_password_msg">Sai mật khẩu!</string>
-  <string name="alert_key_corrupted_msg">Có thể khoá bí mật đã bị hỏng!</string>
-  <string name="alert_sdcard_absent">Hãy kiểm tra lại, không tìm thấy thẻ nhớ ngoài SD card!</string>
-  <string name="button_change">Thay đổi</string>
   <string name="button_resize">Đổi kích thước</string>
-  <string name="alert_disconnect_msg">Mất kết nối</string>
-  <string name="msg_copyright">Bản quyền thuộc về © 2007-2008 Kenny Root http://the-b.org/, Jeffrey Sharkey http://jsharkey.org/</string>
+  <string name="alert_disconnect_msg">Mất Kết Nối</string>
+  <string name="network_lost_grace_period">Mất kết nối mạng, đang chờ kết nối lại…</string>
+  <string name="network_grace_period_expired">Không thể kết nối lại mạng, đang ngắt kết nối…</string>
+  <string name="network_restored_same_ip">Mạng đã được khôi phục, kết nối được duy trì.</string>
+  <string name="network_restored_ip_changed">Mạng đã được khôi phục nhưng địa chỉ IP đã thay đổi, đang kết nối lại…</string>
+  <string name="network_restored_no_previous_state">Mạng đã được khôi phục, đang kiểm tra kết nối…</string>
   <string name="pref_emulation_category">Mô phỏng Terminal</string>
   <string name="pref_emulation_title">Chế độ mô phỏng</string>
-  <string name="pref_emulation_summary">Chế độ Terminal mô phỏng dùng cho các kết nối PTY</string>
-  <string name="pref_scrollback_title">Kích cỡ của Scrollback</string>
-  <string name="pref_scrollback_summary">Kích cỡ của bộ nhớ đệm dành cho Scrollback để lưu bộ nhớ cho từng console</string>
-  <string name="pref_backupkeys_title">Backup pubkeys (sao lưu)</string>
-  <string name="pref_backupkeys_summary">Giữ bản lưu của các khoá bí mật sử dùng cơ chế sao lưu backup của Android</string>
-  <string name="pref_ui_category">UI - Giao diện người dùng</string>
-  <string name="pref_rotation_title">Chế độ xoay màn hình</string>
-  <string name="pref_rotation_summary">Cách màn hình xoay khi bàn phím ẩn/hiện</string>
-  <string name="pref_titlebarhide_title">Tự động giấu Title bar</string>
-  <string name="pref_titlebarhide_summary">Chạm vào màn hình để hiện thị Title bar và Menu</string>
-  <string name="pref_alwaysvisible_title">Các phím đặc biệt luôn luôn hiện thị</string>
-  <string name="pref_pg_updn_gesture_summary">Vuốt 1/3 màn hình bên trái để gửi mệnh pg up/dn tới terminal</string>
+  <string name="pref_scrollback_title">Kích thước Scrollback</string>
+  <string name="pref_scrollback_summary">Kích thước của bộ đệm scrollback để giữ trong bộ nhớ cho mỗi console</string>
+  <string name="pref_fontfamily_title">Phông chữ</string>
+  <string name="pref_customfont_title">Thêm phông chữ tùy chỉnh</string>
+  <string name="pref_customfont_summary">Thêm một phông chữ từ Google Fonts theo tên.</string>
+  <string name="dialog_customfont_title">Thêm phông chữ tùy chỉnh</string>
+  <string name="dialog_customfont_hint">Tên phông chữ Google (ví dụ: Cascadia Code)</string>
+  <string name="button_add">Thêm</string>
+  <string name="button_remove">Xóa</string>
+  <string name="font_validating">Đang kiểm tra phông chữ…</string>
+  <string name="font_downloading">Đang tải xuống phông chữ…</string>
+  <string name="pref_localfont_title">Nhập phông chữ cục bộ</string>
+  <string name="pref_localfont_summary">Nhập một tệp phông chữ từ bộ nhớ (TTF, OTF)</string>
+  <string name="dialog_localfont_title">Nhập phông chữ</string>
+  <string name="dialog_localfont_hint">Tên hiển thị của phông chữ</string>
+  <string name="button_import">Nhập</string>
+  <string name="font_importing">Đang nhập phông chữ…</string>
+  <string name="pref_backupkeys_title">Sao lưu khóa</string>
+  <string name="pref_backupkeys_summary">Giữ sao lưu của khóa riêng tư bằng cơ chế sao lưu của Android</string>
+  <string name="pref_ui_category">Giao diện người dùng</string>
+  <string name="pref_language_title">Ngôn ngữ</string>
+  <string name="pref_language_system_default">Mặc định của hệ thống</string>
+  <string name="pref_theme_title">Chủ đề</string>
+  <string name="pref_theme_system">Mặc định của hệ thống</string>
+  <string name="pref_theme_light">Nhẹ</string>
+  <string name="pref_theme_dark">Tối</string>
+  <string name="pref_titlebarhide_title">Tự động ẩn thanh tiêu đề</string>
+  <string name="pref_titlebarhide_summary">Nhấn vào console để hiển thị thanh tiêu đề và truy cập menu</string>
+  <string name="pref_alwaysvisible_title">Các phím đặc biệt luôn hiển thị</string>
+  <string name="pref_pg_updn_gesture_title">Cử chỉ page up/down</string>
+  <string name="pref_pg_updn_gesture_summary">Vuốt một phần ba bên trái của màn hình để gửi pg up/dn đến console</string>
   <string name="pref_fullscreen_title">Toàn màn hình</string>
   <string name="pref_fullscreen_summary">Ẩn thanh trạng thái khi ở trong console</string>
   <string name="pref_keyboard_category">Bàn phím</string>
-  <string name="pref_shiftfkeys_title">Phím Shift &amp; F1-F10</string>
-  <string name="pref_shiftfkeys_summary">"Với bàn phím cứng, phím Shift kết hợp với các phím số  để thay cho F1-F10"</string>
-  <string name="pref_ctrlfkeys_title">Phím Ctrl &amp; F1-F10</string>
-  <string name="pref_ctrlfkeys_summary">"Với bàn phím cứng, phím Ctrl kết hợp với các phím số  để thay cho F1-F10"</string>
-  <string name="pref_volumefont_title">Dùng nút âm thanh -/+ để đổi kích thước font chữ</string>
-  <string name="pref_volumefont_summary">Cỡ chữ có thể bị thay đổi tuỳ theo thiết lập của từng máy chủ</string>
-  <string name="pref_memkeys_title">Ghi nhớ các khoá trong bộ nhớ</string>
-  <string name="pref_memkeys_summary">Giữ unlocked keys trong bộ nhớ cho đến khi service chạy ngầm bị huỷ.</string>
-  <string name="pref_conn_persist_title">Giữ kết nối ở background</string>
-  <string name="pref_conn_persist_summary">Force các connection giữ kết nối khi đang ở chế độ background</string>
+  <string name="pref_shiftfkeys_title">Shift+số là phím F1-F10</string>
+  <string name="pref_shiftfkeys_summary">Trên bàn phím vật lý, các phím số gửi F1-F10 với shift</string>
+  <string name="pref_ctrlfkeys_title">Ctrl+số là phím F1-F10</string>
+  <string name="pref_ctrlfkeys_summary">Trên bàn phím ảo, các phím số gửi F1-F10 với ctrl</string>
+  <string name="pref_volumefont_title">Phím âm lượng thay đổi kích thước phông chữ</string>
+  <string name="pref_volumefont_summary">Kích thước phông chữ cũng có thể được thay đổi trong cài đặt của từng máy chủ</string>
+  <string name="pref_memkeys_title">Ghi nhớ khoá trong bộ nhớ</string>
+  <string name="pref_memkeys_summary">Giữ các khóa đã mở khóa trong bộ nhớ cho đến khi dịch vụ nền bị huỷ</string>
   <string name="pref_keymode_title">Các phím tắt của thư mục</string>
-  <string name="pref_keymode_summary">Chọn cách dùng phím Alt thay cho phím \'/\' và phím Shift thay cho phím Tab</string>
   <string name="pref_stickymodifiers_title">Các thay đổi đỉnh đính lên top</string>
-  <string name="pref_stickymodifiers_summary">Các phím điều chỉnh vẫn được kích hoạt cho đến khi một phím khác được nhấn</string>
   <string name="only_alt">Chỉ phím Alt</string>
   <string name="pref_camera_title">Phím tắt cho camera</string>
-  <string name="pref_camera_summary">Chọn phím tắt để kích hoạt khi bấm phím camera</string>
   <string name="pref_keepalive_title">Giữ màn hình không bị tắt</string>
   <string name="pref_keepalive_summary">Giữ màn hình không bị tắt khi đang thực hiện tác vụ trong console</string>
   <string name="pref_wifilock_title">Giữ kết nối Wi-Fi</string>
   <string name="pref_wifilock_summary">Giữ kết nối Wi-Fi không bị tắt khi đang có một phiên làm việc đang hoạt động</string>
+  <string name="pref_bumpyarrows_title">Các mũi tên gồ ghề</string>
   <string name="pref_bumpyarrows_summary">Rung khi gửi các phím mũi tên. Hữu dụng khi các kết nối không ổn định (lag)</string>
   <string name="pref_bell_category">Chuông Terminal</string>
   <string name="pref_bell_title">Chuông báo hiệu</string>
+  <string name="pref_bell_summary">Phát âm thanh khi có thông báo trên giao diện dòng lệnh</string>
   <string name="pref_bell_volume_title">Âm lượng chuông</string>
   <string name="pref_bell_vibrate_title">Rung khi có chuông</string>
+  <string name="pref_bell_vibrate_summary">Rung khi có thông báo trên giao diện dòng lệnh</string>
   <string name="pref_bell_notification_title">Thông báo nhắc background</string>
-  <string name="pref_bell_notification_summary">Gửi thông báo nhắc khi một Terminal đang chạy ở background phát chuông</string>
+  <string name="pref_bell_notification_summary">Gửi thông báo nhắc khi một Terminal đang chạy ở background phát chuông.</string>
   <string name="list_keymode_right">Dung các phím bên phía tay phải</string>
   <string name="list_keymode_left">Dùng các phím bên phía tay trái</string>
   <string name="list_keymode_none">Vô hiệu hóa</string>
@@ -134,11 +152,28 @@
   <string name="list_pubkeyids_any">Dùng bất khì khoá nào (key) để xác thực</string>
   <string name="hostpref_nickname_title">Nickname</string>
   <string name="hostpref_color_title">Nhóm màu</string>
+  <string name="color_red">Màu đỏ</string>
+  <string name="color_pink">Màu hồng</string>
+  <string name="color_purple">Màu tím</string>
+  <string name="color_deep_purple">Màu tím đậm</string>
+  <string name="color_indigo">Màu chàm</string>
+  <string name="color_blue">Màu xanh lam</string>
+  <string name="color_light_blue">Màu xanh lam nhạt</string>
+  <string name="color_cyan">Màu lục lam</string>
+  <string name="color_teal">Màu xanh lục bảo</string>
+  <string name="color_green">Màu xanh lá cây</string>
+  <string name="color_light_green">Màu xanh lá cây nhạt</string>
+  <string name="color_lime">Màu chanh</string>
+  <string name="color_yellow">Màu vàng</string>
+  <string name="color_amber">Màu hổ phách</string>
+  <string name="color_orange">Màu cam</string>
+  <string name="color_gray">Màu xám</string>
   <string name="hostpref_fontsize_title">Cỡ chữ (pt)</string>
+  <string name="hostpref_fontfamily_title">Phông chữ</string>
+  <string name="hostpref_colorscheme_title">Chế độ màu của giao diện dòng lệnh</string>
   <string name="hostpref_pubkeyid_title">Dùng xác thực pubkey</string>
   <string name="hostpref_authagent_title">Dùng SSH auth agent</string>
   <string name="hostpref_postlogin_title">Tự động sau khi login</string>
-  <string name="hostpref_postlogin_summary">Các lệnh sẽ chạy ở server truy cập đến ngay sau khi xác thực thành công</string>
   <string name="hostpref_compression_title">Nén</string>
   <string name="hostpref_compression_summary">Điều này có thể hữu ích đối với các mạng có kết nối chậm</string>
   <string name="hostpref_wantsession_title">Bắt đầu phiên làm việc</string>
@@ -150,25 +185,67 @@
   <string name="hostpref_delkey_title">Phím DEL</string>
   <string name="hostpref_encoding_title">Mã hoá</string>
   <string name="hostpref_username_title">Tên đăng nhập (Username)</string>
+  <string name="hostpref_save_password_summary">Lưu trữ mật khẩu đăng nhập một cách an toàn để tự động xác thực</string>
+  <string name="hostpref_password_title">Mật khẩu</string>
+  <string name="hostpref_password_unchanged">Mật khẩu (không thay đổi)</string>
+  <string name="hostpref_clear_password">Xóa mật khẩu đã lưu</string>
   <string name="hostpref_hostname_title">Máy chủ (Host)</string>
   <string name="hostpref_port_title">Cổng (Port)</string>
-  <string name="bind_never">Chưa từng kết nối</string>
-  <plurals name="console_copy_done">
-    <item quantity="other">Đã copy %1$d bytes vào clipboard</item>
-  </plurals>
-  <string name="console_copy_start">Tạm và di chuyển\nhoặc dùng bàn điều hướng\nđể chọn phạm vi cần sao chép (copy)</string>
+  <string name="hostpref_profile_title">Hồ sơ</string>
+  <string name="hostpref_profile_summary">Chọn một cấu hình để sử dụng các cài đặt thiết bị đầu cuối của cấu hình đó</string>
+  <string name="hostpref_profile_none">Không có (sử dụng cài đặt máy chủ)</string>
+  <string name="profile_controlled_setting">Điều khiển bằng cấu hình</string>
+  <string name="font_use_default">Sử dụng mặc định</string>
+  <string name="font_system_default">Mặc định (Phông chữ đơn cách)</string>
+  <string name="pubkey_unknown">Khóa không xác định</string>
+  <string name="colorscheme_default">Mặc định</string>
+  <string name="profile_editor_title_new">Tạo hồ sơ mới</string>
+  <string name="profile_editor_title_edit">Chỉnh sửa hồ sơ</string>
+  <string name="profile_editor_save">Lưu</string>
+  <string name="profile_editor_name_label">Tên hồ sơ</string>
+  <string name="profile_editor_section_icon_color">Màu biểu tượng</string>
+  <string name="profile_editor_section_color_scheme">Chế độ màu</string>
+  <string name="profile_editor_section_font">Phông chữ</string>
+  <string name="profile_editor_section_terminal">Giao diện dòng lệnh</string>
+  <string name="profile_editor_font_family_title">Font chữ</string>
+  <string name="profile_editor_font_size_title">Kích thước phông chữ: %d</string>
+  <string name="profile_editor_force_size_title">Buộc kích thước</string>
+  <string name="profile_editor_force_size_summary">Buộc kích thước của giao diện dòng lệnh thành một kích thước cụ thể (số cột x số hàng) thay vì tự động điều chỉnh để phù hợp với màn hình.</string>
+  <string name="profile_editor_force_size_enable">Bật tùy chọn đặt kích thước cố định</string>
+  <string name="profile_editor_force_size_columns">Cột</string>
+  <string name="profile_editor_force_size_rows">Số hàng</string>
+  <string name="profile_icon_color_none">Không có (sử dụng màu của máy chủ)</string>
+  <string name="profile_list_title">Hồ sơ</string>
+  <string name="profile_list_create_profile">Tạo hồ sơ</string>
+  <string name="profile_list_empty_message">Chưa có cấu hình nào. Nhấn vào dấu + để tạo một cấu hình mới.</string>
+  <string name="profile_list_more_options">Thêm tùy chọn</string>
+  <string name="profile_list_duplicate">Trùng lặp</string>
+  <string name="profile_list_delete">Xóa</string>
+  <string name="profile_create_dialog_title">Tạo hồ sơ</string>
+  <string name="profile_create_name_label">Tên hồ sơ</string>
+  <string name="profile_create_button">Tạo</string>
+  <string name="profile_create_cancel">Hủy</string>
+  <string name="profile_delete_dialog_title">Xóa hồ sơ</string>
+  <string name="profile_delete_dialog_message">Bạn có chắc muốn xóa \'%s\' không?</string>
+  <string name="profile_delete_button">Xóa</string>
+  <string name="profile_delete_cancel">Hủy</string>
+  <string name="profile_summary_font">Phông chữ: %1$s %2$dpt</string>
+  <string name="profile_summary_emulation">Mô phỏng: %s</string>
+  <string name="console_menu_reconnect">Kết nối lại</string>
   <string name="console_menu_close">Ðóng</string>
-  <string name="console_menu_copy">Sao Chép (Copy)</string>
   <string name="console_menu_paste">Dán (Paste)</string>
   <string name="console_menu_portforwards">Cổng chuyển tiếp (Port Forward)</string>
   <string name="console_menu_resize">Kích cỡ bắt buộc</string>
   <string name="console_menu_urlscan">Danh sách các URL</string>
+  <string name="console_url_no_handler">Không có ứng dụng nào khả dụng để mở URL này</string>
+  <string name="console_url_not_supported">Loại URL này không được hỗ trợ</string>
   <string name="button_yes">Có</string>
   <string name="button_no">Không</string>
   <string name="portforward_local">Local</string>
   <string name="portforward_remote">Máy chủ từ xa</string>
+  <string name="portforward_dynamic">Động (SOCKS)</string>
   <string name="portforward_pos">Tạo cổng chuyển tiếp (port forward)</string>
-  <string name="portforward_problem">Không thể tạo cổng chuyển tiếp. Có thể bạn đang dùng cổng nhỏ hơn 1024 hoặc cổng bạn chọn đã bị sử dụng?</string>
+  <string name="portforward_save">Lưu</string>
   <string name="format_username">tên người dùng (username)</string>
   <string name="format_hostname">tên máy chủ (hostname)</string>
   <string name="format_port">cổng</string>
@@ -181,25 +258,20 @@
   <string name="list_host_edit">Chỉnh sửa host</string>
   <string name="list_host_portforwards">Chỉnh sửa cổng chuyển tiếp (port forward)</string>
   <string name="list_host_delete">Xoá host</string>
-  <string name="list_host_empty">Chưa có host nào được tạo.</string>
-  <string name="list_rotation_default">Mặc định</string>
-  <string name="list_rotation_land">Bắt buộc màn hình ngang</string>
-  <string name="list_rotation_port">Bắt buộc màn hình dọc</string>
-  <string name="list_rotation_auto">Tự động</string>
+  <string name="list_host_duplicate">Tên máy chủ trùng lặp</string>
+  <string name="list_host_forget_keys">Quên các khóa máy chủ</string>
   <string name="list_camera_ctrlaspace">Ctrl+A, sau đó Space</string>
   <string name="list_camera_ctrla">Ctrl+A</string>
   <string name="list_camera_esc">Esc</string>
   <string name="list_camera_esc_a">Esc+A</string>
   <string name="list_camera_none">Không tìm thấy</string>
-  <string name="list_delkey_backspace">Backspace</string>
-  <string name="list_delkey_del">Xóa</string>
+  <string name="list_camera_text_input">Nhập văn bản</string>
   <string name="delete_message">"Bạn có chắc muốn xoá  \'%1$s\'?"</string>
   <string name="delete_pos">Có, xoá</string>
   <string name="delete_neg">Hủy</string>
   <string name="disconnect_all_message">Bạn có chắc muốn đóng tất cả các host đang kết nối?</string>
   <string name="disconnect_all_pos">Có, ngắt kết nối</string>
   <string name="disconnect_all_neg">Hủy</string>
-  <string name="terminal_no_hosts_connected">Hiện không có host nào đang kết nối</string>
   <string name="terminal_connecting">"Đang kết nối  %1$s:%2$d qua %3$s"</string>
   <string name="terminal_sucess">Đã xác thực host \'%1$s\' key: %2$s</string>
   <string name="terminal_failed">Xác thực host key thất bại</string>
@@ -210,9 +282,13 @@
   <string name="terminal_auth">Đang thử xác thực</string>
   <string name="terminal_auth_pass">Đang thử xác nhận \'mật khẩu\'</string>
   <string name="terminal_auth_pass_fail">Phương thức xác thực \'mật khẩu\' thất bại</string>
+  <string name="terminal_auth_saved_password">Đang thử mật khẩu đã lưu…</string>
+  <string name="terminal_auth_saved_password_fail">Xác thực bằng mật khẩu đã lưu không thành công</string>
   <string name="terminal_auth_pubkey_any">Thử xác thực \'publickey\' với các khoá công khai (public key) bất kì có trong bộ nhớ trong</string>
   <string name="terminal_auth_pubkey_invalid">Khoá công khai đã chọn không hợp lệ, hãy thử chọn lại khoá trong trình chỉnh sửa Host</string>
   <string name="terminal_auth_pubkey_specific">Thử xác thực \'publickey\' với một khoá công khai (public key) được chỉ định</string>
+  <string name="terminal_auth_biometric">Đang yêu cầu xác thực sinh trắc học cho khóa \'%1$s\'</string>
+  <string name="terminal_auth_biometric_invalidated">Khóa sinh trắc học \'%1$s\' đã bị hủy. Điều này có thể xảy ra khi có thêm dấu vân tay được đăng ký trên thiết bị. Vui lòng tạo một khóa mới.</string>
   <string name="terminal_auth_pubkey_fail">Phương thức xác thực \'publickey\' với khoá \'%1$s\' thất bại</string>
   <string name="terminal_auth_ki">"Thử xác thực  \'keyboard-interactive\'"</string>
   <string name="terminal_auth_ki_fail">"Phương thức xác thực  \'keyboard-interactive\' thất bại"</string>
@@ -223,17 +299,46 @@
   <string name="notification_text">%1$s cần sự chú ý của bạn.</string>
   <string name="no">Không</string>
   <string name="yes">Đồng ý</string>
-  <string name="menu_colors_reset">Tái Thiết Lập</string>
+  <string name="title_scheme_manager">Quản lý các chủ đề màu</string>
+  <string name="button_new_scheme">Chế độ mới</string>
+  <string name="button_duplicate_scheme">Trùng lặp</string>
+  <string name="button_delete_scheme">Xóa</string>
+  <string name="dialog_title_new_scheme">Chế độ màu mới</string>
+  <string name="label_scheme_name">Tên lược đồ</string>
+  <string name="label_scheme_description">Mô tả (tùy chọn)</string>
+  <string name="dialog_title_delete_scheme">Xóa lược đồ?</string>
+  <string name="dialog_message_delete_scheme">Bạn có chắc muốn xóa \"%1$s\" không? Hành động này không thể hoàn tác.</string>
+  <string name="button_confirm">Xác nhận</string>
+  <string name="button_cancel">Hủy</string>
+  <string name="label_built_in_scheme">Tích hợp sẵn</string>
+  <string name="label_custom_scheme">Tùy chỉnh</string>
+  <string name="empty_custom_schemes">Không có lược đồ tùy chỉnh nào. Nhấn vào \"Lược đồ mới\" để tạo một lược đồ.</string>
+  <string name="button_export_scheme">Xuất lược đồ</string>
+  <string name="button_import_scheme">Nhập lược đồ</string>
+  <string name="message_export_success">Đã xuất %1$s</string>
+  <string name="message_import_success">Đã nhập %1$s</string>
+  <string name="error_export_failed">Không thể xuất lược đồ: %1$s</string>
+  <string name="error_import_failed">Không thể nhập lược đồ: %1$s</string>
+  <string name="error_invalid_json">Tệp JSON không hợp lệ</string>
+  <string name="title_palette_editor">Chỉnh sửa bảng màu</string>
+  <string name="button_reset_all_colors">Khôi phục tất cả</string>
+  <string name="section_ansi_colors">Màu ANSI (0–15)</string>
+  <string name="dialog_title_edit_color">Chỉnh sửa màu %1$d</string>
+  <string name="dialog_title_reset_all">Khôi phục tất cả màu sắc mặc định?</string>
+  <string name="dialog_message_reset_all">Thao tác này sẽ đặt lại tất cả 256 màu về giá trị mặc định. Thao tác này không thể hoàn tác.</string>
   <string name="app_is_running">ConnectBot đang kết nối</string>
-  <string name="color_red">đỏ</string>
-  <string name="color_green">xanh lá cây</string>
-  <string name="color_blue">xanh nước biển</string>
-  <string name="color_gray">xám</string>
-  <string name="colors_fg_label">Màu trên nền: %1$d</string>
-  <string name="color_bg_label">Màu nền: %1$d</string>
+  <string name="label_red">Đỏ</string>
+  <string name="label_green">Màu xanh lá cây</string>
+  <string name="label_blue">Xanh lam</string>
+  <string name="label_hex_color">Mã màu hệ thập lục phân</string>
+  <string name="section_fg_bg_colors">Màu nền &amp; Màu tiền cảnh</string>
+  <string name="label_foreground_color">Màu tiền</string>
+  <string name="label_background_color">Màu nền</string>
+  <string name="label_base_scheme">Sơ đồ cơ bản:</string>
+  <string name="menu_manage_colors">Quản lý các chủ đề màu</string>
+  <string name="section_color_preview">Xem trước</string>
   <string name="image_description_connected">Đã kết nối.</string>
   <string name="image_description_disconnected">Đã ngắt kết nối.</string>
-  <string name="image_description_key_is_locked">Khoá bị vô hiệu.</string>
   <string name="image_description_toggle_control_character">Chuyển đổi phím điều khiển.</string>
   <string name="image_description_send_escape_character">Gửi kí tự thoát (Escape)</string>
   <string name="image_description_send_tab_character">Gửi kí tự TAB</string>
@@ -243,10 +348,9 @@
   <string name="image_description_down">Mũi tên hướng xuống</string>
   <string name="image_description_left">Mũi tên sáng trái</string>
   <string name="image_description_right">Mũi tên sáng phải</string>
-  <string name="image_description_volume">Âm lượng</string>
   <string name="button_key_esc">Esc (thoát)</string>
   <string name="button_key_ctrl">Ctrl (điều khiển)</string>
-  <string name="button_key_home">Màn hình chính</string>
+  <string name="button_key_home">Home</string>
   <string name="button_key_end">Kết thúc</string>
   <string name="button_key_pgup">PgUp (trang trước đó)</string>
   <string name="button_key_pgdn">PgDn (trang tiếp sau)</string>
@@ -262,20 +366,731 @@
   <string name="button_key_f10">F10</string>
   <string name="button_key_f11">F11</string>
   <string name="button_key_f12">F12</string>
+  <string name="terminal_keyboard_text_input_button">Nhập văn bản</string>
+  <string name="terminal_text_input_dialog_title">Nhập văn bản</string>
+  <string name="terminal_text_input_dialog_label">Nhập văn bản để gửi đến thiết bị đầu cuối</string>
+  <string name="terminal_text_input_resize_handle">Thay đổi kích thước</string>
+  <string name="console_menu_text_input">Nhập văn bản</string>
+  <string name="button_send">Gửi</string>
+  <string name="button_ok">Được rồi</string>
+  <string name="button_close">Đóng</string>
+  <string name="button_back">Quay lại</string>
+  <string name="button_navigate_up">Di chuyển lên trên</string>
+  <string name="button_more_options">Thêm tùy chọn</string>
+  <string name="button_host_options">Các tùy chọn máy chủ</string>
+  <string name="button_collapse">Thu gọn</string>
+  <string name="error_key_load_failed">Không thể tải khóa \'%1$s\': %2$s</string>
+  <string name="error_connection_failed">Không thể kết nối đến %1$s (%2$s): %3$s</string>
+  <string name="error_port_forward_load_failed">Không thể tải các cấu hình chuyển tiếp cổng cho %1$s: %2$s</string>
+  <string name="error_host_save_failed">Không thể lưu thông tin máy chủ %1$s: %2$s</string>
+  <string name="error_color_scheme_load_failed">Không thể tải lược đồ màu: %s</string>
+  <string name="host_duplicate_nickname">%1$s (sao chép)</string>
+  <string name="empty_hosts_message">Chưa có máy chủ nào được cấu hình</string>
+  <string name="empty_pubkeys_message">Không tìm thấy khóa nào.</string>
+  <string name="empty_port_forwards_message">Không có chuyển tiếp cổng nào được cấu hình.</string>
+  <string name="empty_urls_message">Không tìm thấy URL nào trong bộ nhớ đệm của thiết bị đầu cuối</string>
+  <string name="console_default_title">Bảng điều khiển</string>
+  <string name="host_editor_show_advanced">Hiển thị các tùy chọn nâng cao</string>
+  <string name="host_editor_hide_advanced">Ẩn các tùy chọn nâng cao</string>
+  <string name="resize_width_label">Chiều rộng (số cột)</string>
+  <string name="resize_height_label">Chiều cao (số hàng)</string>
+  <string name="resize_disable_force_size">Tắt chế độ ép kích thước</string>
+  <string name="pubkey_editor_key_type_label">Loại khóa</string>
+  <string name="pubkey_editor_options_label">Tùy chọn</string>
+  <string name="pubkey_editor_encrypted_startup_warning">Không thể mở khóa các khóa đã mã hóa khi khởi động</string>
+  <string name="pubkey_type_label">Loại: %s</string>
+  <string name="pubkey_encrypted_description">Đã mã hóa</string>
+  <string name="pubkey_not_encrypted_description">Không được mã hóa</string>
+  <string name="pubkey_biometric_protection">Bảo vệ bằng dấu vân tay</string>
+  <string name="pubkey_biometric_description">Bảo vệ khóa này bằng dấu vân tay của bạn</string>
+  <string name="pubkey_biometric_not_enrolled">Chưa có dấu vân tay nào được đăng ký. Hãy thiết lập dấu vân tay trong cài đặt thiết bị để sử dụng tính năng này.</string>
+  <string name="pubkey_biometric_key_type_warning">Tính năng bảo vệ bằng dấu vân tay chỉ khả dụng cho khóa RSA và EC</string>
+  <string name="pubkey_biometric_prompt_title">Xác thực bằng khóa để sử dụng</string>
+  <string name="pubkey_biometric_prompt_subtitle">Chạm vào cảm biến vân tay để mở khóa \'%1$s\'</string>
+  <string name="pubkey_biometric_description_icon">Được bảo vệ bằng dấu vân tay</string>
+  <string name="pubkey_biometric_not_available">Tính năng xác thực bằng dấu vân tay không khả dụng</string>
+  <string name="portforward_nickname_placeholder">Máy chủ web nội bộ</string>
+  <string name="portforward_port_range_error">Cổng phải nằm trong khoảng từ 1 đến 65535</string>
+  <string name="portforward_destination_placeholder">localhost:80</string>
+  <string name="portforward_destination_format_error">Định dạng phải là: host:port (ví dụ: localhost:80)</string>
+  <string name="portforward_type_label">Loại: %s</string>
+  <string name="portforward_enable">Bật</string>
+  <string name="portforward_disable">Tắt</string>
+  <string name="portforward_enabled">Tính năng chuyển tiếp cổng đã được kích hoạt</string>
+  <string name="portforward_disabled">Tính năng chuyển tiếp cổng đã bị tắt</string>
   <string name="protocol_spinner_label">Giao thức (Protocol)</string>
   <string name="expand">Mở rộng</string>
   <string name="hostpref_authagent_with_confirmation">cần xác nhận</string>
   <string name="hostpref_add_host">Thêm máy chủ (host)</string>
-  <string name="hostpref_edit_host">Lưu máy chủ (host)</string>
-  <string name="pubkey_add_new">Thêm khoá pubkey mới</string>
+  <string name="hostpref_save_host">Lưu máy chủ (host)</string>
+  <string name="hostpref_setting_title">Cài đặt máy chủ</string>
   <string name="pubkey_import_existing">Import khoá pubkey có sẵn</string>
-  <string name="discard_host_changes_message">Đường dẫn URI của máy chủ không hợp lệ. Bạn có muốn huỷ bỏ thay đổi?</string>
-  <string name="discard_host_button">Hủy bỏ</string>
-  <string name="discard_host_cancel_button">Giữ thay đổi</string>
-  <string name="key_type_rsa_bits">RSA %d-bit</string>
-  <string name="key_type_dsa_bits">DSA %d-bit</string>
-  <string name="key_type_ec_bits">EC %d-bit</string>
-  <string name="key_type_ed25519">Ed25519</string>
-  <string name="key_type_unknown">Không xác định được loại thuật toán sinh key</string>
-  <string name="key_attribute_encrypted">(đã mã hoá)</string>
+  <string name="grant_permission">Cho phép</string>
+  <string name="connect_anyway">Vẫn kết nối</string>
+  <string name="open_settings">Mở cài đặt</string>
+  <string name="terminal_no_route">Bạn có đang cố gắng truy cập máy chủ cục bộ không? Hãy cấp quyền truy cập mạng cục bộ.</string>
+  <string name="loading_message">Đang tải…</string>
+  <string name="migration_checking">Đang kiểm tra cơ sở dữ liệu…</string>
+  <string name="migration_title">Di chuyển cơ sở dữ liệu</string>
+  <string name="migration_warning">Vui lòng không đóng ứng dụng trong quá trình chuyển đổi</string>
+  <string name="migration_stats_hosts">Số lượng máy chủ đã chuyển đổi: %d</string>
+  <string name="migration_stats_pubkeys">Đã chuyển các khóa SSH: %d</string>
+  <string name="migration_stats_port_forwards">Số lượng chuyển tiếp cổng đã được thực hiện: %d</string>
+  <string name="migration_stats_known_hosts">Danh sách máy chủ đã biết đã được chuyển đổi: %d</string>
+  <string name="migration_failed_title">Quá trình di chuyển không thành công</string>
+  <string name="migration_failed_message">Đã xảy ra lỗi trong quá trình di chuyển cơ sở dữ liệu: %s</string>
+  <string name="migration_retry">Thử lại</string>
+  <string name="migration_failed_help">Nếu sự cố vẫn tiếp diễn, vui lòng báo cáo vấn đề này tại %1$s và đính kèm bản ghi gỡ lỗi đã sao chép ở trên</string>
+  <string name="migration_warnings_title">Cảnh báo về việc nâng cấp</string>
+  <string name="migration_copy_warnings">Sao chép Cảnh báo</string>
+  <string name="migration_debug_log_title">Nhật ký gỡ lỗi</string>
+  <string name="migration_copy_debug_log">Sao chép nhật ký gỡ lỗi</string>
+  <string name="disconnect_host_alert">Bạn có chắc muốn ngắt kết nối khỏi \'%1$s\' không?</string>
+  <string name="delete_host_confirm">Bạn có chắc muốn xóa máy chủ \'%1$s\' không?</string>
+  <string name="forget_host_keys_confirm">Bạn có chắc muốn xóa các khóa máy chủ đã lưu cho \'%1$s\' không? Bạn sẽ được yêu cầu xác minh khóa máy chủ trong lần kết nối tiếp theo.</string>
+  <string name="list_pubkey_edit">Chỉnh sửa khóa công khai</string>
+  <string name="hostpref_ipversion_title">Phiên bản IP</string>
+  <string name="ipversion_auto">Tự động</string>
+  <string name="ipversion_ipv4">Chỉ sử dụng IPv4</string>
+  <string name="ipversion_ipv6">Chỉ sử dụng IPv6</string>
+  <string name="hostpref_jumphost_title">Máy chủ trung gian (ProxyJump)</string>
+  <string name="hostpref_jumphost_summary">Kết nối thông qua một máy chủ SSH khác</string>
+  <string name="list_jumphost_none">Không có (kết nối trực tiếp)</string>
+  <string name="terminal_connecting_via_jump">Kết nối thông qua máy chủ trung gian: %s</string>
+  <string name="terminal_jump_connected">Đã kết nối đến máy chủ trung gian: %s</string>
+  <string name="terminal_jump_authenticated">Đã xác thực với máy chủ trung gian: %s</string>
+  <string name="terminal_jump_failed">Không thể kết nối đến máy chủ trung gian %1$s: %2$s</string>
+  <string name="terminal_jump_auth_failed">Xác thực không thành công cho máy chủ trung gian: %s</string>
+  <string name="terminal_jump_not_found">Không tìm thấy máy chủ trung gian trong danh sách máy chủ đã lưu</string>
+  <string name="terminal_jump_password">Mật khẩu cho máy chủ trung gian %s:</string>
+  <string name="view_logs">Xem nhật ký</string>
+  <string name="logs_title">Nhật ký ứng dụng</string>
+  <string name="copy_logs">Sao chép nhật ký</string>
+  <string name="logs_copied">Nhật ký đã được sao chép vào bộ nhớ tạm</string>
+  <string name="logs_bug_report_info">Để báo cáo lỗi, hãy sao chép các nhật ký này và mở một báo cáo mới tại https://connectbot.org/bug</string>
+  <string name="no_logs_available">Không có nhật ký nào khả dụng</string>
+  <string name="help_section_about">Giới thiệu</string>
+  <string name="title_contact">Liên hệ và Hỗ trợ</string>
+  <string name="help_section_contact">Liên hệ và Hỗ trợ</string>
+  <string name="help_website">Trang web</string>
+  <string name="help_github">Mã nguồn</string>
+  <string name="help_report_bug">Báo cáo lỗi</string>
+  <string name="help_section_donate">Ủng hộ việc phát triển ứng dụng</string>
+  <string name="help_donate_github">GitHub Sponsors</string>
+  <string name="help_donate_coffee">Hãy mua cho tôi một tách cà phê</string>
+  <string name="colorscheme_default_description">Màu mặc định của giao diện dòng lệnh</string>
+  <string name="colorscheme_solarized_dark_description">Màu sắc chính xác cho máy móc và con người</string>
+  <string name="colorscheme_solarized_light_description">Chế độ Solarized với nền sáng</string>
+  <string name="colorscheme_dracula_description">Giao diện tối cho ứng dụng terminal</string>
+  <string name="colorscheme_nord_description">Bảng màu xanh lam nhạt, mang sắc thái của vùng cực bắc</string>
+  <string name="colorscheme_gruvbox_dark_description">Bảng màu theo phong cách cổ điển</string>
+  <string name="colorscheme_monokai_description">Giao diện lấy cảm hứng từ Sublime Text</string>
+  <string name="colorscheme_tomorrow_night_description">Giao diện tối màu, sạch sẽ và dễ nhìn</string>
+  <string name="pref_profiles_category">Hồ sơ</string>
+  <string name="pref_default_profile_title">Hồ sơ mặc định</string>
+  <string name="pref_default_profile_none">Không có (sử dụng cài đặt máy chủ)</string>
+  <string name="pref_alwaysvisible_summary">Luôn hiển thị các phím đặc biệt</string>
+  <string name="pref_customterminal_title">Các loại giao diện dòng lệnh tùy chỉnh</string>
+  <string name="pref_customterminal_summary">Thêm các giá trị TERM tùy chỉnh cho các máy chủ từ xa</string>
+  <string name="dialog_customterminal_title">Thêm loại giao diện dòng lệnh tùy chỉnh</string>
+  <string name="dialog_customterminal_hint">Loại thiết bị đầu cuối (ví dụ: rxvt-unicode)</string>
+  <string name="dialog_custom_value_label">Nhập giá trị tùy chỉnh</string>
+  <string name="list_camera_ctrlaspace_description">Nhấn Ctrl+A, sau đó nhấn phím cách</string>
+  <string name="list_camera_ctrla_description">Ctrl+A</string>
+  <string name="list_camera_esc_description">Esc</string>
+  <string name="list_camera_esc_a_description">Esc+A</string>
+  <string name="list_camera_none_description">Không có</string>
+  <string name="list_camera_text_input_description">Nhập văn bản</string>
+  <string name="list_menu_export_hosts">Xuất danh sách máy chủ</string>
+  <string name="list_menu_import_hosts">Nhập danh sách máy chủ</string>
+  <string name="export_hosts_success">Đã xuất %1$d máy chủ và %2$d cấu hình</string>
+  <string name="import_hosts_success">Đã nhập %1$d máy chủ (%2$d máy bị bỏ qua) và %3$d cấu hình (%4$d cấu hình bị bỏ qua)</string>
+  <string name="export_hosts_failed">Không thể xuất danh sách máy chủ: %s</string>
+  <string name="import_hosts_failed">Không thể nhập danh sách máy chủ: %s</string>
+  <string name="shortcut_customize_title">Tùy chỉnh phím tắt</string>
+  <string name="shortcut_icon_color">Màu biểu tượng</string>
+  <string name="shortcut_icon_style">Kiểu biểu tượng</string>
+  <string name="shortcut_use_host_color">Sử dụng màu cho tên máy chủ</string>
+  <string name="shortcut_create">Tạo lối tắt</string>
+  <string name="icon_style_terminal">Giao diện dòng lệnh</string>
+  <string name="icon_style_server">Máy chủ</string>
+  <string name="icon_style_cloud">Cloud</string>
+  <string name="icon_style_key">Key</string>
+  <string name="pref_auth_on_launch_title">Xác thực khi khởi động</string>
+  <string name="pref_auth_on_launch_summary">Yêu cầu sử dụng dấu vân tay, khuôn mặt hoặc mã PIN của thiết bị khi mở ứng dụng</string>
+  <string name="pref_security_category">Bảo mật</string>
+  <string name="auth_screen_title">ConnectBot đã bị khóa</string>
+  <string name="auth_screen_unlock_button">Chạm để mở khóa</string>
+  <string name="auth_prompt_title">Mở khóa ConnectBot</string>
+  <string name="auth_prompt_subtitle">Xác minh danh tính của bạn để tiếp tục</string>
+  <string name="pref_language_download" tools:machine_translated="true">Tải gói ngôn ngữ</string>
+  <string name="pref_language_download_failed" tools:machine_translated="true">Tải xuống không thành công, chạm để thử lại.</string>
+  <string name="portforward_host_address" tools:machine_translated="true">Địa chỉ máy chủ</string>
+  <string name="portforward_source_addr_localhost" tools:machine_translated="true">Địa chỉ cục bộ</string>
+  <string name="portforward_source_addr_localhost_ipv4" tools:machine_translated="true">Máy chủ cục bộ (chỉ IPv4)</string>
+  <string name="portforward_source_addr_localhost_ipv6" tools:machine_translated="true">Máy chủ cục bộ (chỉ sử dụng IPv6)</string>
+  <string name="portforward_source_addr_all" tools:machine_translated="true">Tất cả địa chỉ</string>
+  <string name="portforward_source_addr_all_ipv4" tools:machine_translated="true">Tất cả địa chỉ IPv4</string>
+  <string name="portforward_source_addr_all_ipv6" tools:machine_translated="true">Tất cả địa chỉ IPv6</string>
+  <string name="portforward_source_addr_specific" tools:machine_translated="true">Địa chỉ cụ thể</string>
+  <string name="portforward_source_addr_specific_placeholder" tools:machine_translated="true">192.168.1.1</string>
+  <string name="pubkey_import_from_clipboard" tools:machine_translated="true">Nhập từ khay nhớ tạm</string>
+  <string name="pubkey_import_clipboard_key_label" tools:machine_translated="true">Nội dung khóa riêng</string>
+  <string name="pubkey_paste_from_clipboard" tools:machine_translated="true">Dán từ bộ nhớ tạm</string>
+  <string name="auth_banner_title" tools:machine_translated="true">Thông báo xác thực từ %1$s</string>
+  <string name="terminal_auth_banner_header" tools:machine_translated="true">[%1$s] Thông báo xác thực:</string>
+  <string name="pref_imetogglekey_title" tools:machine_translated="true">Hiển thị phím chuyển đổi IME</string>
+  <string name="pref_imetogglekey_summary" tools:machine_translated="true">Thêm một nút IME vào hàng các phím đặc biệt, nút này sẽ chuyển đổi giữa chế độ soạn thảo và chế độ bình thường cho các ngôn ngữ cần bộ đệm soạn thảo (ví dụ: tiếng Nhật, tiếng Trung, tiếng Hàn, v.v.).</string>
+  <string name="pref_ime_shortcut_mode_title" tools:machine_translated="true">Phím tắt Ctrl/Alt của IME đầy đủ</string>
+  <string name="pref_ime_shortcut_mode_disabled" tools:machine_translated="true">Không dùng giải pháp thay thế</string>
+  <string name="pref_ime_shortcut_mode_type_null" tools:machine_translated="true">Các sự kiện bàn phím thô.</string>
+  <string name="pref_ime_shortcut_mode_force_ascii" tools:machine_translated="true">Buộc sử dụng bàn phím ASCII (khuyến nghị)</string>
+  <string name="pref_swipe_sessions_title" tools:machine_translated="true">Vuốt để chuyển giữa các phiên.</string>
+  <string name="pref_swipe_sessions_summary" tools:machine_translated="true">Bật tính năng vuốt ngang để chuyển đổi giữa các phiên làm việc. Tính năng này sẽ bị tắt theo mặc định để đảm bảo khả năng truy cập.</string>
+  <string name="console_switch_session" tools:machine_translated="true">Chuyển phiên làm việc</string>
+  <string name="console_previous_session" tools:machine_translated="true">Phiên làm việc trước đó</string>
+  <string name="console_next_session" tools:machine_translated="true">Phiên tiếp theo</string>
+  <string name="button_key_alt" tools:machine_translated="true">Alt</string>
+  <string name="image_description_toggle_alt_key" tools:machine_translated="true">Bật/tắt phím Alt.</string>
+  <string name="button_key_ime" tools:machine_translated="true">IME</string>
+  <string name="image_description_toggle_compose_mode" tools:machine_translated="true">Chuyển đổi chế độ soạn thảo cho phương thức nhập liệu IME.</string>
+  <string name="console_menu_compose_mode" tools:machine_translated="true">Chế độ soạn thảo (IME)</string>
+  <string name="hostpref_profile_edit" tools:machine_translated="true">Chỉnh sửa hồ sơ đã chọn</string>
+  <string name="terminal_mosh_installing" tools:machine_translated="true">Đang chuẩn bị các tính năng hỗ trợ Mosh…</string>
+  <string name="terminal_mosh_starting" tools:machine_translated="true">Đang khởi tạo kết nối Mosh...</string>
+  <string name="terminal_mosh_install_timeout" tools:machine_translated="true">Cảnh báo: Quá trình cài đặt Mosh đã hết thời gian cho phép.</string>
+  <string name="terminal_mosh_launching_server" tools:machine_translated="true">Đang khởi động mosh-server trên máy chủ từ xa...</string>
+  <string name="terminal_mosh_server_failed" tools:machine_translated="true">Không thể khởi động mosh-server trên máy chủ từ xa.</string>
+  <string name="terminal_mosh_client_failed" tools:machine_translated="true">Không thể khởi động chương trình mosh-client.</string>
+  <string name="terminal_mosh_connected" tools:machine_translated="true">Kết nối Mosh đã được thiết lập.</string>
+  <string name="terminal_mosh_error" tools:machine_translated="true">Lỗi của Mosh: %1$s</string>
+  <string name="hostpref_mosh_server_title" tools:machine_translated="true">Lệnh máy chủ Mosh</string>
+  <string name="hostpref_mosh_server_summary" tools:machine_translated="true">Đường dẫn hoặc lệnh tùy chỉnh cho máy chủ Mosh (để trống để sử dụng mặc định).</string>
+  <string name="hostpref_mosh_port_title" tools:machine_translated="true">Cổng UDP của Mosh</string>
+  <string name="hostpref_mosh_port_summary" tools:machine_translated="true">Cố định cổng UDP cho Mosh (sử dụng 0 để tự động chọn trong khoảng từ 60000 đến 61000).</string>
+  <string name="hostpref_locale_title" tools:machine_translated="true">Ngôn ngữ/Khu vực</string>
+  <string name="hostpref_locale_summary" tools:machine_translated="true">Cấu hình ngôn ngữ cho phiên làm việc của Mosh (ví dụ: en_US.UTF-8).</string>
+  <string name="mosh_feature_title" tools:machine_translated="true">Mosh</string>
+  <string name="pref_mosh_release_title" tools:machine_translated="true">Phiên bản phát hành và mã nguồn của Mosh.</string>
+  <string name="pref_mosh_installing" tools:machine_translated="true">Đang chuẩn bị hỗ trợ cho Mosh…</string>
+  <string name="editor_discard_changes_title" tools:machine_translated="true">Bỏ qua các thay đổi chưa lưu?</string>
+  <string name="editor_discard_changes_message" tools:machine_translated="true">Các thay đổi của bạn sẽ bị mất nếu bạn rời đi mà không lưu lại.</string>
+  <string name="editor_discard" tools:machine_translated="true">Hủy bỏ</string>
+  <string name="editor_save" tools:machine_translated="true">Lưu</string>
+  <string name="import_json_file_too_large" tools:machine_translated="true">Tệp JSON quá lớn, không thể nhập được (tối đa 8MB).</string>
+  <string name="import_file_unavailable" tools:machine_translated="true">Không thể mở tệp đã chọn.</string>
+  <string name="profile_inline_images" tools:machine_translated="true">Hiển thị hình ảnh trực tiếp trong dòng lệnh.</string>
+  <string name="inline_images_off" tools:machine_translated="true">Tắt</string>
+  <string name="inline_images_ask" tools:machine_translated="true">Hỏi</string>
+  <string name="inline_images_on" tools:machine_translated="true">Đã bật.</string>
+  <string name="inline_images_prompt_title" tools:machine_translated="true">Hiển thị hình ảnh trực tiếp trong văn bản?</string>
+  <string name="inline_images_prompt_message" tools:machine_translated="true">Cho phép máy chủ này hiển thị hình ảnh trực tiếp trong suốt thời gian còn lại của phiên làm việc này không?</string>
+  <string name="automation_load_failed" tools:machine_translated="true">Không thể tải quy trình tự động hóa.</string>
+  <string name="automation_save_failed" tools:machine_translated="true">Không thể lưu quy trình tự động hóa.</string>
+  <string name="automation_invalid_action" tools:machine_translated="true">Kiểm tra văn bản, mẫu, thời lượng hoặc cổng chuyển tiếp đã chọn.</string>
+  <string name="automation_action_failed" tools:machine_translated="true">Thao tác không thành công.</string>
+  <string name="automation_timed_out" tools:machine_translated="true">Đã hết thời gian chờ để nhận văn bản.</string>
+  <string name="automation_buffer_overflow" tools:machine_translated="true">Có quá nhiều dữ liệu được tạo ra trước khi hệ thống tự động có thể xử lý.</string>
+  <string name="automation_no_session" tools:machine_translated="true">Thao tác này yêu cầu một phiên lệnh đang mở.</string>
+  <string name="automation_forward_missing" tools:machine_translated="true">Cấu hình chuyển tiếp cổng bị thiếu.</string>
+  <string name="automation_forward_unsupported" tools:machine_translated="true">Kết nối này không hỗ trợ chuyển tiếp cổng.</string>
+  <string name="automation_wait_text" tools:machine_translated="true">Chờ chuỗi văn bản</string>
+  <string name="automation_send_text" tools:machine_translated="true">Gửi chuỗi ký tự.</string>
+  <string name="automation_send_key" tools:machine_translated="true">Gửi phím đặc biệt.</string>
+  <string name="automation_delay" tools:machine_translated="true">Chờ.</string>
+  <string name="automation_disconnect" tools:machine_translated="true">Ngắt kết nối</string>
+  <string name="automation_enable_forward" tools:machine_translated="true">Bật tính năng chuyển tiếp cổng.</string>
+  <string name="automation_disable_forward" tools:machine_translated="true">Tắt tính năng chuyển tiếp cổng.</string>
+  <string name="automation_add" tools:machine_translated="true">Thêm hành động</string>
+  <string name="automation_save" tools:machine_translated="true">Lưu</string>
+  <string name="automation_edit" tools:machine_translated="true">Chỉnh sửa</string>
+  <string name="automation_delete" tools:machine_translated="true">Xóa</string>
+  <string name="automation_move_up" tools:machine_translated="true">Di chuyển lên trên.</string>
+  <string name="automation_move_down" tools:machine_translated="true">Di chuyển xuống dưới.</string>
+  <string name="automation_drag" tools:machine_translated="true">Kéo để sắp xếp lại.</string>
+  <string name="automation_cancel" tools:machine_translated="true">Hủy bỏ</string>
+  <string name="automation_text" tools:machine_translated="true">Văn bản</string>
+  <string name="automation_regex" tools:machine_translated="true">Biểu thức chính quy</string>
+  <string name="automation_regex_help" tools:machine_translated="true">So sánh văn bản nhập vào mà không áp dụng định dạng ANSI. Biểu thức chính quy hỗ trợ cú pháp RE2; các tính năng tìm kiếm trước/sau và tham chiếu ngược không được hỗ trợ.</string>
+  <string name="automation_duration" tools:machine_translated="true">Thời lượng (giây)</string>
+  <string name="automation_timeout" tools:machine_translated="true">Thời gian chờ tối đa (giây).</string>
+  <string name="automation_key" tools:machine_translated="true">Phím</string>
+  <string name="automation_forward" tools:machine_translated="true">Chuyển tiếp cổng</string>
+  <string name="automation_failure" tools:machine_translated="true">Khi xảy ra lỗi</string>
+  <string name="automation_stop" tools:machine_translated="true">Dừng tự động hóa.</string>
+  <string name="automation_continue" tools:machine_translated="true">Tiếp tục</string>
+  <string name="automation_save_host" tools:machine_translated="true">Lưu máy chủ để cấu hình tự động hóa.</string>
+  <string name="automation_progress" tools:machine_translated="true">Tự động hóa: Bước hiện tại là %1$d, tổng số bước là %2$d.</string>
+  <string name="automation_failure_step" tools:machine_translated="true">Hành động số %1$d: %2$s</string>
+  <string name="automation_cancel_run" tools:machine_translated="true">Hủy bỏ chế độ tự động hóa.</string>
+  <string name="automation_key_enter" tools:machine_translated="true">Enter</string>
+  <string name="automation_key_tab" tools:machine_translated="true">Tab</string>
+  <string name="automation_key_escape" tools:machine_translated="true">Esc</string>
+  <string name="automation_key_backspace" tools:machine_translated="true">Phím xóa lùi</string>
+  <string name="automation_key_delete" tools:machine_translated="true">Xóa</string>
+  <string name="automation_key_up" tools:machine_translated="true">Mũi tên chỉ lên</string>
+  <string name="automation_key_down" tools:machine_translated="true">Mũi tên chỉ xuống</string>
+  <string name="automation_key_left" tools:machine_translated="true">Mũi tên chỉ sang trái.</string>
+  <string name="automation_key_right" tools:machine_translated="true">Mũi tên chỉ sang phải</string>
+  <string name="automation_key_home" tools:machine_translated="true">Home</string>
+  <string name="automation_key_end" tools:machine_translated="true">Kết thúc</string>
+  <string name="automation_key_insert" tools:machine_translated="true">Chèn vào</string>
+  <string name="automation_key_page_up" tools:machine_translated="true">Lật lên một trang</string>
+  <string name="automation_key_page_down" tools:machine_translated="true">Cuộn xuống một trang.</string>
+  <string name="automation_key_function" tools:machine_translated="true">F%1$s</string>
+  <string name="automation_key_shift" tools:machine_translated="true">Phím Shift</string>
+  <string name="automation_seconds" tools:machine_translated="true">%1$.3f giây</string>
+  <plurals name="automation_count" tools:machine_translated="true">
+    <item quantity="one">%1$d thao tác</item>
+    <item quantity="other">%1$d thao tác</item>
+  </plurals>
+  <string name="host_status_unread_output" tools:machine_translated="true">Dữ liệu chưa đọc.</string>
+  <string name="host_status_user_disconnected" tools:machine_translated="true">Bạn đã ngắt kết nối với máy chủ này.</string>
+  <string name="host_status_session_exit" tools:machine_translated="true">Phiên làm việc từ xa đã kết thúc.</string>
+  <string name="host_status_remote_closed" tools:machine_translated="true">Máy chủ đã đóng kết nối. Bạn có thể kết nối lại.</string>
+  <string name="host_status_connection_lost" tools:machine_translated="true">Kết nối bị gián đoạn. Bạn có thể kết nối lại.</string>
+  <string name="host_status_network_lost" tools:machine_translated="true">Kết nối mạng đã bị mất. Vui lòng kết nối lại khi có kết nối mạng.</string>
+  <string name="host_status_auth_failed" tools:machine_translated="true">Xác thực không thành công. Vui lòng kiểm tra tên người dùng, mật khẩu hoặc khóa trước khi kết nối lại.</string>
+  <string name="host_status_connection_ended" tools:machine_translated="true">Kết nối đã kết thúc.</string>
+  <string name="host_status_action_required" tools:machine_translated="true">Kết nối cần được kiểm tra.</string>
+  <string name="host_status_unread_explanation" tools:machine_translated="true">%1$s Mở bảng điều khiển để xem phần còn lại của thông báo.</string>
+  <string name="hostpref_mosh_network_timeout_title" tools:machine_translated="true">Thời gian chờ kết nối mạng của Mosh (giây)</string>
+  <string name="hostpref_mosh_network_timeout_summary" tools:machine_translated="true">Thời gian chờ trước khi máy chủ ngừng hoạt động nếu không nhận được bản cập nhật từ máy khách. Để trống để sử dụng cài đặt của máy chủ hoặc một tuần; sử dụng 0 để tắt chức năng hết hạn.</string>
+  <string name="hostpref_mosh_network_timeout_error" tools:machine_translated="true">Nhập một số nguyên từ 0 đến 2147483647, hoặc để trống.</string>
+  <string name="notification_channel_sessions" tools:machine_translated="true">Các phiên hoạt động.</string>
+  <string name="notification_channel_attention" tools:machine_translated="true">Các phiên cần được xử lý.</string>
+  <string name="notification_channel_bells" tools:machine_translated="true">Chuông báo hiệu của thiết bị đầu cuối.</string>
+  <string name="notification_channel_connections" tools:machine_translated="true">Kết nối bị gián đoạn.</string>
+  <string name="pref_notification_channels_title" tools:machine_translated="true">Quản lý các kênh thông báo trong phần cài đặt.</string>
+  <string name="notification_summary" tools:machine_translated="true">%1$s · %2$s</string>
+  <string name="notification_connected" tools:machine_translated="true">Đã kết nối.</string>
+  <string name="notification_connecting" tools:machine_translated="true">Đang kết nối…</string>
+  <string name="notification_disconnected" tools:machine_translated="true">Đã ngắt kết nối.</string>
+  <string name="notification_bell" tools:machine_translated="true">Tiếng chuông báo hiệu từ thiết bị đầu cuối.</string>
+  <string name="notification_session_detail" tools:machine_translated="true">%1$s: %2$s</string>
+  <string name="notification_event_time" tools:machine_translated="true">%1$s · %2$s</string>
+  <string name="notification_mark_seen" tools:machine_translated="true">Đánh dấu là đã xem</string>
+  <string name="notification_mute_bells" tools:machine_translated="true">Tắt chuông.</string>
+  <string name="pref_connection_lost_notification_title" tools:machine_translated="true">Thông báo khi mất kết nối.</string>
+  <string name="pref_connection_lost_notification_summary" tools:machine_translated="true">Hiển thị một thông báo nổi không phát âm thanh khi một phiên làm việc mà bạn không đang xem bị ngắt kết nối đột ngột.</string>
+  <plurals name="notification_connected_sessions" tools:machine_translated="true">
+		<item quantity="one">%d phiên đã kết nối</item>
+		<item quantity="other">%d phiên đã kết nối</item>
+	</plurals>
+  <plurals name="notification_attention_sessions" tools:machine_translated="true">
+		<item quantity="one">Có %d phiên cần được xử lý.</item>
+		<item quantity="other">Có %d phiên cần được xử lý.</item>
+	</plurals>
+  <plurals name="notification_more_sessions" tools:machine_translated="true">
+		<item quantity="one">Còn %d phiên khác</item>
+		<item quantity="other">Còn %d phiên khác</item>
+	</plurals>
+  <string name="pref_connection_alerts_title" tools:machine_translated="true">Thông báo về kết nối</string>
+  <string name="pref_connection_alerts_summary" tools:machine_translated="true">Hiển thị thông báo âm thanh và mất kết nối.</string>
+  <string name="pref_connection_alerts_disabled_summary" tools:machine_translated="true">Thông báo về kết nối đã tắt. Hỗ trợ kết nối nền vẫn được bật.</string>
+  <string name="pref_service_notification_visibility" tools:machine_translated="true">Trên Android, việc hiển thị thông báo về kết nối đang hoạt động được kiểm soát độc lập với các thông báo về kết nối.</string>
+  <string name="pref_notifications_blocked" tools:machine_translated="true">Android đã chặn thông báo của ConnectBot. Tính năng hỗ trợ kết nối nền vẫn được bật.</string>
+  <string name="connection_alert_permission_title" tools:machine_translated="true">Thông báo kết nối</string>
+  <string name="connection_alert_permission_message" tools:machine_translated="true">Cho phép hiển thị thông báo để xem các máy chủ đã kết nối và nhận thông báo về âm báo và tình trạng mất kết nối. Các kết nối vẫn có thể hoạt động trong nền ngay cả khi không cấp quyền này.</string>
+  <string name="connection_alert_permission_denied_title" tools:machine_translated="true">Bật thông báo</string>
+  <string name="connection_alert_permission_denied_message" tools:machine_translated="true">Bật thông báo cho ConnectBot trong phần cài đặt của Android để xem các máy chủ đã kết nối và nhận thông báo về âm báo hiệu và tình trạng mất kết nối. Chức năng hỗ trợ kết nối nền vẫn được bật.</string>
+  <string name="profile_bold_as_bright" tools:machine_translated="true">Màu sáng cho văn bản in đậm</string>
+  <string name="profile_bold_as_bright_summary" tools:machine_translated="true">Sử dụng màu ANSI sáng cho văn bản được in đậm. Áp dụng cho các phiên lệnh mới.</string>
+  <string name="known_hosts_title" tools:machine_translated="true">Các máy chủ đáng tin cậy</string>
+  <string name="hostpref_known_hosts_title" tools:machine_translated="true">Danh sách các khóa SSH đáng tin cậy đã biết.</string>
+  <string name="hostpref_known_hosts_summary" tools:machine_translated="true">Xem, nhập hoặc xóa các khóa được tin cậy cho máy chủ này.</string>
+  <string name="known_hosts_empty" tools:machine_translated="true">Không có máy chủ đã biết nào.</string>
+  <string name="known_host_algorithm" tools:machine_translated="true">Thuật toán: %1$s</string>
+  <string name="known_host_delete" tools:machine_translated="true">Xóa máy chủ đã biết</string>
+  <string name="known_host_delete_confirm" tools:machine_translated="true">Xóa</string>
+  <string name="known_host_delete_title" tools:machine_translated="true">Xóa máy chủ đã biết?</string>
+  <string name="known_host_delete_message" tools:machine_translated="true">Lần kết nối tiếp theo, bạn cần xác minh lại khóa cho %1$s.</string>
+  <string name="known_hosts_error" tools:machine_translated="true">Không thể cập nhật danh sách các máy chủ đã biết.</string>
+  <string name="known_host_import" tools:machine_translated="true">Nhập khóa máy chủ.</string>
+  <string name="known_host_import_title" tools:machine_translated="true">Nhập khóa máy chủ.</string>
+  <string name="known_host_import_key_label" tools:machine_translated="true">Khóa công khai OpenSSH</string>
+  <string name="known_host_import_help" tools:machine_translated="true">Dán toàn bộ khóa công khai, ví dụ: “ssh-ed25519 AAAA…”. Chỉ riêng dấu vân tay thì không thể nhập được.</string>
+  <string name="known_host_import_invalid" tools:machine_translated="true">Nhập khóa công khai OpenSSH hợp lệ. Thuật toán và khóa đã mã hóa theo định dạng phải khớp nhau.</string>
+  <string name="known_host_import_confirm" tools:machine_translated="true">Nhập</string>
+  <string name="logs_exit_history" tools:machine_translated="true">Các kết quả thoát của tiến trình gần đây.</string>
+  <string name="logs_exit_history_empty" tools:machine_translated="true">Không có bản ghi nào về việc kết thúc tiến trình.</string>
+  <string name="logs_exit_history_unavailable" tools:machine_translated="true">Không thể truy cập lịch sử kết thúc tiến trình.</string>
+  <string name="logs_exit_description_unavailable" tools:machine_translated="true">Không có mô tả nào.</string>
+  <string name="logs_exit_details" tools:machine_translated="true">Thời gian: %1$s\nTiến trình: %2$s (PID %3$d)\nNguyên nhân: %4$s (%5$d)\nTrạng thái/tín hiệu: %6$d\nMô tả: %7$s\nBộ nhớ được ghi lại gần nhất: PSS %8$d kB, RSS %9$d kB</string>
+  <string name="save_tombstone" tools:machine_translated="true">Lưu thông tin lỗi hệ thống</string>
+  <string name="tombstone_save_info" tools:machine_translated="true">Lưu báo cáo sự cố mã gốc mới nhất hiện có vào vị trí bạn chọn.</string>
+  <string name="tombstone_saved" tools:machine_translated="true">Đã lưu thông tin chi tiết về sự cố.</string>
+  <string name="tombstone_unavailable" tools:machine_translated="true">Không có báo cáo sự cố mã gốc nào. Có thể Android đã xóa báo cáo này.</string>
+  <string name="tombstone_save_failed" tools:machine_translated="true">Không thể lưu thông tin lỗi.</string>
+  <string name="pubkey_import_save_failed" tools:machine_translated="true">Không thể lưu khóa. Hãy thử một tên khác hoặc thử lại.</string>
+  <string name="shortcut_create_failed" tools:machine_translated="true">Không thể tạo lối tắt. Vui lòng thử lại.</string>
+  <string name="terminal_jump_cycle" tools:machine_translated="true">Chuỗi máy chủ trung gian chứa một vòng lặp. Vui lòng kiểm tra cài đặt của máy chủ trung gian.</string>
+  <string name="terminal_jump_too_deep" tools:machine_translated="true">Chuỗi máy chủ trung gian vượt quá giới hạn 32 máy chủ.</string>
+  <string name="telnet_echo_title" tools:machine_translated="true">Hiển thị cục bộ các ký tự đã nhập.</string>
+  <string name="telnet_echo_summary" tools:machine_translated="true">Chọn xem có hiển thị nội dung nhập liệu cục bộ hay không. Nếu luôn bật, có thể xảy ra tình trạng lặp lại nội dung khi máy chủ phản hồi.</string>
+  <string name="telnet_echo_auto" tools:machine_translated="true">Tự động</string>
+  <string name="telnet_echo_on" tools:machine_translated="true">Luôn bật.</string>
+  <string name="telnet_echo_off" tools:machine_translated="true">Luôn tắt.</string>
+  <string name="telnet_negotiation_title" tools:machine_translated="true">Khởi tạo quá trình thương lượng.</string>
+  <string name="telnet_negotiation_summary" tools:machine_translated="true">Khi kết nối, hãy thương lượng về các tính năng của thiết bị đầu cuối hoặc đợi máy chủ yêu cầu.</string>
+  <string name="telnet_negotiation_interactive" tools:machine_translated="true">Thỏa thuận khi kết nối.</string>
+  <string name="telnet_negotiation_passive" tools:machine_translated="true">Đợi máy chủ.</string>
+  <string name="telnet_nonbinary_title" tools:machine_translated="true">Dữ liệu không phải nhị phân.</string>
+  <string name="telnet_nonbinary_summary" tools:machine_translated="true">Nếu máy chủ từ chối chế độ nhị phân, hãy cho phép sử dụng chế độ tám bit cũ hoặc yêu cầu sử dụng ASCII. Cả hai phía phải sử dụng cùng một kiểu mã hóa.</string>
+  <string name="telnet_nonbinary_legacy" tools:machine_translated="true">Cho phép sử dụng các byte tám bit cũ.</string>
+  <string name="telnet_nonbinary_ascii" tools:machine_translated="true">Yêu cầu định dạng ASCII.</string>
+  <string name="telnet_newline_title" tools:machine_translated="true">Các ký tự kết thúc dòng đã được dán.</string>
+  <string name="telnet_newline_summary" tools:machine_translated="true">Ngoài chế độ nhị phân, hãy chuyển đổi ký tự xuống dòng (LF) đã sao chép thành CRLF hoặc giữ nguyên LF. Quy tắc này cũng áp dụng cho văn bản tự động hóa.</string>
+  <string name="telnet_newline_crlf" tools:machine_translated="true">Chuyển đổi LF thành CRLF.</string>
+  <string name="telnet_newline_lf" tools:machine_translated="true">Giữ nguyên ký tự xuống dòng (LF).</string>
+  <string name="telnet_ascii_input_rejected" tools:machine_translated="true">Dữ liệu nhập vào không được gửi. Kết nối này yêu cầu sử dụng định dạng ASCII cho đến khi máy chủ bật chế độ nhị phân.</string>
+  <string name="telnet_input_rejected" tools:machine_translated="true">Không thể gửi dữ liệu đến máy chủ Telnet này.</string>
+  <string name="terminal_connection_failed" tools:machine_translated="true">Kết nối không thành công.</string>
+  <string name="terminal_connected" tools:machine_translated="true">Đã kết nối.</string>
+  <string name="terminal_auth_success" tools:machine_translated="true">Xác thực thành công.</string>
+  <string name="terminal_session_failed" tools:machine_translated="true">Không thể mở phiên SSH.</string>
+  <string name="terminal_pty_rejected" tools:machine_translated="true">Máy chủ SSH từ chối yêu cầu kết nối đến thiết bị đầu cuối.</string>
+  <string name="terminal_shell_rejected" tools:machine_translated="true">Máy chủ SSH từ chối yêu cầu mở phiên làm việc.</string>
+  <string name="console_menu_connection_info" tools:machine_translated="true">Thông tin kết nối</string>
+  <string name="connection_info_protocol" tools:machine_translated="true">Giao thức</string>
+  <string name="connection_info_host" tools:machine_translated="true">Máy chủ</string>
+  <string name="connection_info_port" tools:machine_translated="true">Cổng</string>
+  <string name="connection_info_ssh_port" tools:machine_translated="true">Cổng SSH</string>
+  <string name="connection_info_username" tools:machine_translated="true">Tên người dùng</string>
+  <string name="connection_info_status" tools:machine_translated="true">Trạng thái</string>
+  <string name="connection_info_connecting" tools:machine_translated="true">Đang kết nối.</string>
+  <string name="connection_info_connected" tools:machine_translated="true">Đã kết nối.</string>
+  <string name="connection_info_disconnected" tools:machine_translated="true">Kết nối bị ngắt.</string>
+  <string name="connection_info_local_address" tools:machine_translated="true">Địa chỉ cục bộ</string>
+  <string name="connection_info_ssh_bootstrap" tools:machine_translated="true">Thông tin chi tiết về quá trình khởi tạo SSH.</string>
+  <string name="connection_info_ssh_negotiation" tools:machine_translated="true">Chi tiết đàm phán qua kết nối SSH.</string>
+  <string name="connection_info_unavailable" tools:machine_translated="true">Không có thông tin chi tiết về quá trình thương lượng SSH.</string>
+  <string name="connection_info_key_exchange" tools:machine_translated="true">Thuật toán trao đổi khóa</string>
+  <string name="connection_info_host_key" tools:machine_translated="true">Khóa máy chủ của máy chủ.</string>
+  <string name="connection_info_cipher_outbound" tools:machine_translated="true">Mã hóa: từ máy khách đến máy chủ.</string>
+  <string name="connection_info_cipher_inbound" tools:machine_translated="true">Mã hóa: từ máy chủ đến máy khách.</string>
+  <string name="connection_info_mac_outbound" tools:machine_translated="true">Tính toàn vẹn: từ máy khách đến máy chủ.</string>
+  <string name="connection_info_mac_inbound" tools:machine_translated="true">Tính toàn vẹn: từ máy chủ đến máy khách.</string>
+  <string name="connection_info_integrated_mac" tools:machine_translated="true">Tích hợp với mã hóa.</string>
+  <string name="connection_info_post_quantum" tools:machine_translated="true">Trao đổi khóa lượng tử sau này</string>
+  <string name="connection_info_yes" tools:machine_translated="true">Có.</string>
+  <string name="connection_info_no" tools:machine_translated="true">Không</string>
+  <string name="connection_info_port_forwards" tools:machine_translated="true">Chuyển tiếp cổng</string>
+  <string name="connection_info_configured_source" tools:machine_translated="true">Đã cấu hình nguồn.</string>
+  <string name="connection_info_bound_port" tools:machine_translated="true">Cổng được gán.</string>
+  <string name="connection_info_not_bound" tools:machine_translated="true">Chưa được liên kết.</string>
+  <string name="connection_info_forward_status" tools:machine_translated="true">Trạng thái chuyển tiếp</string>
+  <string name="connection_info_forward_active" tools:machine_translated="true">Đang hoạt động.</string>
+  <string name="connection_info_forward_inactive" tools:machine_translated="true">Không hoạt động.</string>
+  <string name="connection_info_forward_destination" tools:machine_translated="true">Địa chỉ đích.</string>
+  <string name="crypto_policy_title" tools:machine_translated="true">Chính sách mật mã</string>
+  <string name="crypto_policy_default" tools:machine_translated="true">Mặc định</string>
+  <string name="crypto_policy_future" tools:machine_translated="true">Trong tương lai</string>
+  <string name="crypto_policy_legacy" tools:machine_translated="true">Cũ</string>
+  <string name="crypto_policy_fips" tools:machine_translated="true">Các thuật toán FIPS</string>
+  <string name="crypto_policy_custom" tools:machine_translated="true">Tùy chỉnh</string>
+  <string name="crypto_policy_default_subtitle" tools:machine_translated="true">Các thuật toán và kích thước khóa được đề xuất.</string>
+  <string name="crypto_policy_future_subtitle" tools:machine_translated="true">Yêu cầu trao đổi khóa sau thời đại lượng tử.</string>
+  <string name="crypto_policy_fips_subtitle" tools:machine_translated="true">Giới hạn các thuật toán; chưa được chứng nhận theo tiêu chuẩn FIPS.</string>
+  <string name="crypto_policy_legacy_subtitle" tools:machine_translated="true">Cho phép sử dụng các thuật toán cũ hơn để đảm bảo khả năng tương thích.</string>
+  <string name="crypto_policy_custom_subtitle" tools:machine_translated="true">Chọn thuật toán và kích thước khóa tối thiểu.</string>
+  <string name="crypto_policy_default_summary" tools:machine_translated="true">Các thuật toán hiện đại và yêu cầu về kích thước khóa được duy trì bởi thư viện SSH.</string>
+  <string name="crypto_policy_future_summary" tools:machine_translated="true">Yêu cầu sử dụng phương pháp trao đổi khóa kết hợp giữa thuật toán lượng tử và thuật toán truyền thống, khóa mã hóa 256-bit và khóa RSA mạnh hơn.</string>
+  <string name="crypto_policy_fips_summary" tools:machine_translated="true">Hạn chế các lựa chọn thuật toán; không thiết lập quy trình kiểm tra FIPS.</string>
+  <string name="crypto_policy_legacy_summary" tools:machine_translated="true">Cho phép sử dụng các thuật toán cũ hơn và các khóa RSA và DH có kích thước nhỏ hơn để đảm bảo khả năng tương thích. Các thuật toán hiện đại vẫn được ưu tiên sử dụng.</string>
+  <string name="crypto_policy_custom_summary" tools:machine_translated="true">Tùy chỉnh mặc định. Việc chọn thuật toán và kích thước khóa tối thiểu là độc lập với nhau.</string>
+  <string name="crypto_minimum_rsa" tools:machine_translated="true">Số lượng bit RSA tối thiểu</string>
+  <string name="crypto_minimum_dh" tools:machine_translated="true">Số bit tối thiểu của DH.</string>
+  <string name="crypto_inherit_bits" tools:machine_translated="true">Sử dụng giá trị mặc định (%1$d bit)</string>
+  <string name="crypto_minimum_summary" tools:machine_translated="true">Để trống để sử dụng cài đặt mặc định. Áp dụng ngay cả đối với các thuật toán được bật rõ ràng.</string>
+  <string name="crypto_minimum_invalid" tools:machine_translated="true">Nhập ít nhất 1024 bit. DH không được vượt quá 8192 bit.</string>
+  <string name="crypto_category_kex" tools:machine_translated="true">Các thuật toán trao đổi khóa.</string>
+  <string name="crypto_category_cipher" tools:machine_translated="true">Các thuật toán mã hóa</string>
+  <string name="crypto_category_mac" tools:machine_translated="true">Các thuật toán xác thực thông điệp</string>
+  <string name="crypto_category_hostkey" tools:machine_translated="true">Các thuật toán khóa máy chủ</string>
+  <string name="crypto_category_pubkey" tools:machine_translated="true">Các thuật toán xác thực bằng khóa công khai.</string>
+  <string name="crypto_mode_title" tools:machine_translated="true">Chế độ chọn</string>
+  <string name="crypto_mode_default" tools:machine_translated="true">Sử dụng cấu hình mặc định.</string>
+  <string name="crypto_mode_delta" tools:machine_translated="true">Chỉnh sửa mặc định</string>
+  <string name="crypto_mode_exact" tools:machine_translated="true">Chỉ sử dụng những cái này.</string>
+  <string name="crypto_apply" tools:machine_translated="true">Áp dụng</string>
+  <string name="crypto_expression" tools:machine_translated="true">Biểu thức thuật toán</string>
+  <string name="crypto_expression_help" tools:machine_translated="true">Các tên được phân tách bằng dấu phẩy. Trong mục Sửa đổi mặc định, thêm tiền tố ^ (để đặt ở đầu), + (để thêm vào cuối) hoặc - (để loại trừ) vào mỗi tên.</string>
+  <string name="crypto_expression_invalid" tools:machine_translated="true">Sử dụng các tên SSH duy nhất và chỉ chọn một chế độ. Danh sách chính xác không được để trống.</string>
+  <string name="crypto_effective_order" tools:machine_translated="true">Thứ tự ưu tiên hiệu quả.</string>
+  <string name="crypto_algorithm_unavailable" tools:machine_translated="true">Không khả dụng trên thiết bị này; vẫn được giữ lại trong cấu hình của bạn.</string>
+  <string name="crypto_algorithm_filtered" tools:machine_translated="true">Loại trừ do kích thước khóa tối thiểu.</string>
+  <string name="crypto_algorithm_default" tools:machine_translated="true">Đã bật theo mặc định.</string>
+  <string name="crypto_algorithm_optional" tools:machine_translated="true">Có sẵn; chưa được kích hoạt trong cấu hình mặc định.</string>
+  <string name="crypto_prepend" tools:machine_translated="true">Ưu tiên lựa chọn đầu tiên.</string>
+  <string name="crypto_append" tools:machine_translated="true">Thêm vào.</string>
+  <string name="crypto_exclude" tools:machine_translated="true">Loại trừ</string>
+  <string name="crypto_inherit" tools:machine_translated="true">Sử dụng cài đặt mặc định.</string>
+  <string name="crypto_reason_unsupported" tools:machine_translated="true">không được hỗ trợ bởi thư viện này.</string>
+  <string name="crypto_reason_unavailable" tools:machine_translated="true">không khả dụng với các nhà cung cấp dịch vụ mã hóa đã cài đặt.</string>
+  <string name="crypto_reason_dh_small" tools:machine_translated="true">Nhóm DH nhỏ hơn giá trị tối thiểu đã được cấu hình.</string>
+  <string name="crypto_reason_rsa_small" tools:machine_translated="true">khóa hoặc chứng chỉ không đáp ứng các yêu cầu của chính sách RSA hoặc chính sách chứng chỉ.</string>
+  <string name="crypto_connection_warning" tools:machine_translated="true">Cảnh báo — %1$s: %2$s: %3$s đã bị bỏ qua (%4$s).</string>
+  <string name="crypto_no_algorithms" tools:machine_translated="true">Chính sách mật mã không cho phép sử dụng bất kỳ %1$s nào.</string>
+  <string name="crypto_policy_failed" tools:machine_translated="true">Chính sách mã hóa không thành công đối với %1$s: %2$s</string>
+  <string name="crypto_policy_host" tools:machine_translated="true">Chính sách mật mã — %1$s</string>
+  <string name="crypto_minimums" tools:machine_translated="true">Kích thước khóa tối thiểu</string>
+  <string name="crypto_minimum_values" tools:machine_translated="true">RSA: %1$d bit; DH trên trường hữu hạn: %2$d bit</string>
+  <string name="crypto_show_effective_order" tools:machine_translated="true">Hiển thị thứ tự ưu tiên hiệu quả.</string>
+  <string name="crypto_hide_effective_order" tools:machine_translated="true">Ẩn danh sách các thuật toán được sắp xếp theo thứ tự ưu tiên đã chọn.</string>
+  <string name="crypto_change_algorithm_state" tools:machine_translated="true">Thay đổi trạng thái cho %1$s</string>
+  <string name="crypto_states_help" tools:machine_translated="true">^ Ưu tiên thuật toán đầu tiên · + Thêm vào · ✓ Tuân theo mặc định · − Loại trừ</string>
+  <string name="keyboard_key_ctrl" tools:machine_translated="true">Ctrl</string>
+  <string name="keyboard_key_alt" tools:machine_translated="true">Alt</string>
+  <string name="keyboard_key_shift" tools:machine_translated="true">Phím Shift</string>
+  <string name="keyboard_key_escape" tools:machine_translated="true">Esc</string>
+  <string name="keyboard_key_tab" tools:machine_translated="true">Phím Tab</string>
+  <string name="keyboard_key_enter" tools:machine_translated="true">Nhấn Enter.</string>
+  <string name="keyboard_key_backspace" tools:machine_translated="true">Phím xóa lùi</string>
+  <string name="keyboard_key_delete" tools:machine_translated="true">Xóa</string>
+  <string name="keyboard_key_insert" tools:machine_translated="true">Chèn</string>
+  <string name="keyboard_key_arrow_up" tools:machine_translated="true">Mũi tên chỉ lên.</string>
+  <string name="keyboard_key_arrow_down" tools:machine_translated="true">Mũi tên chỉ xuống.</string>
+  <string name="keyboard_key_arrow_left" tools:machine_translated="true">←</string>
+  <string name="keyboard_key_arrow_right" tools:machine_translated="true">→</string>
+  <string name="keyboard_key_home" tools:machine_translated="true">Trang chủ</string>
+  <string name="keyboard_key_end" tools:machine_translated="true">Kết thúc.</string>
+  <string name="keyboard_key_page_up" tools:machine_translated="true">Lật trang lên</string>
+  <string name="keyboard_key_page_down" tools:machine_translated="true">PgDn</string>
+  <string name="keyboard_key_text_input" tools:machine_translated="true">Nhập văn bản</string>
+  <string name="keyboard_key_toggle_compose" tools:machine_translated="true">Tạo tổ hợp phím.</string>
+  <string name="keyboard_key_toggle_ime" tools:machine_translated="true">Bàn phím</string>
+  <string name="keyboard_key_f1" tools:machine_translated="true">F1</string>
+  <string name="keyboard_key_f2" tools:machine_translated="true">F2</string>
+  <string name="keyboard_key_f3" tools:machine_translated="true">F3</string>
+  <string name="keyboard_key_f4" tools:machine_translated="true">F4</string>
+  <string name="keyboard_key_f5" tools:machine_translated="true">F5</string>
+  <string name="keyboard_key_f6" tools:machine_translated="true">F6</string>
+  <string name="keyboard_key_f7" tools:machine_translated="true">F7</string>
+  <string name="keyboard_key_f8" tools:machine_translated="true">F8</string>
+  <string name="keyboard_key_f9" tools:machine_translated="true">F9</string>
+  <string name="keyboard_key_f10" tools:machine_translated="true">F10</string>
+  <string name="keyboard_key_f11" tools:machine_translated="true">F11</string>
+  <string name="keyboard_key_f12" tools:machine_translated="true">F12</string>
+  <string name="keyboard_settings_title" tools:machine_translated="true">Bàn phím của thiết bị đầu cuối</string>
+  <string name="keyboard_layouts" tools:machine_translated="true">Bố cục bàn phím</string>
+  <string name="keyboard_macros" tools:machine_translated="true">Các macro được chia sẻ.</string>
+  <string name="keyboard_missing_macro" tools:machine_translated="true">Thiếu macro.</string>
+  <string name="keyboard_unsupported" tools:machine_translated="true">Cấu hình không được hỗ trợ.</string>
+  <string name="keyboard_action_failed" tools:machine_translated="true">Thao tác trên bàn phím không thành công.</string>
+  <string name="keyboard_move_up" tools:machine_translated="true">Di chuyển lên.</string>
+  <string name="keyboard_move_down" tools:machine_translated="true">Di chuyển xuống.</string>
+  <string name="keyboard_move_left" tools:machine_translated="true">Di chuyển sang trái.</string>
+  <string name="keyboard_move_right" tools:machine_translated="true">Di chuyển sang phải.</string>
+  <string name="keyboard_off" tools:machine_translated="true">Tắt</string>
+  <string name="keyboard_once" tools:machine_translated="true">Phím tiếp theo</string>
+  <string name="keyboard_locked" tools:machine_translated="true">Đã khóa.</string>
+  <string name="keyboard_new_layout" tools:machine_translated="true">Bố cục mới.</string>
+  <string name="keyboard_new_macro" tools:machine_translated="true">Tạo macro mới.</string>
+  <string name="keyboard_copy_suffix" tools:machine_translated="true">(sao chép)</string>
+  <string name="keyboard_back" tools:machine_translated="true">Quay lại</string>
+  <string name="keyboard_error" tools:machine_translated="true">Không thể áp dụng thay đổi: %1$s</string>
+  <string name="keyboard_add_layout" tools:machine_translated="true">Thêm bố cục.</string>
+  <string name="keyboard_add_macro" tools:machine_translated="true">Thêm macro.</string>
+  <string name="keyboard_edit" tools:machine_translated="true">Chỉnh sửa</string>
+  <string name="keyboard_duplicate" tools:machine_translated="true">Trùng lặp</string>
+  <string name="keyboard_delete" tools:machine_translated="true">Xóa</string>
+  <string name="keyboard_default" tools:machine_translated="true">Sử dụng làm cấu hình mặc định cho ứng dụng.</string>
+  <string name="keyboard_used_by" tools:machine_translated="true">Được sử dụng trong: %1$s</string>
+  <string name="keyboard_confirm" tools:machine_translated="true">Xác nhận.</string>
+  <string name="keyboard_confirm_message" tools:machine_translated="true">Có áp dụng thay đổi này không? Các chỉnh sửa bố cục đã lưu có thể bị mất. Các macro được chia sẻ sẽ được giữ lại khi đặt lại bố cục.</string>
+  <string name="keyboard_cancel" tools:machine_translated="true">Hủy bỏ</string>
+  <string name="keyboard_name" tools:machine_translated="true">Tên</string>
+  <string name="keyboard_width" tools:machine_translated="true">Chiều rộng của nút (dp, áp dụng cho tất cả các nút)</string>
+  <string name="keyboard_height" tools:machine_translated="true">Chiều cao của nút (dp, áp dụng cho tất cả các nút)</string>
+  <string name="keyboard_grid_help" tools:machine_translated="true">Chạm vào một phím để chỉnh sửa. Chạm và giữ, sau đó kéo để di chuyển. Kéo giữa các phần để ghim hoặc bỏ ghim. Kích thước nút áp dụng cho tất cả các phím.</string>
+  <string name="keyboard_drag_button" tools:machine_translated="true">Kéo để sắp xếp lại vị trí của nút.</string>
+  <string name="keyboard_add_button" tools:machine_translated="true">Thêm phím</string>
+  <string name="keyboard_visible" tools:machine_translated="true">Hiển thị</string>
+  <string name="keyboard_row" tools:machine_translated="true">Hàng (bắt đầu từ 0)</string>
+  <string name="keyboard_column" tools:machine_translated="true">Cột (bắt đầu từ 0)</string>
+  <string name="keyboard_row_span" tools:machine_translated="true">Số lượng hàng trải dài.</string>
+  <string name="keyboard_column_span" tools:machine_translated="true">Số lượng cột.</string>
+  <string name="keyboard_remove_button" tools:machine_translated="true">Xóa phím</string>
+  <string name="keyboard_save" tools:machine_translated="true">Lưu</string>
+  <string name="keyboard_reset" tools:machine_translated="true">Khôi phục cài đặt mặc định.</string>
+  <string name="keyboard_use_default" tools:machine_translated="true">Sử dụng cài đặt mặc định của ứng dụng.</string>
+  <string name="keyboard_visual_editor" tools:machine_translated="true">Trình chỉnh sửa trực quan.</string>
+  <string name="keyboard_text_editor" tools:machine_translated="true">Trình soạn thảo văn bản</string>
+  <string name="keyboard_macro_help" tools:machine_translated="true">Mỗi dòng chứa một hành động: key ctrl+b, text \"hello\", key enter, bytes 1b 5b 41. Văn bản sử dụng phương pháp thoát chuỗi JSON.</string>
+  <string name="keyboard_steps" tools:machine_translated="true">Các bước trong macro</string>
+  <string name="keyboard_add_text" tools:machine_translated="true">Thêm văn bản.</string>
+  <string name="keyboard_add_key" tools:machine_translated="true">Thêm phím</string>
+  <string name="keyboard_add_bytes" tools:machine_translated="true">Thêm byte.</string>
+  <string name="keyboard_text" tools:machine_translated="true">Văn bản cần gửi.</string>
+  <string name="keyboard_bytes" tools:machine_translated="true">Giá trị byte chính xác (hệ thập lục phân)</string>
+  <string name="keyboard_character" tools:machine_translated="true">Ký tự</string>
+  <string name="terminal_key_space" tools:machine_translated="true">Phím cách</string>
+  <string name="terminal_key_keypad" tools:machine_translated="true">Phím số %1$s</string>
+  <string name="keyboard_button_label" tools:machine_translated="true">Nhãn nút</string>
+  <string name="keyboard_preset_citrus" tools:machine_translated="true">Cam quýt</string>
+  <string name="keyboard_preset_citrus_subtitle" tools:machine_translated="true">Các điều khiển thiết bị đầu cuối nhỏ gọn.</string>
+  <string name="keyboard_preset_last_stop" tools:machine_translated="true">Điểm dừng cuối cùng</string>
+  <string name="keyboard_preset_last_stop_subtitle" tools:machine_translated="true">Các nút điều khiển bố trí rộng rãi.</string>
+  <string name="keyboard_preset_claw" tools:machine_translated="true">Móng vuốt</string>
+  <string name="keyboard_preset_claw_subtitle" tools:machine_translated="true">Được tối ưu hóa cho Claude Code.</string>
+  <string name="keyboard_preset_scribe" tools:machine_translated="true">Scribe</string>
+  <string name="keyboard_preset_scribe_subtitle" tools:machine_translated="true">Được tối ưu hóa cho giao diện dòng lệnh (CLI) Codex.</string>
+  <string name="keyboard_choose_preset" tools:machine_translated="true">Chọn một kiểu bố cục bàn phím.</string>
+  <string name="keyboard_original_layout" tools:machine_translated="true">Bố cục bàn phím CB cổ điển.</string>
+  <string name="keyboard_fit_to_width" tools:machine_translated="true">Điều chỉnh để vừa với chiều rộng.</string>
+  <string name="keyboard_layer" tools:machine_translated="true">Lớp %1$d</string>
+  <string name="keyboard_layer_short" tools:machine_translated="true">Lớp bàn phím số %1$d</string>
+  <string name="keyboard_add_layer_switch" tools:machine_translated="true">Chuyển đổi lớp phím</string>
+  <string name="keyboard_layer_destination" tools:machine_translated="true">Điểm đến của lớp</string>
+  <string name="keyboard_layer_next" tools:machine_translated="true">Lớp tiếp theo không trống</string>
+  <string name="keyboard_fn" tools:machine_translated="true">FN</string>
+  <string name="keyboard_layer_empty" tools:machine_translated="true">Lớp đích trống.</string>
+  <string name="keyboard_action_stop" tools:machine_translated="true">Dừng lại</string>
+  <string name="keyboard_action_history" tools:machine_translated="true">Lịch sử (ngắn gọn)</string>
+  <string name="keyboard_action_mode" tools:machine_translated="true">Chế độ</string>
+  <string name="keyboard_action_newline" tools:machine_translated="true">Xuống dòng</string>
+  <string name="keyboard_action_log" tools:machine_translated="true">Nhật ký</string>
+  <string name="keyboard_action_edit" tools:machine_translated="true">Chỉnh sửa</string>
+  <string name="keyboard_action_copy" tools:machine_translated="true">Sao chép</string>
+  <string name="keyboard_key_paste" tools:machine_translated="true">Dán</string>
+  <string name="keyboard_shortcut_description" tools:machine_translated="true">%1$s (%2$s)</string>
+  <string name="keyboard_action_stop_full" tools:machine_translated="true">Ngắt.</string>
+  <string name="keyboard_action_history_full" tools:machine_translated="true">Tìm trong lịch sử lệnh</string>
+  <string name="keyboard_action_mode_full" tools:machine_translated="true">Chuyển đổi giữa các chế độ quyền.</string>
+  <string name="keyboard_action_newline_full" tools:machine_translated="true">Chèn dòng mới</string>
+  <string name="keyboard_action_log_full" tools:machine_translated="true">Bật/tắt bản ghi</string>
+  <string name="keyboard_action_edit_full" tools:machine_translated="true">Mở trình soạn thảo bên ngoài.</string>
+  <string name="keyboard_action_copy_full" tools:machine_translated="true">Sao chép phản hồi</string>
+  <string name="macro_assign" tools:machine_translated="true">Gán macro.</string>
+  <string name="macro_import" tools:machine_translated="true">Nhập macro</string>
+  <string name="macro_export" tools:machine_translated="true">Xuất macro</string>
+  <string name="macro_none" tools:machine_translated="true">Không có macro nào đã được lưu.</string>
+  <string name="automation_run_macro" tools:machine_translated="true">Chạy macro.</string>
+  <string name="macro_choose" tools:machine_translated="true">Chọn macro</string>
+  <string name="macro_manage" tools:machine_translated="true">Quản lý macro.</string>
+  <string name="keyboard_selected" tools:machine_translated="true">Đã chọn</string>
+  <string name="keyboard_app_default" tools:machine_translated="true">Mặc định của ứng dụng</string>
+  <string name="keyboard_select" tools:machine_translated="true">Sử dụng tính năng này.</string>
+  <string name="keyboard_change" tools:machine_translated="true">Thay đổi bố cục.</string>
+  <string name="keyboard_customize" tools:machine_translated="true">Tùy chỉnh</string>
+  <string name="keyboard_edit_shared" tools:machine_translated="true">Chỉnh sửa bố cục dùng chung.</string>
+  <string name="keyboard_make_default" tools:machine_translated="true">Sử dụng làm cấu hình mặc định cho ứng dụng.</string>
+  <string name="keyboard_saving" tools:machine_translated="true">Đang lưu…</string>
+  <string name="keyboard_context_name" tools:machine_translated="true">%1$s — %2$s</string>
+  <string name="keyboard_copy_name" tools:machine_translated="true">Tùy chỉnh</string>
+  <string name="keyboard_reset_inherited" tools:machine_translated="true">Sử dụng bàn phím được kế thừa.</string>
+  <string name="keyboard_inherit_named" tools:machine_translated="true">%1$s — %2$s</string>
+  <string name="keyboard_from_profile" tools:machine_translated="true">Từ cấu hình “%1$s”</string>
+  <string name="keyboard_advanced" tools:machine_translated="true">Nâng cao</string>
+  <string name="keyboard_usage_layout" tools:machine_translated="true">Bàn phím: %1$s</string>
+  <string name="keyboard_usage_automation" tools:machine_translated="true">Tự động hóa sau khi đăng nhập: %1$s</string>
+  <string name="keyboard_usage_profile" tools:machine_translated="true">Hồ sơ: %1$s</string>
+  <string name="keyboard_usage_host" tools:machine_translated="true">Máy chủ: %1$s</string>
+  <string name="keyboard_delete_layout_title" tools:machine_translated="true">Xóa bố cục “%1$s”?</string>
+  <string name="keyboard_delete_macro_title" tools:machine_translated="true">Xóa macro “%1$s”?</string>
+  <string name="keyboard_delete_layout_message" tools:machine_translated="true">Các máy chủ và cấu hình sử dụng bố cục này sẽ sử dụng bố cục bàn phím mặc định của chúng. Nếu đây là bố cục mặc định của ứng dụng, thì một bố cục khác sẽ trở thành bố cục mặc định.</string>
+  <string name="keyboard_delete_macro_message" tools:machine_translated="true">Thao tác này sẽ xóa macro khỏi thư viện dùng chung.</string>
+  <string name="keyboard_reset_message" tools:machine_translated="true">Khôi phục bố cục ban đầu, bao gồm cả vị trí và kích thước của các phím? Các thay đổi sẽ được áp dụng khi bạn lưu. Các macro đã chia sẻ sẽ được giữ nguyên.</string>
+  <string name="macro_shared_title" tools:machine_translated="true">Chỉnh sửa một macro đã chia sẻ?</string>
+  <string name="macro_shared_message" tools:machine_translated="true">Macro này đã được sử dụng ở nơi khác. Hãy tạo một bản sao riêng hoặc chỉnh sửa bản dùng chung để tất cả người dùng có thể sử dụng.</string>
+  <string name="macro_make_copy" tools:machine_translated="true">Tạo bản sao.</string>
+  <string name="macro_edit_shared" tools:machine_translated="true">Chỉnh sửa macro đã chia sẻ.</string>
+  <string name="macro_global_save_notice" tools:machine_translated="true">Lưu các thay đổi vào macro này ở mọi nơi nó được sử dụng, ngay cả khi sau đó bạn xóa bỏ các phần xung quanh trong trình soạn thảo.</string>
+  <string name="macro_remove_uses_first" tools:machine_translated="true">Xóa hoặc gán lại các mục này trước khi xóa macro.</string>
+  <string name="keyboard_session_only" tools:machine_translated="true">Phiên này</string>
+  <string name="keyboard_read_only" tools:machine_translated="true">Máy chủ này chỉ cho phép đọc dữ liệu. Không thể thay đổi cài đặt bàn phím của máy.</string>
+  <string name="keyboard_manage_layouts" tools:machine_translated="true">Quản lý bố cục</string>
+  <string name="keyboard_done" tools:machine_translated="true">Hoàn tất.</string>
+  <string name="automation_draft_host" tools:machine_translated="true">Các bước này sẽ được lưu cùng với máy chủ mới.</string>
+  <string name="automation_no_forwards_new_host" tools:machine_translated="true">Lưu máy chủ này và thêm các cấu hình chuyển tiếp cổng trước khi sử dụng các thao tác chuyển tiếp.</string>
+  <string name="keyboard_action_type" tools:machine_translated="true">Hành động</string>
+  <string name="keyboard_action_key" tools:machine_translated="true">Phím</string>
+  <string name="keyboard_action_macro" tools:machine_translated="true">Macro (tổ hợp phím)</string>
+  <string name="keyboard_action_modifier" tools:machine_translated="true">Bộ điều chỉnh</string>
+  <string name="keyboard_action_app" tools:machine_translated="true">Thao tác của ứng dụng</string>
+  <string name="keyboard_action_layer" tools:machine_translated="true">Chuyển lớp.</string>
+  <string name="keyboard_usage_shared_layout" tools:machine_translated="true">Bố cục dùng chung: lưu các bản cập nhật để tất cả mọi người đều có thể sử dụng.</string>
+  <string name="keyboard_layout_unavailable" tools:machine_translated="true">Bố cục bàn phím này hiện không khả dụng.</string>
+  <string name="keyboard_grid_advanced_help" tools:machine_translated="true">Các hàng và cột bắt đầu từ 0 trong mỗi phần. Mỗi phím chiếm một hàng. Số lượng cột được xác định số lượng ô mà một phím chiếm.</string>
+  <string name="keyboard_appearance" tools:machine_translated="true">Giao diện hiển thị</string>
+  <string name="keyboard_background_color" tools:machine_translated="true">Màu nền</string>
+  <string name="keyboard_text_color" tools:machine_translated="true">Màu chữ</string>
+  <string name="keyboard_outline_color" tools:machine_translated="true">Màu viền.</string>
+  <string name="keyboard_color_value" tools:machine_translated="true">%1$s: %2$s</string>
+  <string name="keyboard_theme_color" tools:machine_translated="true">Giao diện mặc định</string>
+  <string name="keyboard_background_opacity" tools:machine_translated="true">Độ đục của nền: %1$d%%</string>
+  <string name="keyboard_outlined" tools:machine_translated="true">Đã viền đường bao</string>
+  <string name="keyboard_outline_thickness" tools:machine_translated="true">Độ dày đường viền: %1$.1f dp</string>
+  <string name="keyboard_reset_appearance" tools:machine_translated="true">Khôi phục giao diện.</string>
+  <string name="keyboard_appearance_state_help" tools:machine_translated="true">Các tùy chọn đang hoạt động và các công cụ chuyển đổi lớp sử dụng hiệu ứng làm nổi bật theo chủ đề.</string>
+  <string name="keyboard_behavior" tools:machine_translated="true">Hành vi</string>
+  <string name="keyboard_repeat_on_hold" tools:machine_translated="true">Lặp lại khi giữ.</string>
+  <string name="keyboard_repeat_default" tools:machine_translated="true">Sử dụng chế độ lặp mặc định.</string>
+  <string name="keyboard_haptics_app_setting" tools:machine_translated="true">Cài đặt ứng dụng</string>
+  <string name="keyboard_haptics_on" tools:machine_translated="true">Bật</string>
+  <string name="keyboard_haptics_off" tools:machine_translated="true">Tắt</string>
+  <string name="keyboard_haptics_value" tools:machine_translated="true">Phản hồi xúc giác: %1$s</string>
+  <string name="keyboard_pinned_section" tools:machine_translated="true">Các phím đã ghim</string>
+  <string name="keyboard_scrolling_section" tools:machine_translated="true">Các phím có thể cuộn.</string>
+  <string name="keyboard_drop_section" tools:machine_translated="true">Kéo các phím đến đây.</string>
+  <string name="keyboard_pin_to_right" tools:machine_translated="true">Cố định ở bên phải</string>
+  <string name="keyboard_navigation_summary" tools:machine_translated="true">Chọn bố cục, tùy chỉnh phím và quản lý các macro.</string>
+  <string name="keyboard_edit_layout_title" tools:machine_translated="true">Chỉnh sửa bố cục</string>
+  <string name="keyboard_edit_key_title" tools:machine_translated="true">Chỉnh sửa tiêu đề phím</string>
+  <string name="keyboard_layout_settings" tools:machine_translated="true">Cài đặt bố cục</string>
+  <string name="keyboard_mode_scrollable" tools:machine_translated="true">Có thể cuộn.</string>
+  <string name="keyboard_mode_fit" tools:machine_translated="true">Điều chỉnh theo chiều rộng.</string>
+  <string name="keyboard_dimensions_summary" tools:machine_translated="true">%1$s · %2$s × %3$s dp</string>
+  <string name="keyboard_canvas_title" tools:machine_translated="true">Bàn phím</string>
+  <string name="keyboard_canvas_hint" tools:machine_translated="true">Chạm để chỉnh sửa · Giữ và kéo để di chuyển.</string>
+  <string name="keyboard_pinned_hint" tools:machine_translated="true">Các phím được ghim sẽ luôn nằm ở cuối bàn phím (bên trái trong giao diện từ phải sang trái).</string>
+  <string name="keyboard_scrolling_hint" tools:machine_translated="true">Kéo một phím vào phần “Phím được ghim” để giữ phím đó ở cuối bàn phím. Kéo phím đó trở lại phần “Phím có thể cuộn” để bỏ ghim.</string>
+  <string name="keyboard_group_expanded" tools:machine_translated="true">Mở rộng</string>
+  <string name="keyboard_group_collapsed" tools:machine_translated="true">Đã thu gọn.</string>
+  <string name="keyboard_edit_copy" tools:machine_translated="true">Chỉnh sửa bản sao.</string>
+  <string name="keyboard_continue_editing" tools:machine_translated="true">Tiếp tục chỉnh sửa.</string>
+  <string name="keyboard_copy_help" tools:machine_translated="true">Tạo bố cục cho %1$s. Những người dùng khác vẫn giữ bố cục hiện tại của họ.</string>
+  <string name="keyboard_parent_save_hint" tools:machine_translated="true">Các thay đổi sẽ được áp dụng khi bạn lưu máy chủ hoặc cấu hình này.</string>
+  <string name="keyboard_key_save_hint" tools:machine_translated="true">Lưu thay đổi của phím này sẽ cập nhật bản nháp bố cục. Lưu bố cục để giữ lại các thay đổi của bạn.</string>
+  <string name="keyboard_placement" tools:machine_translated="true">Vị trí sắp xếp.</string>
+  <string name="keyboard_show_key" tools:machine_translated="true">Hiển thị phím.</string>
+  <string name="keyboard_pin_choice" tools:machine_translated="true">Đã ghim ở cuối.</string>
+  <string name="keyboard_change_shortcut" tools:machine_translated="true">Thay đổi phím tắt.</string>
+  <string name="keyboard_action_help" tools:machine_translated="true">Chọn chức năng của phím này khi được nhấn.</string>
+  <string name="keyboard_appearance_summary" tools:machine_translated="true">Nền, chữ và đường viền.</string>
+  <string name="keyboard_behavior_summary" tools:machine_translated="true">%1$s · Phản hồi xúc giác: %2$s</string>
+  <string name="keyboard_repeat_off" tools:machine_translated="true">Nhấn một lần.</string>
+  <string name="keyboard_repeat_on" tools:machine_translated="true">Lặp lại khi nhấn và giữ.</string>
+  <string name="keyboard_advanced_summary" tools:machine_translated="true">Hàng, cột và độ rộng của phím</string>
+  <string name="keyboard_usage_count" tools:machine_translated="true">Số nơi sử dụng: %1$d</string>
+  <string name="keyboard_remove_key_message" tools:machine_translated="true">Xóa phím này khỏi bản nháp bố cục bàn phím?</string>
+  <string name="keyboard_key_discard_title" tools:machine_translated="true">Áp dụng các thay đổi cho phím?</string>
+  <string name="keyboard_key_discard_message" tools:machine_translated="true">Áp dụng những thay đổi này vào bố cục hoặc hủy bỏ chúng.</string>
+  <string name="keyboard_apply_key" tools:machine_translated="true">Áp dụng các thay đổi.</string>
+  <string name="keyboard_library_edit" tools:machine_translated="true">Chỉnh sửa bố cục.</string>
+  <string name="keyboard_key_type" tools:machine_translated="true">Phím hoặc phím tắt</string>
+  <string name="keyboard_preview_label" tools:machine_translated="true">Xem trước</string>
+  <string name="keyboard_own_layout" tools:machine_translated="true">Lựa chọn tùy chỉnh</string>
+  <string name="keyboard_inherited_selection" tools:machine_translated="true">Sử dụng bố cục kế thừa.</string>
+  <string name="keyboard_more_layout_actions" tools:machine_translated="true">Các thao tác bố cục</string>
+  <string name="keyboard_outline_preview" tools:machine_translated="true">Xem trước màu sắc</string>
+  <string name="keyboard_empty_layer" tools:machine_translated="true">Thêm một phím để kích hoạt lớp này.</string>
+  <string name="keyboard_immediate_hint" tools:machine_translated="true">Các thay đổi sẽ được áp dụng cho cửa sổ lệnh hiện tại khi bạn lưu bố cục.</string>
+  <string name="keyboard_shared_confirm" tools:machine_translated="true">Lưu bố cục này sẽ cập nhật cho tất cả người dùng. Bạn có thể chỉnh sửa một bản sao thay vì bản gốc.</string>
+  <string name="keyboard_shared_title" tools:machine_translated="true">Chỉnh sửa bố cục dùng chung?</string>
+  <string name="keyboard_this_configuration" tools:machine_translated="true">cấu hình này</string>
+  <string name="keyboard_builtin_presets" tools:machine_translated="true">Các mẫu có sẵn.</string>
+  <string name="keyboard_builtin_presets_help" tools:machine_translated="true">Các cài đặt sẵn có mặc định sẽ không thay đổi. Việc chỉnh sửa sẽ tạo ra một bản sao riêng của bạn.</string>
+  <string name="keyboard_builtin_preset" tools:machine_translated="true">Cài đặt sẵn.</string>
+  <string name="pref_zmodem_title" tools:machine_translated="true">Kích hoạt chức năng truyền tệp bằng giao thức Z-Modem.</string>
+  <string name="pref_zmodem_summary" tools:machine_translated="true">Phát hiện các yêu cầu tải lên và tải xuống tệp từ xa qua SSH và Telnet.</string>
+  <string name="zmodem_title" tools:machine_translated="true">Truyền tệp bằng giao thức Z-Modem</string>
+  <string name="zmodem_progress" tools:machine_translated="true">%1$s: %2$d byte</string>
+  <string name="zmodem_cancel" tools:machine_translated="true">Hủy bỏ quá trình truyền tải.</string>
+  <string name="zmodem_select" tools:machine_translated="true">Chọn tệp hoặc thư mục tải xuống.</string>
+  <string name="zmodem_failed" tools:machine_translated="true">Quá trình truyền tệp đã không thành công.</string>
+  <string name="zmodem_dismiss" tools:machine_translated="true">Đóng.</string>
+  <string name="zmodem_progress_total" tools:machine_translated="true">%1$s: %2$d / %3$d byte</string>
+  <string name="zmodem_cancelling" tools:machine_translated="true">Đang hủy quá trình truyền dữ liệu…</string>
 </resources>

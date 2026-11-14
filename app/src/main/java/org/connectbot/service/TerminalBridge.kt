@@ -1,0 +1,1642 @@
+/*
+ * ConnectBot: simple, powerful, open-source SSH client for Android
+ * Copyright 2025-2026 Kenny Root
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.connectbot.service
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.net.Network
+import android.os.Handler
+import android.os.Looper
+import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import org.connectbot.R
+import org.connectbot.data.EntityIds
+import org.connectbot.data.entity.Host
+import org.connectbot.data.entity.PortForward
+import org.connectbot.data.entity.Profile
+import org.connectbot.data.keyboard.MacroAction
+import org.connectbot.di.CoroutineDispatchers
+import org.connectbot.service.automation.AutomationFailure
+import org.connectbot.service.automation.AutomationKeySupport
+import org.connectbot.service.automation.AutomationRunner
+import org.connectbot.service.automation.AutomationSession
+import org.connectbot.service.automation.AutomationState
+import org.connectbot.terminal.DelKeyMode
+import org.connectbot.terminal.ProgressState
+import org.connectbot.terminal.TerminalDimensions
+import org.connectbot.terminal.TerminalEmulator
+import org.connectbot.terminal.TerminalEmulatorFactory
+import org.connectbot.terminal.UrlScanScope
+import org.connectbot.transport.AbsTransport
+import org.connectbot.transport.TransportFactory
+import org.connectbot.util.HostConstants
+import org.connectbot.util.PreferenceConstants
+import org.connectbot.util.TerminalFontWeight
+import org.connectbot.util.TerminalKeyModifiers
+import timber.log.Timber
+import java.io.IOException
+import java.nio.charset.Charset
+import java.util.UUID
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicLong
+import kotlin.coroutines.resume
+
+data class AuthBanner(
+    val id: Long,
+    val sourceName: String,
+    val message: String,
+    val urls: List<String>,
+    val languageTag: String?,
+)
+
+internal class AuthBannerQueue {
+    private val authBannerIds = AtomicLong()
+    private val _authBanners = MutableStateFlow<List<AuthBanner>>(emptyList())
+    val authBanners: StateFlow<List<AuthBanner>> = _authBanners.asStateFlow()
+
+    fun enqueue(
+        sourceName: String,
+        message: String,
+        urls: List<String>,
+        languageTag: String?,
+    ) {
+        if (urls.isEmpty()) return
+
+        val banner = AuthBanner(
+            id = authBannerIds.incrementAndGet(),
+            sourceName = sourceName,
+            message = message,
+            urls = urls,
+            languageTag = languageTag,
+        )
+        _authBanners.update { list ->
+            if (list.any { it.sourceName == sourceName && it.message == message }) {
+                list
+            } else {
+                (list + banner).takeLast(MAX_AUTH_BANNERS)
+            }
+        }
+    }
+
+    fun dismiss(id: Long) {
+        _authBanners.update { list -> list.filterNot { it.id == id } }
+    }
+
+    fun dismissFrom(sourceName: String) {
+        _authBanners.update { list -> list.filterNot { it.sourceName == sourceName } }
+    }
+
+    private companion object {
+        private const val MAX_AUTH_BANNERS = 10
+    }
+}
+
+/**
+ * Provides a bridge between a MUD terminal buffer and a possible TerminalView.
+ * This separation allows us to keep the TerminalBridge running in a background
+ * service. A TerminalView shares down a bitmap that we can use for rendering
+ * when available.
+ *
+ * This class also provides SSH hostkey verification prompting, and password
+ * prompting.
+ */
+@Suppress("DEPRECATION") // for ClipboardManager
+class TerminalBridge {
+    private val scope: CoroutineScope
+    private var connectionJob: Job? = null
+
+    private sealed class TransportOperation {
+        var target: AbsTransport? = null
+        var inputGeneration: Long? = null
+        data class WriteData(val data: ByteArray, val completion: CompletableDeferred<Unit>? = null, val keyboard: Boolean = false, val transfer: Boolean = false, val abort: Boolean = false) : TransportOperation()
+        data class Barrier(val completion: CompletableDeferred<Unit>) : TransportOperation()
+        data class SetDimensions(val columns: Int, val rows: Int, val width: Int, val height: Int) : TransportOperation()
+        class Flush : TransportOperation()
+    }
+
+    val zmodem by lazy { ZmodemController(this, scope, dispatchers) }
+
+    internal fun beginTransfer() {
+        invalidateConfiguredInput()
+        cancelAutomation()
+    }
+
+    internal suspend fun writeTransfer(data: ByteArray, abort: Boolean = false, target: AbsTransport? = transport) {
+        val completion = CompletableDeferred<Unit>()
+        enqueueTransportOperation(TransportOperation.WriteData(data, completion, transfer = true, abort = abort), InputConnection(target, inputGeneration.get()))
+        completion.await()
+    }
+
+    private val transportOperations = Channel<TransportOperation>(Channel.UNLIMITED)
+    private data class InputConnection(val transport: AbsTransport?, val generation: Long)
+    private val inputGeneration = AtomicLong()
+    private var configuredInputJob: Job? = null
+    private val semanticInputMutex = Mutex()
+
+    @Volatile private var semanticInputConnection: InputConnection? = null
+
+    private fun captureInputConnection(): InputConnection = synchronized(this) {
+        InputConnection(transport, inputGeneration.get())
+    }
+
+    private fun checkInputConnection(connection: InputConnection) {
+        check(
+            connection.generation == inputGeneration.get() && connection.transport === transport &&
+                !disconnected && !connecting && connection.transport?.isConnected() == true,
+        ) { "Session is disconnected" }
+    }
+
+    private fun invalidateConfiguredInput() = synchronized(this) {
+        inputGeneration.incrementAndGet()
+        configuredInputJob?.cancel()
+    }
+
+    @Volatile private var transportFailure: Exception? = null
+    private var automationJob: Job? = null
+
+    @Volatile private var automationRunner: AutomationRunner? = null
+    private val mutableAutomationState = MutableStateFlow(AutomationState())
+    val automationState = mutableAutomationState.asStateFlow()
+
+    fun cancelAutomation() {
+        automationJob?.cancel()
+        automationRunner = null
+        mutableAutomationState.value = mutableAutomationState.value.copy(running = false)
+    }
+
+    fun onAutomationOutput(text: CharSequence) {
+        automationRunner?.output?.append(text)
+    }
+
+    private suspend fun awaitTransportWrite(data: ByteArray? = null, connection: InputConnection) {
+        checkInputConnection(connection)
+        val completion = CompletableDeferred<Unit>()
+        try {
+            val operation = if (data != null) TransportOperation.WriteData(data, completion) else TransportOperation.Barrier(completion)
+            operation.target = connection.transport
+            operation.inputGeneration = connection.generation
+            transportOperations.send(operation)
+            completion.await()
+        } catch (e: CancellationException) {
+            completion.cancel()
+            throw e
+        }
+    }
+
+    private suspend fun dispatchSemanticInput(connection: InputConnection, action: () -> Unit) = semanticInputMutex.withLock {
+        // Drain earlier callbacks before binding this dispatch to its captured connection.
+        awaitKeyboardOutput()
+        checkInputConnection(connection)
+        semanticInputConnection = connection
+        try {
+            action()
+        } finally {
+            // Native key dispatch posts callbacks before returning. Keep their target
+            // until the main queue drains, even when disconnect cancels this invocation.
+            withContext(NonCancellable) {
+                awaitKeyboardOutput()
+                semanticInputConnection = null
+            }
+        }
+        awaitTransportWrite(connection = connection)
+    }
+
+    private suspend fun dispatchTerminalKey(key: Int, modifiers: Int, connection: InputConnection) {
+        require(AutomationKeySupport.isSupported(key, modifiers))
+        if (AutomationKeySupport.isCharacterKey(key)) {
+            if (modifiers == TerminalKeyModifiers.CTRL && AutomationKeySupport.hasControlCode(key)) {
+                awaitTransportWrite(byteArrayOf(AutomationKeySupport.controlCodeForCharacter(key).toByte()), connection)
+            } else {
+                dispatchSemanticInput(connection) { terminalEmulator.dispatchCharacter(modifiers, AutomationKeySupport.characterCodePoint(key)) }
+            }
+        } else {
+            dispatchSemanticInput(connection) { terminalEmulator.dispatchKey(modifiers, key) }
+        }
+    }
+
+    private fun startAutomation() {
+        cancelAutomation()
+        val connection = captureInputConnection()
+        val runner = AutomationRunner(object : AutomationSession {
+            override val sessionOpen: Boolean get() = isSessionOpen
+            override suspend fun sendText(text: String) = awaitTransportWrite(text.toByteArray(charset(encoding)), connection)
+            override suspend fun sendKey(key: Int, modifiers: Int) = dispatchTerminalKey(key, modifiers, connection)
+            override suspend fun runMacro(id: UUID) {
+                val macro = manager.hostRepository.getSharedMacro(id) ?: throw AutomationFailure(R.string.keyboard_missing_macro)
+                executeConfiguredInput(ConfiguredInput(connection, macro = macro.document), consumeModifiers = false)
+            }
+            override suspend fun setForward(id: UUID, enabled: Boolean) {
+                checkInputConnection(connection)
+                val t = connection.transport ?: throw AutomationFailure(R.string.automation_action_failed)
+                if (!t.canForwardPorts()) throw AutomationFailure(R.string.automation_forward_unsupported)
+                val forward = t.getPortForwards()?.find { it.id == id && it.hostId == host.id }
+                    ?: throw AutomationFailure(R.string.automation_forward_missing)
+                if (forward.isEnabled() != enabled) {
+                    val success = if (enabled) t.enablePortForward(forward) else t.disablePortForward(forward)
+                    if (!success) throw AutomationFailure(R.string.automation_action_failed)
+                    manager.notifyBridgeStateChanged()
+                }
+            }
+            override fun disconnect() = dispatchDisconnect(DisconnectReason.USER_REQUESTED)
+        })
+        automationRunner = runner
+        mutableAutomationState.value = AutomationState()
+        automationJob = scope.launch(dispatchers.io) {
+            try {
+                val actions = manager.hostRepository.getAutomation(host.id)
+                coroutineScope {
+                    val observer = launch {
+                        runner.state.collect {
+                            if (automationRunner === runner) mutableAutomationState.value = it
+                        }
+                    }
+                    try {
+                        runner.run(actions)
+                    } finally {
+                        if (automationRunner === runner) mutableAutomationState.value = runner.state.value
+                        observer.cancel()
+                    }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                if (automationRunner === runner) mutableAutomationState.value = AutomationState(error = R.string.automation_action_failed)
+            } finally {
+                if (automationRunner === runner) automationRunner = null
+            }
+        }
+    }
+
+    var color: IntArray = IntArray(0)
+
+    var defaultFg = HostConstants.DEFAULT_FG_COLOR
+    var defaultBg = HostConstants.DEFAULT_BG_COLOR
+
+    // Store color scheme info for reapplication
+    private var currentColorSchemeId: UUID = EntityIds.DEFAULT_SCHEME
+    private var fullColorPalette: IntArray = IntArray(0)
+
+    // Profile observation
+    private var currentProfileId: UUID? = null
+
+    data class ActiveProfile(val id: UUID, val assignedId: UUID?)
+
+    private val _activeProfile = MutableStateFlow<ActiveProfile?>(null)
+    val activeProfile: StateFlow<ActiveProfile?> = _activeProfile.asStateFlow()
+    private val _terminalDimensions = MutableStateFlow<TerminalDimensions?>(null)
+    val terminalDimensions: StateFlow<TerminalDimensions?> = _terminalDimensions.asStateFlow()
+
+    suspend fun saveFontSize(profile: ActiveProfile, size: Int): Boolean {
+        if (_activeProfile.value != profile) return false
+        return manager.profileRepository.updateFontSize(
+            profile.id,
+            host.id.takeUnless { host.isTemporary },
+            profile.assignedId,
+            size,
+        )
+    }
+    private var inlineImagesSetting = "ask"
+    private val sessionInlineImages = SessionInlineImages {
+        scope.async(dispatchers.main) {
+            promptManager.requestBooleanPrompt(
+                manager.res.getString(R.string.inline_images_prompt_title),
+                manager.res.getString(R.string.inline_images_prompt_message),
+            )
+        }.await()
+    }
+
+    private var profileObservationJob: Job? = null
+
+    val manager: TerminalManager
+
+    /** FIDO2 manager for security key operations (delegated from TerminalManager) */
+    val fido2Manager get() = manager.fido2Manager
+
+    var host: Host
+
+    private val dispatchers: CoroutineDispatchers
+
+    /* package */
+    @Volatile var transport: AbsTransport? = null
+
+    val defaultPaint: Paint
+
+    private var relay: Relay? = null
+    private var relayJob: Job? = null
+    private var relayTransport: AbsTransport? = null
+
+    private val emulation: String?
+    private val scrollback: Int
+    private val encoding: String
+
+    /** Font family from profile for terminal display */
+    val fontFamily: String?
+
+    private val _fontWeightFlow = MutableStateFlow(TerminalFontWeight.NORMAL)
+    val fontWeightFlow: StateFlow<Int> = _fontWeightFlow.asStateFlow()
+
+    /** Force size rows from profile (null = auto-size) */
+    var profileForceSizeRows: Int? = null
+        private set
+
+    /** Force size columns from profile (null = auto-size) */
+    var profileForceSizeColumns: Int? = null
+        private set
+
+    /** DEL key mode from profile */
+    private val _delKeyModeFlow = MutableStateFlow<DelKeyMode>(DelKeyMode.Delete)
+    val delKeyModeFlow: StateFlow<DelKeyMode> = _delKeyModeFlow.asStateFlow()
+
+    // Terminal emulator from ConnectBot Terminal library
+    val terminalEmulator: TerminalEmulator
+
+    /**
+     * Callback invoked to request the text input dialog (e.g., from camera button)
+     */
+    var onTextInputRequest: (() -> Unit)? = null
+
+    private val _transportMessages = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val transportMessages: SharedFlow<String> = _transportMessages.asSharedFlow()
+
+    private val _networkStatusMessages = MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 10)
+    val networkStatusMessages: SharedFlow<String> = _networkStatusMessages.asSharedFlow()
+
+    private val authBannerQueue = AuthBannerQueue()
+    val authBanners: StateFlow<List<AuthBanner>> = authBannerQueue.authBanners
+
+    // Progress state for OSC 9;4 progress reporting
+    data class ProgressInfo(val state: ProgressState, val progress: Int)
+    private val _progressState = MutableStateFlow<ProgressInfo?>(null)
+    val progressState: StateFlow<ProgressInfo?> = _progressState.asStateFlow()
+
+    val sessionAttention = SessionAttention()
+
+    @Volatile
+    var notificationSessionId: String = java.util.UUID.randomUUID().toString()
+        private set
+
+    var disconnected = false
+        private set
+    var connecting = false
+        private set
+    var disconnectReason: DisconnectReason = DisconnectReason.UNKNOWN
+        private set
+
+    /** Specific authentication failure retained for the disconnected session UI. */
+    @Volatile
+    var authenticationFailure: String? = null
+        internal set
+
+    private var awaitingClose = false
+
+    private var forcedSize = false
+
+    // Network state tracking for grace period
+    private data class NetworkState(
+        val ipAddresses: Set<String>,
+        val networkId: String,
+    )
+
+    private var lastKnownNetworkState: NetworkState? = null
+    private var networkGracePeriodJob: Job? = null
+    private var inGracePeriod: Boolean = false
+
+    private val keyListener: TerminalKeyListener
+
+    var charWidth = -1
+    var charHeight = -1
+    private var charTop = -1
+
+    private var fontSizeSp: Float = DEFAULT_FONT_SIZE_SP.toFloat()
+    private val _fontSizeFlow = MutableStateFlow(-1f)
+    val fontSizeFlow: StateFlow<Float> = _fontSizeFlow.asStateFlow()
+
+    @Deprecated("Use fontSizeFlow instead")
+    private val fontSizeChangedListeners: MutableList<FontSizeChangedListener>
+
+    private val localOutput: MutableList<String>
+
+    /**
+     * Flag indicating if we should perform a full-screen redraw during our next
+     * rendering pass.
+     */
+    private var fullRedraw = false
+
+    val promptManager = PromptManager()
+
+    private val disconnectListeners = CopyOnWriteArrayList<BridgeDisconnectedListener>()
+
+    /**
+     * Create new terminal bridge with following parameters. We will immediately
+     * launch thread to start SSH connection and handle any hostkey verification
+     * and password authentication.
+     */
+    constructor(manager: TerminalManager, host: Host, dispatchers: CoroutineDispatchers) {
+        this.manager = manager
+        this.host = host
+        this.dispatchers = dispatchers
+        scope = CoroutineScope(SupervisorJob() + dispatchers.default)
+
+        // Load profile for this host (always returns a profile, defaulting to Default profile)
+        val profile = manager.profileRepository.getByIdOrDefaultBlocking(host.profileId)
+        currentProfileId = host.profileId
+        _activeProfile.value = ActiveProfile(profile.id, host.profileId)
+
+        emulation = profile.emulation
+        scrollback = manager.getScrollback()
+
+        // create our default paint
+        defaultPaint = Paint()
+        defaultPaint.isAntiAlias = true
+        defaultPaint.typeface = Typeface.MONOSPACE
+        defaultPaint.isFakeBoldText = true // more readable?
+
+        localOutput = mutableListOf()
+
+        fontSizeChangedListeners = mutableListOf()
+
+        // Store encoding and font family from profile for later use
+        encoding = profile.encoding
+        fontFamily = profile.fontFamily
+        _fontWeightFlow.value = profile.fontWeight
+
+        // Store force size from profile
+        profileForceSizeRows = profile.forceSizeRows
+        profileForceSizeColumns = profile.forceSizeColumns
+
+        // Set DEL key mode from profile
+        _delKeyModeFlow.value = delKeyModeFromProfile(profile)
+
+        // Use settings from profile
+        var fontSizeSp = profile.fontSize
+        if (fontSizeSp <= 0) {
+            fontSizeSp = DEFAULT_FONT_SIZE_SP
+        }
+        setFontSize(fontSizeSp.toFloat())
+
+        // Load color scheme from profile
+        currentColorSchemeId = profile.colorSchemeId
+        fullColorPalette = manager.colorRepository.getColorsForSchemeBlocking(profile.colorSchemeId)
+        val defaults = manager.colorRepository.getDefaultColorsForSchemeBlocking(profile.colorSchemeId)
+        defaultFg = defaults[0]
+        defaultBg = defaults[1]
+
+        // Get actual RGB colors for the default foreground/background indices
+        val defaultFgColor = fullColorPalette[defaultFg]
+        val defaultBgColor = fullColorPalette[defaultBg]
+
+        // Initialize TerminalEmulator with colors from scheme
+        // Note: We pass the actual RGB colors (not indices) wrapped in Color objects
+        inlineImagesSetting = profile.inlineImages
+        terminalEmulator = TerminalEmulatorFactory.create(
+            inlineImages = sessionInlineImages.policy(inlineImagesSetting),
+            boldAsBright = profile.boldAsBright,
+            initialRows = 24, // Will be resized when view is attached
+            initialCols = 80,
+            defaultForeground = Color(defaultFgColor),
+            defaultBackground = Color(defaultBgColor),
+            onKeyboardInput = { data ->
+                enqueueTransportOperation(TransportOperation.WriteData(data, keyboard = true), semanticInputConnection)
+            },
+            onBell = {
+                manager.onBell(this)
+            },
+            onResize = {
+                _terminalDimensions.value = it
+                enqueueTransportOperation(
+                    TransportOperation.SetDimensions(
+                        it.columns,
+                        it.rows,
+                        it.widthPixels,
+                        it.heightPixels,
+                    ),
+                )
+            },
+            onClipboardCopy = { text ->
+                // OSC 52 clipboard support - copy remote text to local clipboard
+                Timber.i("OSC 52 clipboard copy: ${text.length} chars")
+                scope.launch(dispatchers.io) {
+                    try {
+                        val clipboard = manager.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                        clipboard?.setPrimaryClip(ClipData.newPlainText("terminal", text))
+                    } catch (e: RuntimeException) {
+                        Timber.w(e, "Cannot copy terminal text to clipboard")
+                    }
+                }
+            },
+            onProgressChange = { state, progress ->
+                // OSC 9;4 progress reporting - update progress state
+                Timber.d("OSC 9;4 progress: state=$state, progress=$progress")
+                _progressState.value = ProgressInfo(state, progress)
+            },
+        )
+
+        _terminalDimensions.value = terminalEmulator.dimensions
+
+        // Apply color scheme to terminal emulator
+        val ansiColors = fullColorPalette.sliceArray(0 until 16)
+        terminalEmulator.applyColorScheme(ansiColors, defaultFgColor, defaultBgColor)
+
+        val stickyModifierSetting = when (
+            manager.prefs.getString(PreferenceConstants.STICKY_MODIFIERS, PreferenceConstants.NO)
+        ) {
+            PreferenceConstants.ALT -> StickyModifierSetting.ALT
+            PreferenceConstants.YES -> StickyModifierSetting.ALL
+            else -> StickyModifierSetting.NONE
+        }
+        keyListener = TerminalKeyListener(TerminalEmulatorKeyDispatcher(terminalEmulator), stickyModifierSetting)
+
+        // Start the transport operation processor to serialize all writes
+        startTransportOperationProcessor()
+
+        // Start observing profile changes for live updates
+        startProfileObservation()
+    }
+
+    /**
+     * Processes transport operations serially to maintain strict ordering.
+     * This ensures keyboard input and other writes happen in the correct order.
+     */
+    private fun startTransportOperationProcessor() {
+        scope.launch(dispatchers.io) {
+            for (operation in transportOperations) {
+                val operationTransport = operation.target
+                try {
+                    if (operationTransport !== transport) throw IOException("Transport replaced")
+                    if (operation.inputGeneration?.let { it != inputGeneration.get() } == true) throw IOException("Session ended")
+                    when (operation) {
+                        is TransportOperation.WriteData -> {
+                            if (operation.completion?.isCancelled == true) continue
+                            val t = operationTransport ?: throw IOException("Transport unavailable")
+                            if (zmodem.active && !operation.transfer) {
+                                operation.completion?.completeExceptionally(IOException("File transfer active"))
+                                continue
+                            }
+                            if (operation.abort) {
+                                t.writeTransferAbort(operation.data)
+                            } else if (operation.transfer) {
+                                t.writeTransfer(operation.data)
+                            } else if (operation.keyboard) {
+                                t.writeKeyboardInput(operation.data)
+                            } else {
+                                t.write(operation.data)
+                            }
+                            operation.completion?.complete(Unit)
+                        }
+
+                        is TransportOperation.Barrier -> {
+                            if (operation.completion.isCancelled) continue
+                            val failure = transportFailure
+                            transportFailure = null
+                            failure?.let { throw it }
+                            val t = operationTransport ?: throw IOException("Transport unavailable")
+                            t.flush()
+                            operation.completion.complete(Unit)
+                        }
+
+                        is TransportOperation.SetDimensions -> {
+                            operationTransport?.resize(
+                                operation.columns,
+                                operation.rows,
+                                operation.width,
+                                operation.height,
+                            )
+                        }
+
+                        is TransportOperation.Flush -> {
+                            operationTransport?.flush()
+                        }
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: IOException) {
+                    if (transport === operationTransport && operation.inputGeneration?.let { it != inputGeneration.get() } != true) {
+                        transportFailure = if (operation is TransportOperation.WriteData && operation.completion == null) e else null
+                        operationTransport?.userMessageForError(e)?.let { message ->
+                            _transportMessages.tryEmit(manager.res.getString(message))
+                        }
+                    }
+                    when (operation) {
+                        is TransportOperation.WriteData -> operation.completion?.completeExceptionally(e)
+                        is TransportOperation.Barrier -> operation.completion.completeExceptionally(e)
+                        else -> Unit
+                    }
+                    Timber.e(e, "Error processing transport operation")
+                } catch (e: Exception) {
+                    if (transport === operationTransport && operation.inputGeneration?.let { it != inputGeneration.get() } != true) {
+                        transportFailure = if (operation is TransportOperation.WriteData && operation.completion == null) e else null
+                    }
+                    when (operation) {
+                        is TransportOperation.WriteData -> operation.completion?.completeExceptionally(e)
+                        is TransportOperation.Barrier -> operation.completion.completeExceptionally(e)
+                        else -> Unit
+                    }
+                    Timber.e(e, "Unexpected error processing transport operation")
+                }
+            }
+        }
+    }
+
+    private fun enqueueTransportOperation(operation: TransportOperation, connection: InputConnection? = null) {
+        if (operation is TransportOperation.WriteData && !operation.transfer && zmodem.active) {
+            operation.completion?.completeExceptionally(IOException("File transfer active"))
+            return
+        }
+        operation.target = if (connection != null) connection.transport else transport
+        operation.inputGeneration = connection?.generation ?: inputGeneration.get()
+        transportOperations.trySend(operation)
+    }
+
+    internal fun displayLocalEcho(source: AbsTransport, bytes: ByteArray) {
+        if (transport === source && !zmodem.active) terminalEmulator.writeInput(bytes)
+    }
+
+    /**
+     * Start observing profile changes to apply live updates.
+     * Observes both profile attribute changes and host profile_id changes.
+     */
+    private fun startProfileObservation() {
+        profileObservationJob = scope.launch {
+            // For temporary hosts, only observe the current profile
+            if (host.isTemporary) {
+                currentProfileId?.let { profileId ->
+                    manager.profileRepository.observeById(profileId)
+                        .filterNotNull()
+                        .collectLatest { profile ->
+                            Timber.d("Profile ${profile.id} changed, applying updates")
+                            applyProfileSettings(profile)
+                        }
+                }
+                return@launch
+            }
+
+            // For saved hosts, observe the host to detect profile_id changes
+            // and switch profile observation when it changes
+            manager.hostRepository.observeHost(host.id)
+                .filterNotNull()
+                .map { it.profileId }
+                .distinctUntilChanged()
+                .collectLatest { newProfileId ->
+                    if (newProfileId != currentProfileId) {
+                        Timber.d("Host profile changed from $currentProfileId to $newProfileId")
+                        currentProfileId = newProfileId
+                        _activeProfile.value = null
+                    }
+
+                    // Observe the current profile for attribute changes
+                    val profileToObserve = newProfileId ?: EntityIds.DEFAULT_PROFILE // Default to profile 1 if null
+                    manager.profileRepository.observeById(profileToObserve)
+                        .filterNotNull()
+                        .collectLatest { profile ->
+                            Timber.d("Profile ${profile.id} changed, applying updates")
+                            applyProfileSettings(profile)
+                        }
+                }
+        }
+    }
+
+    /**
+     * Apply changes when the host's profile_id changes.
+     */
+    private suspend fun applyProfileChanges(newProfileId: UUID?) {
+        val profile = if (newProfileId != null) {
+            manager.profileRepository.getById(newProfileId)
+        } else {
+            null
+        } ?: manager.profileRepository.getDefault()
+
+        applyProfileSettings(profile)
+    }
+
+    /**
+     * Apply profile settings to the terminal.
+     */
+    private fun applyProfileSettings(profile: Profile) {
+        _activeProfile.value = ActiveProfile(profile.id, currentProfileId)
+        _fontWeightFlow.value = profile.fontWeight
+        if (inlineImagesSetting != profile.inlineImages) {
+            inlineImagesSetting = profile.inlineImages
+            terminalEmulator.setInlineImages(sessionInlineImages.policy(inlineImagesSetting))
+        }
+        // Apply font size
+        val newFontSize = if (profile.fontSize > 0) profile.fontSize else DEFAULT_FONT_SIZE_SP
+        if (newFontSize.toFloat() != fontSizeSp) {
+            setFontSize(newFontSize.toFloat())
+        }
+
+        // Apply color scheme if changed
+        if (profile.colorSchemeId != currentColorSchemeId) {
+            currentColorSchemeId = profile.colorSchemeId
+            fullColorPalette = manager.colorRepository.getColorsForSchemeBlocking(profile.colorSchemeId)
+            val defaults = manager.colorRepository.getDefaultColorsForSchemeBlocking(profile.colorSchemeId)
+            defaultFg = defaults[0]
+            defaultBg = defaults[1]
+
+            // Apply to terminal emulator
+            val defaultFgColor = fullColorPalette[defaultFg]
+            val defaultBgColor = fullColorPalette[defaultBg]
+            val ansiColors = fullColorPalette.sliceArray(0 until 16)
+            terminalEmulator.applyColorScheme(ansiColors, defaultFgColor, defaultBgColor)
+        }
+
+        // Update force size from profile
+        profileForceSizeRows = profile.forceSizeRows
+        profileForceSizeColumns = profile.forceSizeColumns
+
+        // Update DEL key mode from profile
+        _delKeyModeFlow.value = delKeyModeFromProfile(profile)
+
+        // Note: encoding, fontFamily, and boldAsBright changes require a new terminal session
+        // as they are deeply integrated into the terminal initialization
+    }
+
+    /**
+     * Spawn thread to open connection and start login process.
+     */
+    fun startConnection() {
+        val newTransport = TransportFactory.getTransport(host.protocol)
+        if (newTransport == null) {
+            Timber.w("No transport found for ${host.protocol}")
+            return
+        }
+        invalidateConfiguredInput()
+        connectionJob?.cancel()
+        relayJob?.cancel()
+        relay = null
+        val previousTransport = transport
+        if (previousTransport != null) {
+            scope.launch(dispatchers.io) {
+                previousTransport.close()
+            }
+        }
+        notificationSessionId = java.util.UUID.randomUUID().toString()
+        authenticationFailure = null
+        connecting = true
+        manager.notifyBridgeStateChanged()
+
+        transport = newTransport
+        newTransport.bridge = this
+        newTransport.manager = manager
+        newTransport.host = host
+
+        newTransport.setCompression(host.compression)
+        host.useAuthAgent?.let { newTransport.setUseAuthAgent(it) }
+        newTransport.setEmulation(emulation)
+        // A retained terminal may not emit another resize when reconnecting.
+        // Seed the new transport before SSH requests its PTY.
+        terminalEmulator.dimensions.let { dimensions ->
+            newTransport.setInitialDimensions(
+                dimensions.columns,
+                dimensions.rows,
+                dimensions.widthPixels,
+                dimensions.heightPixels,
+            )
+        }
+
+        outputLine(manager.res.getString(R.string.terminal_connecting, host.hostname, host.port, host.protocol))
+
+        connectionJob = scope.launch(dispatchers.io) {
+            try {
+                if (newTransport.canForwardPorts()) {
+                    try {
+                        for (portForward in manager.hostRepository.getPortForwardsForHost(host.id)) {
+                            newTransport.addPortForward(portForward)
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "Failed to load port forwards for ${host.nickname}")
+                        manager.reportError(
+                            ServiceError.PortForwardLoadFailed(
+                                hostNickname = host.nickname,
+                                reason = e.message ?: "Failed to load port forwards",
+                            ),
+                        )
+                    }
+                }
+                Timber.i("Starting connection to ${host.nickname}")
+                newTransport.connect(scope, dispatchers, encoding)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                if (transport !== newTransport) return@launch
+                newTransport.onConnectionFailure(e)
+                Timber.e(e, "Connection failed for ${host.nickname}")
+                manager.reportError(
+                    ServiceError.ConnectionFailed(
+                        hostNickname = host.nickname,
+                        hostname = host.hostname,
+                        reason = e.message ?: "Connection failed",
+                    ),
+                )
+            }
+        }
+    }
+
+    /**
+     * @return charset in use by bridge
+     */
+    val charset: Charset
+        get() = relay?.getCharset() ?: Charsets.UTF_8
+
+    /**
+     * Sets the encoding used by the terminal. If the connection is live,
+     * then the character set is changed for the next read.
+     * @param encoding the canonical name of the character encoding
+     */
+    fun setCharset(encoding: String) {
+        relay?.setCharset(encoding)
+    }
+
+    /** Track output that arrives offscreen, including late data after a disconnect. */
+    fun onOutputReceived() {
+        if (sessionAttention.onOutput()) manager.notifyBridgeStateChanged()
+    }
+
+    /**
+     * Convenience method for writing text into the underlying terminal buffer.
+     * Should never be called once the session is established.
+     */
+    fun outputLine(output: String?) {
+        if (output == null) return
+
+        if (transport?.isSessionOpen() == true) {
+            Timber.e(
+                "Session established, cannot use outputLine!",
+                IOException("outputLine call traceback"),
+            )
+        }
+
+        onOutputReceived()
+        synchronized(localOutput) {
+            for (line in output.split("\n".toRegex())) {
+                var processedLine = line
+                if (processedLine.isNotEmpty() && processedLine[processedLine.length - 1] == '\r') {
+                    processedLine = processedLine.substring(0, processedLine.length - 1)
+                }
+
+                val s = processedLine + "\r\n"
+
+                localOutput.add(s)
+
+                terminalEmulator.writeInput(s.encodeToByteArray())
+            }
+        }
+    }
+
+    /**
+     * Inject a specific string into this terminal. Used for post-login strings
+     * and pasting clipboard.
+     */
+    fun injectString(string: String?) {
+        if (string == null || string.isEmpty()) {
+            return
+        }
+
+        enqueueTransportOperation(
+            TransportOperation.WriteData(string.toByteArray(charset(encoding))),
+        )
+    }
+
+    fun writeToTransport(data: ByteArray) {
+        enqueueTransportOperation(TransportOperation.WriteData(data))
+    }
+
+    fun writeToTransport(c: Int) {
+        enqueueTransportOperation(TransportOperation.WriteData(byteArrayOf(c.toByte())))
+    }
+
+    private data class ConfiguredInput(
+        val connection: InputConnection,
+        val key: String? = null,
+        val modifiers: Int = 0,
+        val macro: String? = null,
+        val keyDefinition: String? = null,
+    )
+    private val configuredInputs = Channel<ConfiguredInput>(Channel.UNLIMITED)
+    val keyboardErrors = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    private val configuredInputProcessor by lazy {
+        scope.launch(dispatchers.io) {
+            for (input in configuredInputs) {
+                coroutineScope {
+                    val invocation = launch(start = CoroutineStart.LAZY) {
+                        try {
+                            executeConfiguredInput(input)
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            keyboardErrors.tryEmit(e.message ?: "Keyboard action unavailable")
+                        }
+                    }
+                    synchronized(this@TerminalBridge) {
+                        if (input.connection.generation == inputGeneration.get() && input.connection.transport === transport) {
+                            configuredInputJob = invocation
+                            invocation.start()
+                        } else {
+                            invocation.cancel()
+                        }
+                    }
+                    try {
+                        invocation.join()
+                    } finally {
+                        synchronized(this@TerminalBridge) {
+                            if (configuredInputJob === invocation) configuredInputJob = null
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun executeConfiguredInput(input: ConfiguredInput, consumeModifiers: Boolean = true) {
+        val connection = input.connection
+        checkInputConnection(connection)
+        if (input.key != null) {
+            val presetModifiers = KeyboardActions.presetModifiers(input.key, input.keyDefinition)
+            dispatchTerminalKey(KeyboardActions.key(input.key), input.modifiers or presetModifiers, connection)
+            return
+        }
+        runKeyboardMacro(
+            input.macro!!,
+            object : MacroOutput {
+                override suspend fun checkConnected() = checkInputConnection(connection)
+                override suspend fun accepted() {
+                    if (!consumeModifiers) return
+                    withContext(dispatchers.main) {
+                        checkInputConnection(connection)
+                        keyHandler.clearTransients()
+                    }
+                }
+                override suspend fun text(text: String) {
+                    bytes(text.toByteArray(charset(encoding)))
+                }
+                override suspend fun bytes(bytes: ByteArray) {
+                    awaitTransportWrite(bytes, connection)
+                }
+                override suspend fun key(key: MacroAction.Key) {
+                    val modifiers = KeyboardActions.terminalModifiers(key.modifiers)
+                    if (key.key != null) {
+                        dispatchTerminalKey(KeyboardActions.key(key.key), modifiers, connection)
+                    } else {
+                        dispatchSemanticInput(connection) { terminalEmulator.dispatchCharacter(modifiers, key.character!!.codePointAt(0)) }
+                    }
+                }
+            },
+        )
+    }
+
+    /** Called from UI: capture/consume transient modifiers before another tap can change them. */
+    fun sendConfiguredKey(target: String, keyDefinition: String? = null) {
+        val connection = captureInputConnection()
+        val modifiers = if (target == "escape" || target == "tab") 0 else keyHandler.modifiersForKeyboard()
+        keyHandler.clearTransients()
+        configuredInputProcessor
+        configuredInputs.trySend(ConfiguredInput(connection, key = target, modifiers = modifiers, keyDefinition = keyDefinition))
+    }
+
+    fun sendKeyboardMacro(document: String) {
+        val connection = captureInputConnection()
+        configuredInputProcessor
+        configuredInputs.trySend(ConfiguredInput(connection, macro = document))
+    }
+
+    private suspend fun awaitKeyboardOutput() {
+        // termlib posts output on the main looper before dispatch returns. Fence that
+        // queue so a following raw/text action cannot overtake semantic key output.
+        suspendCancellableCoroutine { continuation ->
+            Handler(Looper.getMainLooper()).post { continuation.resume(Unit) }
+        }
+    }
+
+    /**
+     * Enqueue a single byte for transport write. Goes through the same serialized
+     * channel as [injectString] so keyboard input cannot interleave with paste data.
+     */
+    fun sendByte(c: Int) {
+        enqueueTransportOperation(
+            TransportOperation.WriteData(byteArrayOf(c.toByte())),
+        )
+    }
+
+    /**
+     * Enqueue a byte array for transport write. Serialized with all other
+     * transport operations (paste, keyboard, resize, flush).
+     */
+    fun sendBytes(data: ByteArray) {
+        if (data.isEmpty()) return
+        enqueueTransportOperation(TransportOperation.WriteData(data))
+    }
+
+    /**
+     * Enqueue a flush after any pending writes. Serialized with writes so the
+     * flush happens only after preceding bytes have been sent to the transport.
+     */
+    fun requestFlush() {
+        enqueueTransportOperation(TransportOperation.Flush())
+    }
+
+    /**
+     * Request the parent ConsoleScreen to open the floating text input dialog.
+     * Called from hardware camera button or other triggers.
+     */
+    fun requestOpenTextInput() {
+        onTextInputRequest?.invoke()
+    }
+
+    /**
+     * Internal method to request actual PTY terminal once we've finished
+     * authentication. If called before authenticated, it will just fail.
+     */
+    internal fun onTransportConnected(t: AbsTransport) {
+        synchronized(this) {
+            if (transport !== t || !connecting) return
+            onConnected()
+        }
+    }
+
+    fun onConnected() {
+        disconnected = false
+        connecting = false
+        transportFailure = null
+        authenticationFailure = null
+        disconnectReason = DisconnectReason.UNKNOWN
+        sessionAttention.onReconnected()
+
+        // We no longer need our local output.
+        localOutput.clear()
+
+        // previously tried vt100 and xterm for emulation modes
+        // "screen" works the best for color and escape codes
+        // TODO(Terminal): send TERM variable in response to VT control code ENQ
+//        (buffer as vt320).setAnswerBack(emulation)
+
+        // TODO(Terminal): set whether backspace is del (for local echo?)
+//        if (HostConstants.DELKEY_BACKSPACE == host.delKey)
+//            (buffer as vt320).setBackspace(vt320.DELETE_IS_BACKSPACE)
+//        else
+//            (buffer as vt320).setBackspace(vt320.DELETE_IS_DEL)
+
+        if (isSessionOpen) {
+            // create thread to relay incoming connection data to buffer
+            transport?.let { t ->
+                synchronized(this) {
+                    if (relayTransport !== t || relayJob?.isActive != true) {
+                        val previousJob = relayJob
+                        previousJob?.cancel()
+                        val newRelay = Relay(this, t, dispatchers, encoding)
+                        relay = newRelay
+                        relayTransport = t
+                        relayJob = scope.launch {
+                            previousJob?.join()
+                            startAutomation()
+                            newRelay.start()
+                        }
+                    }
+                }
+            }
+        }
+
+        // force font-size to make sure we resizePTY as needed
+        setFontSize(fontSizeSp)
+
+        // Capture network state after successful connection
+        captureNetworkState()
+
+        // Notify manager so the UI recomposes with updated connection state
+        manager.notifyBridgeStateChanged()
+    }
+
+    /**
+     * @return whether a session is open or not
+     */
+    val isSessionOpen: Boolean
+        get() {
+            if (transport != null) {
+                return transport?.isSessionOpen() == true
+            }
+            return false
+        }
+
+    fun setOnDisconnectedListener(disconnectListener: BridgeDisconnectedListener?) {
+        disconnectListeners.clear()
+        if (disconnectListener != null) {
+            disconnectListeners.add(disconnectListener)
+        }
+    }
+
+    /**
+     * Force disconnection of this terminal bridge.
+     *
+     * [DisconnectReason.USER_REQUESTED] always takes the immediate-close path,
+     * even if the bridge already reached the disconnected state — this is how
+     * the "Close" button on the reconnect overlay tears down a session that an
+     * IO_ERROR already marked disconnected.
+     */
+    fun dispatchDisconnect(reason: DisconnectReason) {
+        zmodem.disconnected()
+        invalidateConfiguredInput()
+        cancelAutomation()
+        // We don't need to do this multiple times.
+        synchronized(this) {
+            if (disconnected && reason != DisconnectReason.USER_REQUESTED) {
+                return
+            }
+
+            disconnected = true
+            connecting = false
+            if (disconnectReason == DisconnectReason.UNKNOWN) {
+                disconnectReason = reason
+            }
+        }
+
+        sessionAttention.onEnded(reason)
+        manager.onSessionEnded(this, reason)
+
+        // Cancel any pending prompts
+        promptManager.cancelPrompt()
+
+        connectionJob?.cancel()
+        val endingTransport = transport
+        // disconnection request hangs if we havent really connected to a host yet
+        // temporary fix is to just spawn disconnection into a thread
+        scope.launch(dispatchers.io) {
+            endingTransport?.close()
+        }
+
+        when (
+            DisconnectPolicy.decide(
+                reason,
+                host.quickDisconnect,
+                host.stayConnected,
+                sessionAttention.snapshot().unreadOutput,
+            )
+        ) {
+            is DisconnectAction.CloseImmediately -> {
+                sessionAttention.onOutputDiscarded()
+                awaitingClose = true
+                triggerDisconnectListener()
+            }
+
+            is DisconnectAction.AutoReconnect -> {
+                manager.requestReconnect(this)
+                manager.notifyBridgeStateChanged()
+            }
+
+            is DisconnectAction.ShowReconnectOverlay -> {
+                manager.notifyBridgeStateChanged()
+            }
+        }
+    }
+
+    /**
+     * Tells the TerminalManager that we can be destroyed now.
+     */
+    private fun triggerDisconnectListener() {
+        Timber.i("Triggering disconnect for ${host.nickname}")
+        if (disconnectListeners.isEmpty()) {
+            // Clean up even if no listeners
+            cleanup()
+            return
+        }
+
+        // The disconnect listener should be run on the main thread if possible.
+        // CopyOnWriteArrayList is safe to iterate even if modified during iteration
+        scope.launch(dispatchers.main) {
+            for (listener in disconnectListeners) {
+                listener.onDisconnected(this@TerminalBridge)
+            }
+            // Clean up after notifying all listeners
+            cleanup()
+        }
+    }
+
+    @Synchronized
+    fun tryKeyVibrate() {
+        manager.tryKeyVibrate()
+    }
+
+    /**
+     * Request a different font size. Will make call to parentChanged() to make
+     * sure we resize PTY if needed.
+     *
+     * @param sizeSp Size of font in sp
+     */
+    private fun setFontSize(sizeDp: Float) {
+        setFontSize(sizeDp, false)
+    }
+
+    /**
+     * Request a different font size. Will make call to parentChanged() to make
+     * sure we resize PTY if needed.
+     *
+     * @param sizeSp Size of font in sp
+     * @param isForced whether the font size was forced
+     */
+    private fun setFontSize(sizeSp: Float, isForced: Boolean) {
+        if (sizeSp <= 0.0) {
+            return
+        }
+
+        defaultPaint.textSize = sizeSp
+        fontSizeSp = sizeSp
+        _fontSizeFlow.value = sizeSp
+
+        // read new metrics to get exact pixel dimensions
+        val fm = defaultPaint.fontMetrics
+        charTop = Math.ceil(fm.top.toDouble()).toInt()
+
+        val widths = FloatArray(1)
+        defaultPaint.getTextWidths("X", widths)
+        charWidth = Math.ceil(widths[0].toDouble()).toInt()
+        charHeight = Math.ceil((fm.descent - fm.top).toDouble()).toInt()
+
+        forcedSize = isForced
+
+//        // refresh any bitmap with new font size
+//        parent?.let { parentChanged(it) }
+
+        for (ofscl in fontSizeChangedListeners) {
+            ofscl.onFontSizeChanged(sizeSp)
+        }
+        // Note: Font size is now stored in profiles, not hosts.
+        // Runtime font size changes are session-only and not persisted.
+    }
+
+//    /**
+//     * Something changed in our parent [TerminalView], maybe it's a new
+//     * parent, or maybe it's an updated font size. We should recalculate
+//     * terminal size information and request a PTY resize.
+//     */
+//    @Synchronized
+//    fun parentChanged(parent: TerminalView) {
+//        if (!manager.isResizeAllowed()) {
+//            Timber.d("Resize is not allowed now")
+//            return
+//        }
+//
+//        this.parent = parent
+//        val width = parent.width
+//        val height = parent.height
+//
+//        // Something has gone wrong with our layout; we're 0 width or height!
+//        if (width <= 0 || height <= 0)
+//            return
+//
+//        val clipboard = parent.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+//        keyListener.setClipboardManager(clipboard)
+//
+//        if (!forcedSize) {
+//            // recalculate buffer size
+//            val newColumns: Int
+//            val newRows: Int
+//
+//            newColumns = width / charWidth
+//            newRows = height / charHeight
+//
+//            columns = newColumns
+//            rows = newRows
+//            refreshOverlayFontSize()
+//        }
+//
+//        // clear out any old buffer information
+//        defaultPaint.color = android.graphics.Color.BLACK
+//        canvas.drawPaint(defaultPaint)
+//
+//        // Stroke the border of the terminal if the size is being forced;
+//        if (forcedSize) {
+//            val borderX = (columns * charWidth) + 1
+//            val borderY = (rows * charHeight) + 1
+//
+//            defaultPaint.color = android.graphics.Color.GRAY
+//            defaultPaint.strokeWidth = 0.0f
+//            if (width >= borderX)
+//                canvas.drawLine(borderX.toFloat(), 0f, borderX.toFloat(), (borderY + 1).toFloat(), defaultPaint)
+//            if (height >= borderY)
+//                canvas.drawLine(0f, borderY.toFloat(), (borderX + 1).toFloat(), borderY.toFloat(), defaultPaint)
+//        }
+//
+//        try {
+//            transport?.setInitialDimensions(columns, rows, width, height)
+//        } catch (e: Exception) {
+//            Timber.e(e, "Problem while trying to resize screen or PTY")
+//        }
+//
+//        // redraw local output if we don't have a session to receive our resize request
+//        if (transport == null) {
+//            // TODO(Terminal): write local output directly to display
+// //            synchronized(localOutput) {
+// //                (buffer as vt320).reset()
+// //
+// //                for (line in localOutput)
+// //                    (buffer as vt320).putString(line)
+// //            }
+//        }
+//
+//        parent.notifyUser(String.format("%d x %d", columns, rows))
+//
+//        Timber.i(String.format("parentChanged() now width=%d, height=%d", columns, rows))
+//    }
+
+    /**
+     * Clean up resources when bridge is being destroyed.
+     * Releases bitmap and clears parent reference to prevent memory leaks.
+     */
+    fun cleanup() {
+        invalidateConfiguredInput()
+        cancelAutomation()
+        // Cancel grace period if active
+        networkGracePeriodJob?.cancel()
+        inGracePeriod = false
+
+        profileObservationJob?.cancel()
+        configuredInputs.close()
+        transportOperations.close()
+        scope.cancel()
+    }
+
+    /**
+     * @return whether underlying transport can forward ports
+     */
+    fun canFowardPorts(): Boolean = transport?.canForwardPorts() ?: false
+
+    /**
+     * Adds the [PortForward] to the list.
+     * @param portForward the port forward bean to add
+     * @return true on successful addition
+     */
+    fun addPortForward(portForward: PortForward): Boolean = transport?.addPortForward(portForward) ?: false
+
+    /**
+     * Removes the [PortForward] from the list.
+     * @param portForward the port forward bean to remove
+     * @return true on successful removal
+     */
+    suspend fun removePortForward(portForward: PortForward): Boolean = transport?.removePortForward(portForward) ?: false
+
+    /**
+     * @return the list of port forwards
+     */
+    val portForwards: List<PortForward>
+        get() = transport?.getPortForwards().orEmpty()
+
+    /**
+     * Enables a port forward member. After calling this method, the port forward should
+     * be operational.
+     * @param portForward member of our current port forwards list to enable
+     * @return true on successful port forward setup
+     */
+    suspend fun enablePortForward(portForward: PortForward): Boolean {
+        return transport?.let {
+            if (!it.isConnected()) {
+                Timber.i("Attempt to enable port forward while not connected")
+                return false
+            }
+            it.enablePortForward(portForward)
+        } ?: false
+    }
+
+    /**
+     * Disables a port forward member. After calling this method, the port forward should
+     * be non-functioning.
+     * @param portForward member of our current port forwards list to enable
+     * @return true on successful port forward tear-down
+     */
+    suspend fun disablePortForward(portForward: PortForward): Boolean {
+        return transport?.let {
+            if (!it.isConnected()) {
+                Timber.i("Attempt to disable port forward while not connected")
+                return false
+            }
+            it.disablePortForward(portForward)
+        } ?: false
+    }
+
+    /**
+     * @return whether the TerminalBridge should close
+     */
+    fun isAwaitingClose(): Boolean = awaitingClose
+
+    /**
+     * @return whether this connection had started and subsequently disconnected
+     */
+    val isDisconnected: Boolean
+        get() = disconnected
+
+    val isConnecting: Boolean
+        get() = connecting
+
+    fun scanForURLs(): List<String> = terminalEmulator.getUrls(UrlScanScope.CurrentView).map { it.url }
+
+    fun enqueueAuthBanner(sourceName: String, message: String, urls: List<String>, languageTag: String?) = authBannerQueue.enqueue(sourceName, message, urls, languageTag)
+
+    fun dismissAuthBanner(id: Long) = authBannerQueue.dismiss(id)
+
+    fun dismissAuthBannersFrom(sourceName: String) = authBannerQueue.dismissFrom(sourceName)
+
+    /**
+     * @return
+     */
+    fun isUsingNetwork(): Boolean = transport?.usesNetwork() ?: false
+
+    fun resetOnConnectionChange(): Boolean = transport?.resetOnConnectionChange() ?: true
+
+    /**
+     * Capture current network state when connection established.
+     * Called after successful SSH connection.
+     */
+    fun captureNetworkState() {
+        if (!isUsingNetwork() || !resetOnConnectionChange()) return
+
+        val localIp = transport?.getLocalIpAddress()
+        val networkInfo = manager.connectivityMonitor.getCurrentNetworkInfo()
+
+        lastKnownNetworkState = when {
+            localIp != null -> {
+                NetworkState(
+                    ipAddresses = setOf(localIp),
+                    networkId = networkInfo?.networkId ?: "",
+                )
+            }
+
+            networkInfo != null -> {
+                NetworkState(
+                    ipAddresses = networkInfo.ipAddresses,
+                    networkId = networkInfo.networkId,
+                )
+            }
+
+            else -> null
+        }
+        Timber.d("Captured network state: localIp=$localIp, netId=${lastKnownNetworkState?.networkId}")
+    }
+
+    /**
+     * Called by TerminalManager when network is lost.
+     * Starts 60-second grace period instead of immediate disconnect.
+     */
+    fun onNetworkLost(network: Network, lostIpAddresses: Set<String>) {
+        if (!isUsingNetwork() || !resetOnConnectionChange() || disconnected) return
+
+        val state = lastKnownNetworkState ?: return
+
+        // Check if we are using this network or one of these IP addresses
+        val isAffected = if (state.ipAddresses.isNotEmpty() && lostIpAddresses.isNotEmpty()) {
+            state.ipAddresses.intersect(lostIpAddresses).isNotEmpty()
+        } else {
+            state.networkId == network.toString()
+        }
+
+        if (!isAffected) {
+            Timber.d("Network $network lost but bridge not affected")
+            return
+        }
+
+        // Cancel any existing grace period (rapid network changes)
+        networkGracePeriodJob?.cancel()
+
+        inGracePeriod = true
+        manager.notifyBridgeStateChanged()
+
+        // Show status message to user
+        scope.launch { _networkStatusMessages.emit(manager.res.getString(R.string.network_lost_grace_period)) }
+
+        // Start 60-second timer
+        networkGracePeriodJob = scope.launch {
+            delay(60_000) // 60 seconds
+
+            // Grace period expired without network restoration
+            inGracePeriod = false
+            lastKnownNetworkState = null
+            Timber.i("Network grace period expired")
+            _networkStatusMessages.emit(manager.res.getString(R.string.network_grace_period_expired))
+
+            // Trigger normal disconnect flow
+            dispatchDisconnect(DisconnectReason.NETWORK_LOST)
+        }
+    }
+
+    /**
+     * Called by TerminalManager when network is restored.
+     * Checks if IP address changed to decide reconnect vs resume.
+     */
+    fun onNetworkRestored(newNetworkInfo: ConnectivityMonitor.NetworkInfo) {
+        if (!inGracePeriod) return
+
+        // Cancel grace period timer
+        networkGracePeriodJob?.cancel()
+        inGracePeriod = false
+        manager.notifyBridgeStateChanged()
+
+        val oldState = lastKnownNetworkState
+
+        if (oldState == null) {
+            // No previous state - treat as new connection
+            scope.launch { _networkStatusMessages.emit(manager.res.getString(R.string.network_restored_no_previous_state)) }
+            lastKnownNetworkState = NetworkState(
+                ipAddresses = newNetworkInfo.ipAddresses,
+                networkId = newNetworkInfo.networkId,
+            )
+            // Allow connection to continue
+            return
+        }
+
+        // Check if ANY IP address matches (lenient - handles IPv4/v6 changes)
+        val ipMatches = oldState.ipAddresses.intersect(newNetworkInfo.ipAddresses).isNotEmpty()
+
+        if (ipMatches) {
+            // Same IP - SSH session should still be alive, resume normally
+            scope.launch { _networkStatusMessages.emit(manager.res.getString(R.string.network_restored_same_ip)) }
+            lastKnownNetworkState = NetworkState(
+                ipAddresses = newNetworkInfo.ipAddresses,
+                networkId = newNetworkInfo.networkId,
+            )
+            // No action needed - connection continues
+        } else {
+            // IP changed - TCP connection is broken, must reconnect
+            scope.launch { _networkStatusMessages.emit(manager.res.getString(R.string.network_restored_ip_changed)) }
+            lastKnownNetworkState = null
+            dispatchDisconnect(DisconnectReason.NETWORK_LOST)
+        }
+    }
+
+    /**
+     * @return whether bridge is in network grace period
+     */
+    fun isInGracePeriod(): Boolean = inGracePeriod
+
+    /**
+     * @return
+     */
+    val keyHandler: TerminalKeyListener
+        get() = keyListener
+
+    /**
+     * Convenience function to increase the font size by a given step.
+     */
+    fun increaseFontSize() {
+        setFontSize(fontSizeSp + FONT_SIZE_STEP, false)
+    }
+
+    /**
+     * Convenience function to decrease the font size by a given step.
+     */
+    fun decreaseFontSize() {
+        setFontSize(fontSizeSp - FONT_SIZE_STEP, false)
+    }
+
+    companion object {
+        const val TAG = "CB.TerminalBridge"
+
+        private const val DEFAULT_FONT_SIZE_SP = 10
+        private const val FONT_SIZE_STEP = 2
+    }
+}
+
+private fun delKeyModeFromProfile(profile: Profile): DelKeyMode = if (profile.delKey == HostConstants.DELKEY_BACKSPACE) {
+    DelKeyMode.Backspace
+} else {
+    DelKeyMode.Delete
+}

@@ -1,33 +1,15 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <string name="app_desc">Едноставен но моќен SSH клиент со отворен код.</string>
   <string name="service_desc">Ги одржува SSH конекциите и вчитаните pub клучеви</string>
-  <string name="title_hosts_list">Хостови</string>
   <string name="title_pubkey_list">Pub клучеви</string>
   <string name="title_port_forwards_list">Проследување на порти</string>
-  <string name="title_host_editor">Уреди хост</string>
   <string name="title_help">Помош</string>
-  <string name="title_colors">Бои</string>
   <string name="title_color_picker">Одбери боја</string>
   <string name="title_settings">Подесувања</string>
   <string name="title_pubkey_generate">Генерирај</string>
-  <string name="help_intro">Одбеи тема од подолу наведените за повеќе информации за таа тема.</string>
   <string name="terms_and_conditions">Услови и правила</string>
   <string name="hints">Совети</string>
-  <string name="host_shortcuts_header">Кратенки за хостот</string>
-  <string name="host_shortcuts_content">Долго притиснете на десктопот на Android за да креирате директни кратенки до често користените SSH хостови.</string>
-  <string name="scroll_hints_header">Скролувајте назад / Скролувајте напред</string>
-  <string name="scroll_hints_content">Со повлекување на екранот на десната страна можете да разгледувате низ историјата на локалниот терминал.</string>
-  <string name="scrolling_back">Скролувајте назад</string>
-  <string name="scrolling_forward">Скролувајте напред</string>
-  <string name="page_updn_header">Страна нагоре / Страна надолу</string>
-  <string name="page_updn_content">ЗАБЕЛЕШКА: Ова мора да биде овозможено во поставките\n\nПовлекувајќи го прстот нагоре и надолу на левата третина од екранот, ќе испрати сигнал страница нагоре или страница надолу до оддалечениот хост.</string>
-  <string name="page_up">Страна нагоре</string>
-  <string name="page_down">Страна надолу</string>
-  <string name="switching_hosts_header">Промена на хостови</string>
-  <string name="switching_hosts_content">Повлекувајќи со прстот од едната странан на екранот до другата ќе го промени хостот за кој сте поврзани.</string>
-  <string name="next_host">Следен хост</string>
-  <string name="prev_host">Претходен хост</string>
   <string name="keyboard_shortcuts">Кратенки на тастатурата</string>
   <string name="increase_font_size">Зголеми големина на фонт</string>
   <string name="increase_font_shortcut">Ctrl и +</string>
@@ -42,22 +24,13 @@
   <string name="pubkey_generating">Се генерира пар на клучеви…</string>
   <string name="pubkey_copy_private">Копирај го приватниот клуч</string>
   <string name="pubkey_copy_public">Копирај го јавниот клуч</string>
-  <string name="pubkey_list_empty">Притисни мени за да направиш\nили увезеш нов пар на клучеви</string>
-  <string name="pubkey_unknown_format">Непознат тип</string>
   <string name="pubkey_change_password">Промени лозинка</string>
-  <string name="pubkey_list_pick">Превземи од /sdcard</string>
-  <string name="pubkey_import_parse_problem">Проблем со анализирањето на увезениот приватен клуч</string>
   <string name="pubkey_unlock">Клуч за отклучување</string>
-  <string name="pubkey_failed_add">Погрешна лозинка за клучот \'%1$s\'. Неуспешна авторизација.</string>
-  <string name="pubkey_memory_load">Вчитај во меморија</string>
-  <string name="pubkey_memory_unload">Извади од меморијата</string>
   <string name="pubkey_load_on_start">Вчитај клуч при вклучување</string>
   <string name="pubkey_confirm_use">Побарај потврда пред користење</string>
-  <string name="portforward_list_empty">Притисни мени за да направиш\nпроследување на порти.</string>
   <string name="portforward_edit">Промени проследување на порта</string>
   <string name="portforward_delete">Избриши проследување на порта</string>
   <string name="prompt_nickname">Прекар:</string>
-  <string name="prompt_nickname_hint_pubkey">Мојот работен клуч</string>
   <string name="prompt_source_port">Изворна порта:</string>
   <string name="prompt_destination">Дестинација:</string>
   <string name="prompt_old_password">Стара лозинка:</string>
@@ -70,25 +43,1054 @@
   <string name="prompt_allow_agent_to_use_key">Дозволи му на одалечениот хост\nда го искористи \'%1$s\'?</string>
   <string name="host_verification_failure_warning_header">ПРЕДУПРЕДУВАЊЕ: ИДЕНТИФИКАЦИЈАТА НА ОДАЛЕЧЕНИОТ ХОСТ Е ПРОМЕНЕТА!</string>
   <string name="host_verification_failure_warning">МОЖНО Е НЕКОЈ ДА ПРАВИ НЕШТО ЛОШО!\nНекој можеби ве прислушкува сега (напад човек во средина)!\nИсто така можно е да се променил клучот на одалечениот хост.</string>
-  <string name="prompt_host_disconnected">Хостот се дисконектираше.\nЗатвори ја сесијата?</string>
   <string name="prompt_continue_connecting">Дали си сигурен дека\nсакаш да продолжиш со поврзување?</string>
   <string name="host_authenticity_warning">Автентичноста на \'%1$s\' не може да биде потврдена.</string>
   <string name="host_fingerprint">Отпечаток на клучот на хостот %1$s е %2$s</string>
   <string name="alert_passwords_do_not_match_msg">Лозинките не се совпаѓаат!</string>
   <string name="alert_wrong_password_msg">Погрешна лозинка!</string>
-  <string name="alert_key_corrupted_msg">Приватниот клуч е корумпиран!</string>
-  <string name="alert_sdcard_absent">СД картичката не е ставена!</string>
-  <string name="button_change">Промени</string>
   <string name="button_resize">Промени големина</string>
   <string name="alert_disconnect_msg">Врската е изгубена</string>
-  <string name="msg_copyright">Авторско право © 2007-2008 Kenny Root http://the-b.org/, Jeffrey Sharkey http://jsharkey.org/</string>
   <string name="pref_emulation_category">Емулација на терминал</string>
   <string name="pref_emulation_title">Вид на емулација</string>
-  <string name="pref_emulation_summary">Вид на емулација на терминал да се користи за PTY врски</string>
   <string name="pref_backupkeys_title">Резервен pub клуч</string>
   <string name="pref_backupkeys_summary">Чувајте ги резервните копии на приватните клучеви користејќи го резервниот механизам на Android</string>
   <string name="pref_ui_category">Кориснички интерфејс</string>
   <string name="pref_fullscreen_title">На цел екран</string>
   <string name="pref_fullscreen_summary">Сокриј ја статусната трака додека си во конзола</string>
   <string name="pref_memkeys_title">Запомни ги клучевите во меморија</string>
+  <string name="app_copyright" tools:machine_translated="true">Авторски права © Кени Рут</string>
+  <string name="title_eula" tools:machine_translated="true">Лиценца</string>
+  <string name="pubkey_copy_private_openssh" tools:machine_translated="true">Копирај го приватниот клуч (OpenSSH)</string>
+  <string name="pubkey_copy_private_pem" tools:machine_translated="true">Копирај го приватниот клуч (PEM)</string>
+  <string name="pubkey_copy_private_encrypted" tools:machine_translated="true">Копирај го приватниот клуч (шифриран)</string>
+  <string name="pubkey_export_public" tools:machine_translated="true">Извезете јавен клуч</string>
+  <string name="pubkey_export_private" tools:machine_translated="true">Извезете го приватниот клуч</string>
+  <string name="pubkey_export_private_openssh" tools:machine_translated="true">Извезете го приватниот клуч (OpenSSH)</string>
+  <string name="pubkey_export_private_pem" tools:machine_translated="true">Извезете го приватниот клуч (PEM)</string>
+  <string name="pubkey_export_private_encrypted" tools:machine_translated="true">Извезете го приватниот клуч (шифриран)</string>
+  <string name="pubkey_export_set_passphrase" tools:machine_translated="true">Поставете лозинка за извоз</string>
+  <string name="pubkey_export_passphrase_message" tools:machine_translated="true">Внесете лозинка за да го шифрирате изнесениот клуч.</string>
+  <string name="pubkey_export_confirm_passphrase" tools:machine_translated="true">Потврдете ја лозинката</string>
+  <string name="pubkey_export_passphrase_mismatch" tools:machine_translated="true">Лозинките не се совпаѓаат</string>
+  <string name="pubkey_import_encrypted_title" tools:machine_translated="true">Импортирајте шифриран клуч.</string>
+  <string name="pubkey_import_encrypted_message" tools:machine_translated="true">Внесете ја лозинката за да го дешифрирате клучот „%1$s“ (%2$s).</string>
+  <string name="pubkey_import_button" tools:machine_translated="true">Увези</string>
+  <string name="pubkey_import_encrypt_key" tools:machine_translated="true">Шифрирај го клучот за складирање.</string>
+  <string name="pubkey_import_reuse_password" tools:machine_translated="true">Користете ја истата лозинка за шифрирање</string>
+  <string name="pubkey_import_new_password" tools:machine_translated="true">Нова лозинка</string>
+  <string name="pubkey_import_confirm_password" tools:machine_translated="true">Потврдете ја лозинката</string>
+  <string name="pubkey_unlock_message" tools:machine_translated="true">Внесете ја лозинката за да го отклучите клучот „%1$s“.</string>
+  <string name="pubkey_nickname_exists" tools:machine_translated="true">Веќе постои клуч со ова име.</string>
+  <string name="prompt_username" tools:machine_translated="true">Корисничко име:</string>
+  <string name="host_key_verification_title" tools:machine_translated="true">Проверка на клучот на домаќинот</string>
+  <string name="fingerprint_format_header" tools:machine_translated="true">Формат на отпечаток од прст</string>
+  <string name="host_key_type_and_size" tools:machine_translated="true">%1$s %2$d бити</string>
+  <string name="fingerprint_copy_description" tools:machine_translated="true">Копирај го отпечатокот и залепи го во меморијата</string>
+  <string name="network_lost_grace_period" tools:machine_translated="true">Врската е прекината, се обидуваме повторно да се поврземе…</string>
+  <string name="network_grace_period_expired" tools:machine_translated="true">Мрежата не е обновена, се исклучува…</string>
+  <string name="network_restored_same_ip" tools:machine_translated="true">Мрежата е обновена, поврзувањето е продолжено.</string>
+  <string name="network_restored_ip_changed" tools:machine_translated="true">Мрежата е повторно воспоставена, но IP-адресата е променета, повторно се поврзуваме…</string>
+  <string name="network_restored_no_previous_state" tools:machine_translated="true">Мрежата е обновена, се проверува поврзувањето…</string>
+  <string name="pref_scrollback_title" tools:machine_translated="true">Големина на историјатот</string>
+  <string name="pref_scrollback_summary" tools:machine_translated="true">Големина на меморискиот простор за чување на историјата на прикажаните содржини за секоја конзола.</string>
+  <string name="pref_fontfamily_title" tools:machine_translated="true">Фонт</string>
+  <string name="pref_customfont_title" tools:machine_translated="true">Додај прилагоден фонт</string>
+  <string name="pref_customfont_summary" tools:machine_translated="true">Додадете фонт од Google Fonts по име.</string>
+  <string name="dialog_customfont_title" tools:machine_translated="true">Додај прилагоден фонт</string>
+  <string name="dialog_customfont_hint" tools:machine_translated="true">Име на Google Fonts (на пр., Cascadia Code)</string>
+  <string name="button_add" tools:machine_translated="true">Додај</string>
+  <string name="button_remove" tools:machine_translated="true">Отстрани</string>
+  <string name="font_validating" tools:machine_translated="true">Проверка на фонтот…</string>
+  <string name="font_downloading" tools:machine_translated="true">Преземање на фонт…</string>
+  <string name="pref_localfont_title" tools:machine_translated="true">Увезете локален фонт.</string>
+  <string name="pref_localfont_summary" tools:machine_translated="true">Импортирајте датотека со фонт од складиштето (TTF, OTF)</string>
+  <string name="dialog_localfont_title" tools:machine_translated="true">Увези фонт</string>
+  <string name="dialog_localfont_hint" tools:machine_translated="true">Име кое ќе се прикажува за фонтот.</string>
+  <string name="button_import" tools:machine_translated="true">Увези</string>
+  <string name="font_importing" tools:machine_translated="true">Увоз на фонт…</string>
+  <string name="pref_language_title" tools:machine_translated="true">Јазик</string>
+  <string name="pref_language_system_default" tools:machine_translated="true">Поставена вредност по дефолт во системот</string>
+  <string name="pref_language_download" tools:machine_translated="true">Преземете јазичен пакет</string>
+  <string name="pref_language_download_failed" tools:machine_translated="true">Преземањето не успеа, допрете за да повторите.</string>
+  <string name="pref_theme_title" tools:machine_translated="true">Тема</string>
+  <string name="pref_theme_system" tools:machine_translated="true">Поставена вредност од системот</string>
+  <string name="pref_theme_light" tools:machine_translated="true">Светла тема</string>
+  <string name="pref_theme_dark" tools:machine_translated="true">Темна</string>
+  <string name="pref_titlebarhide_title" tools:machine_translated="true">Автоматско скривање на лентата со наслов</string>
+  <string name="pref_titlebarhide_summary" tools:machine_translated="true">Допрете ја конзолата за да го прикажете насловот и да пристапите до менито.</string>
+  <string name="pref_alwaysvisible_title" tools:machine_translated="true">Специјалните копчиња секогаш видливи.</string>
+  <string name="pref_pg_updn_gesture_title" tools:machine_translated="true">Гест за превртување на страницата нагоре/надолу</string>
+  <string name="pref_pg_updn_gesture_summary" tools:machine_translated="true">Повлечете со прстот по левата една третина од екранот за да испратите команда за преместување на курсорот нагоре/надолу во терминалот.</string>
+  <string name="pref_keyboard_category" tools:machine_translated="true">Клавијатура</string>
+  <string name="pref_shiftfkeys_title" tools:machine_translated="true">Shift + број се F-тастери</string>
+  <string name="pref_shiftfkeys_summary" tools:machine_translated="true">На физичките тастатури, нумеричките копчиња испраќаат F1-F10 кога е притиснато копчето Shift.</string>
+  <string name="pref_ctrlfkeys_title" tools:machine_translated="true">Ctrl + број се F-тастери</string>
+  <string name="pref_ctrlfkeys_summary" tools:machine_translated="true">На софтверските тастатури, притискањето на бројките испраќа команди F1-F10 заедно со Ctrl.</string>
+  <string name="pref_volumefont_title" tools:machine_translated="true">Копчињата за јачина на звукот ја менуваат големината на фонтот.</string>
+  <string name="pref_volumefont_summary" tools:machine_translated="true">Големината на фонтот исто така може да се промени во поставките на профилот.</string>
+  <string name="pref_memkeys_summary" tools:machine_translated="true">Зачувајте ги отклучените клучеви во меморијата додека не се прекине работата на позадинската услуга.</string>
+  <string name="pref_keymode_title" tools:machine_translated="true">Преки патишта до директориуми</string>
+  <string name="pref_stickymodifiers_title" tools:machine_translated="true">Постојани модификатори</string>
+  <string name="only_alt" tools:machine_translated="true">Само Alt</string>
+  <string name="pref_camera_title" tools:machine_translated="true">Преку пат за камера</string>
+  <string name="pref_keepalive_title" tools:machine_translated="true">Не дозволувај екранот да се исклучи</string>
+  <string name="pref_keepalive_summary" tools:machine_translated="true">Спречете го екранот да се исклучува додека работите во конзола.</string>
+  <string name="pref_wifilock_title" tools:machine_translated="true">Држете ја Wi-Fi мрежата активна</string>
+  <string name="pref_wifilock_summary" tools:machine_translated="true">Спречете го исклучувањето на Wi-Fi кога е активна сесија.</string>
+  <string name="pref_bumpyarrows_title" tools:machine_translated="true">Вибрации при притискање на стрелките</string>
+  <string name="pref_bumpyarrows_summary" tools:machine_translated="true">Вибрирајте кога ќе испратите команди со стрелките; корисно за спори интернет-врски.</string>
+  <string name="pref_bell_category" tools:machine_translated="true">Звук за терминал</string>
+  <string name="pref_bell_title" tools:machine_translated="true">Звучен сигнал</string>
+  <string name="pref_bell_summary" tools:machine_translated="true">Пуштај звук при активирање на алармот во терминалот.</string>
+  <string name="pref_bell_volume_title" tools:machine_translated="true">Јачина на звукот на ѕвонцето</string>
+  <string name="pref_bell_vibrate_title" tools:machine_translated="true">Вибрирај при звук.</string>
+  <string name="pref_bell_vibrate_summary" tools:machine_translated="true">Вибрирај при сигнал од терминалот.</string>
+  <string name="pref_bell_notification_title" tools:machine_translated="true">Известувања во позадина</string>
+  <string name="pref_bell_notification_summary" tools:machine_translated="true">Прикажи тивко скокачко известување кога ќе се огласи ѕвонче во сесија што не ја гледате</string>
+  <string name="list_keymode_right" tools:machine_translated="true">Користете ги копчињата од десната страна</string>
+  <string name="list_keymode_left" tools:machine_translated="true">Користете ги копчињата на левата страна</string>
+  <string name="list_keymode_none" tools:machine_translated="true">Исклучи</string>
+  <string name="list_pubkeyids_none" tools:machine_translated="true">Не користете клучеви</string>
+  <string name="list_pubkeyids_any" tools:machine_translated="true">Користете кој било отклучен клуч</string>
+  <string name="hostpref_nickname_title" tools:machine_translated="true">Прекар</string>
+  <string name="hostpref_color_title" tools:machine_translated="true">Категорија на бои</string>
+  <string name="color_red" tools:machine_translated="true">Црвена</string>
+  <string name="color_pink" tools:machine_translated="true">Розова</string>
+  <string name="color_purple" tools:machine_translated="true">Виолетова</string>
+  <string name="color_deep_purple" tools:machine_translated="true">Наситен виолетов</string>
+  <string name="color_indigo" tools:machine_translated="true">Индиго</string>
+  <string name="color_blue" tools:machine_translated="true">Сина</string>
+  <string name="color_light_blue" tools:machine_translated="true">Светло сино</string>
+  <string name="color_cyan" tools:machine_translated="true">Цијан</string>
+  <string name="color_teal" tools:machine_translated="true">Тиркизна боја</string>
+  <string name="color_green" tools:machine_translated="true">Зелена</string>
+  <string name="color_light_green" tools:machine_translated="true">Светлозелена</string>
+  <string name="color_lime" tools:machine_translated="true">Лиметова боја</string>
+  <string name="color_yellow" tools:machine_translated="true">Жолта</string>
+  <string name="color_amber" tools:machine_translated="true">Кехлибарна боја</string>
+  <string name="color_orange" tools:machine_translated="true">Портокалова</string>
+  <string name="color_gray" tools:machine_translated="true">Сив</string>
+  <string name="hostpref_fontsize_title" tools:machine_translated="true">Големина на фонтот (pt)</string>
+  <string name="hostpref_fontfamily_title" tools:machine_translated="true">Фонт</string>
+  <string name="hostpref_colorscheme_title" tools:machine_translated="true">Колоритна шема за терминалот</string>
+  <string name="hostpref_pubkeyid_title" tools:machine_translated="true">Користете автентикација со јавен клуч.</string>
+  <string name="hostpref_authagent_title" tools:machine_translated="true">Користете SSH агент за автентикација</string>
+  <string name="hostpref_postlogin_title" tools:machine_translated="true">Автоматизација по најавување</string>
+  <string name="hostpref_compression_title" tools:machine_translated="true">Компресија</string>
+  <string name="hostpref_compression_summary" tools:machine_translated="true">Ова може да помогне при користење на побавни мрежи</string>
+  <string name="hostpref_wantsession_title" tools:machine_translated="true">Покренете сесија во командна обвивка</string>
+  <string name="hostpref_wantsession_summary" tools:machine_translated="true">Деактивирајте ја оваа опција за да се користат само пренасочувања на порти.</string>
+  <string name="hostpref_stayconnected_title" tools:machine_translated="true">Останете поврзани</string>
+  <string name="hostpref_stayconnected_summary" tools:machine_translated="true">Обидете се повторно да се поврзете со хостот ако се прекина врската.</string>
+  <string name="hostpref_quickdisconnect_title" tools:machine_translated="true">Затвори при прекинување на врската.</string>
+  <string name="hostpref_quickdisconnect_summary" tools:machine_translated="true">Затворете веднаш по прекинување на далечинската врска, без да се прикажува порака.</string>
+  <string name="hostpref_delkey_title" tools:machine_translated="true">КЛАВИШ DEL</string>
+  <string name="hostpref_encoding_title" tools:machine_translated="true">Кодирање</string>
+  <string name="hostpref_username_title" tools:machine_translated="true">Корисничко име</string>
+  <string name="hostpref_save_password_summary" tools:machine_translated="true">Безбедно зачувајте ја лозинката за најавување за да се овозможи автоматска автентикација.</string>
+  <string name="hostpref_password_title" tools:machine_translated="true">Лозинка</string>
+  <string name="hostpref_password_unchanged" tools:machine_translated="true">Лозинка (не е променета)</string>
+  <string name="hostpref_clear_password" tools:machine_translated="true">Избриши ја зачуваната лозинка</string>
+  <string name="hostpref_hostname_title" tools:machine_translated="true">Домаќин</string>
+  <string name="hostpref_port_title" tools:machine_translated="true">Порт</string>
+  <string name="hostpref_profile_title" tools:machine_translated="true">Профил</string>
+  <string name="hostpref_profile_summary" tools:machine_translated="true">Изберете профил за да ги користите неговите поставки за терминал.</string>
+  <string name="hostpref_profile_none" tools:machine_translated="true">Нема избрано (користете ги поставките за домаќинот)</string>
+  <string name="profile_controlled_setting" tools:machine_translated="true">Контролирано преку профил.</string>
+  <string name="font_use_default" tools:machine_translated="true">Користете го стандардниот</string>
+  <string name="font_system_default" tools:machine_translated="true">Стандардно (Моноширен фонт)</string>
+  <string name="pubkey_unknown" tools:machine_translated="true">Непознат клуч</string>
+  <string name="colorscheme_default" tools:machine_translated="true">Стандардно</string>
+  <string name="profile_editor_title_new" tools:machine_translated="true">Нов профил</string>
+  <string name="profile_editor_title_edit" tools:machine_translated="true">Уреди профил</string>
+  <string name="profile_editor_save" tools:machine_translated="true">Зачувај</string>
+  <string name="profile_editor_name_label" tools:machine_translated="true">Име на профилот</string>
+  <string name="profile_editor_section_icon_color" tools:machine_translated="true">Боја на иконата</string>
+  <string name="profile_editor_section_color_scheme" tools:machine_translated="true">Шема на бои</string>
+  <string name="profile_editor_section_font" tools:machine_translated="true">Фонт</string>
+  <string name="profile_editor_section_terminal" tools:machine_translated="true">Терминал</string>
+  <string name="profile_editor_font_family_title" tools:machine_translated="true">Семејство на фонтови</string>
+  <string name="profile_editor_font_size_title" tools:machine_translated="true">Големина на фонтот: %d</string>
+  <string name="profile_editor_force_size_title" tools:machine_translated="true">Фиксна големина</string>
+  <string name="profile_editor_force_size_summary" tools:machine_translated="true">Натерајте го терминалот да има специфична големина (колони x редови) наместо автоматски да се прилагодува на големината на екранот.</string>
+  <string name="profile_editor_force_size_enable" tools:machine_translated="true">Овозможи принудителна големина</string>
+  <string name="profile_editor_force_size_columns" tools:machine_translated="true">Колумни</string>
+  <string name="profile_editor_force_size_rows" tools:machine_translated="true">Редови</string>
+  <string name="profile_icon_color_none" tools:machine_translated="true">Ништо (користете ја бојата на хостот)</string>
+  <string name="profile_list_title" tools:machine_translated="true">Профили</string>
+  <string name="profile_list_create_profile" tools:machine_translated="true">Креирај профил</string>
+  <string name="profile_list_empty_message" tools:machine_translated="true">Сè уште нема профили. Допрете го знакот + за да креирате нов профил.</string>
+  <string name="profile_list_more_options" tools:machine_translated="true">Повеќе опции</string>
+  <string name="profile_list_duplicate" tools:machine_translated="true">Дуплицирај</string>
+  <string name="profile_list_delete" tools:machine_translated="true">Избриши</string>
+  <string name="profile_create_dialog_title" tools:machine_translated="true">Креирај профил</string>
+  <string name="profile_create_name_label" tools:machine_translated="true">Име на профилот</string>
+  <string name="profile_create_button" tools:machine_translated="true">Креирај</string>
+  <string name="profile_create_cancel" tools:machine_translated="true">Откажи</string>
+  <string name="profile_delete_dialog_title" tools:machine_translated="true">Избриши профил</string>
+  <string name="profile_delete_dialog_message" tools:machine_translated="true">Дали сте сигурни дека сакате да го избришете профилот „%s“?</string>
+  <string name="profile_delete_button" tools:machine_translated="true">Избриши</string>
+  <string name="profile_delete_cancel" tools:machine_translated="true">Откажи</string>
+  <string name="profile_summary_font" tools:machine_translated="true">Фонт: %1$s %2$d точки</string>
+  <string name="profile_summary_emulation" tools:machine_translated="true">Емулација: %s</string>
+  <string name="console_menu_reconnect" tools:machine_translated="true">Повторно се поврзете</string>
+  <string name="console_menu_close" tools:machine_translated="true">Затвори</string>
+  <string name="console_menu_paste" tools:machine_translated="true">Залепи</string>
+  <string name="console_menu_portforwards" tools:machine_translated="true">Пренасочување на порти</string>
+  <string name="console_menu_resize" tools:machine_translated="true">Наметнете големина</string>
+  <string name="console_menu_urlscan" tools:machine_translated="true">Преглед на URL-адреси</string>
+  <string name="console_url_no_handler" tools:machine_translated="true">Нема апликација која може да го отвори ова URL-от.</string>
+  <string name="console_url_not_supported" tools:machine_translated="true">Овој тип на URL не е поддржан</string>
+  <string name="button_yes" tools:machine_translated="true">Да</string>
+  <string name="button_no" tools:machine_translated="true">Не</string>
+  <string name="portforward_local" tools:machine_translated="true">Локален</string>
+  <string name="portforward_remote" tools:machine_translated="true">Далечински</string>
+  <string name="portforward_dynamic" tools:machine_translated="true">Динамичен (SOCKS)</string>
+  <string name="portforward_pos" tools:machine_translated="true">Креирај пренасочување на порта</string>
+  <string name="portforward_save" tools:machine_translated="true">Зачувај</string>
+  <string name="format_username" tools:machine_translated="true">корисничко име</string>
+  <string name="format_hostname" tools:machine_translated="true">име на хост</string>
+  <string name="format_port" tools:machine_translated="true">порт</string>
+  <string name="list_menu_pubkeys" tools:machine_translated="true">Управувајте ги јавните клучеви</string>
+  <string name="list_menu_sortcolor" tools:machine_translated="true">Подреди по боја.</string>
+  <string name="list_menu_sortname" tools:machine_translated="true">Подреди по име</string>
+  <string name="list_menu_disconnect" tools:machine_translated="true">Исклучете ги сите</string>
+  <string name="list_menu_settings" tools:machine_translated="true">Поставки</string>
+  <string name="list_host_disconnect" tools:machine_translated="true">Искинете ја врската</string>
+  <string name="list_host_edit" tools:machine_translated="true">Уреди ја конфигурацијата на хостот.</string>
+  <string name="list_host_portforwards" tools:machine_translated="true">Уредете пренасочувања на порти</string>
+  <string name="list_host_delete" tools:machine_translated="true">Избриши го хостот</string>
+  <string name="list_host_duplicate" tools:machine_translated="true">Дуплицирај го избраниот хост</string>
+  <string name="list_host_forget_keys" tools:machine_translated="true">Заборави ги клучните податоци за хостот.</string>
+  <string name="list_camera_ctrlaspace" tools:machine_translated="true">Ctrl+A, потоа интервал.</string>
+  <string name="list_camera_ctrla" tools:machine_translated="true">Ctrl+A</string>
+  <string name="list_camera_esc" tools:machine_translated="true">Esc</string>
+  <string name="list_camera_esc_a" tools:machine_translated="true">Esc+A</string>
+  <string name="list_camera_none" tools:machine_translated="true">Ништо</string>
+  <string name="list_camera_text_input" tools:machine_translated="true">Внесување текст</string>
+  <string name="delete_message" tools:machine_translated="true">Дали сте сигурни дека сакате да го избришете „%1$s“?</string>
+  <string name="delete_pos" tools:machine_translated="true">Да, избриши</string>
+  <string name="delete_neg" tools:machine_translated="true">Откажи</string>
+  <string name="disconnect_all_message" tools:machine_translated="true">Дали сте сигурни дека сакате да се одјавите од сите поврзани уреди?</string>
+  <string name="disconnect_all_pos" tools:machine_translated="true">Да, исклучете се</string>
+  <string name="disconnect_all_neg" tools:machine_translated="true">Откажи</string>
+  <string name="terminal_connecting" tools:ignore="PluralsCandidate" tools:machine_translated="true">Поврзување со %1$s:%2$d преку %3$s</string>
+  <string name="terminal_sucess" tools:machine_translated="true">Проверениот клучен код на хостот \'%1$s\': %2$s</string>
+  <string name="terminal_failed" tools:machine_translated="true">Проверката на клучот на хостот не успеа.</string>
+  <string name="terminal_using_s2c_algorithm" tools:machine_translated="true">Алгоритaм од сервер до клиент: %1$s %2$s</string>
+  <string name="terminal_using_c2s_algorithm" tools:machine_translated="true">Алгоритaм од клиентот до серверот: %1$s %2$s</string>
+  <string name="terminal_using_algorithm" tools:machine_translated="true">Се користи алгоритмот: %1$s %2$s</string>
+  <string name="terminal_kex_algorithm" tools:machine_translated="true">Алгоритaм за размена на клуч: %s</string>
+  <string name="terminal_auth" tools:machine_translated="true">Се обидувам да се идентификувам</string>
+  <string name="terminal_auth_pass" tools:machine_translated="true">Се обидува да се изврши автентикација преку „лозинка“.</string>
+  <string name="terminal_auth_pass_fail" tools:machine_translated="true">Методот за автентикација „лозинка“ не успеа.</string>
+  <string name="terminal_auth_saved_password" tools:machine_translated="true">Се обидувам да ја користам зачуваната лозинка…</string>
+  <string name="terminal_auth_saved_password_fail" tools:machine_translated="true">Проверката на зачуваната лозинка не успеа.</string>
+  <string name="terminal_auth_pubkey_any" tools:machine_translated="true">Се обидува да се изврши автентикација со „јавен клуч“ со кој било од достапните јавни клучови што се зачувани во меморијата.</string>
+  <string name="terminal_auth_pubkey_invalid" tools:machine_translated="true">Избраниот јавен клуч е невалиден, обидете се повторно да го изберете клучот во уредувачот на хостот.</string>
+  <string name="terminal_auth_pubkey_specific" tools:machine_translated="true">Се обидува да се изврши автентикација со помош на јавен клуч, користејќи го специфичниот јавен клуч.</string>
+  <string name="terminal_auth_biometric" tools:machine_translated="true">Барање за биометрична потврда за клучот „%1$s“</string>
+  <string name="terminal_auth_biometric_invalidated" tools:machine_translated="true">Биометрискиот клуч „%1$s“ е невалиден. Ова може да се случи кога на уредот се регистрираат нови отпечатоци. Ве молиме, генерирајте нов клуч.</string>
+  <string name="terminal_auth_pubkey_fail" tools:machine_translated="true">Методот за автентикација „јавен клуч“ со клуч „%1$s“ не успеа.</string>
+  <string name="terminal_auth_ki" tools:machine_translated="true">Се обидувам да се изврши автентикација преку „интерактивна тастатура“.</string>
+  <string name="terminal_auth_ki_fail" tools:machine_translated="true">Методот за автентикација „интерактивно внесување преку тастатура“ не успеа.</string>
+  <string name="terminal_auth_fail" tools:machine_translated="true">[Вашиот хост не поддржува автентикација со „лозинка“ или „интеракција со тастатурата“.]</string>
+  <string name="terminal_no_session" tools:machine_translated="true">Сесијата нема да започне поради претпочитањето на хостот.</string>
+  <string name="terminal_enable_portfoward" tools:machine_translated="true">Овозможување на пренасочување на порта: %1$s</string>
+  <string name="local_shell_unavailable" tools:machine_translated="true">Грешка! Локалниот терминал не е достапен на овој телефон.</string>
+  <string name="notification_text" tools:machine_translated="true">%1$s сака да привлече ваше внимание.</string>
+  <string name="no" tools:machine_translated="true">Не</string>
+  <string name="yes" tools:machine_translated="true">Да</string>
+  <string name="title_scheme_manager" tools:machine_translated="true">Управување со шеми на бои</string>
+  <string name="button_new_scheme" tools:machine_translated="true">Нова шема</string>
+  <string name="button_duplicate_scheme" tools:machine_translated="true">Дуплицирај</string>
+  <string name="button_delete_scheme" tools:machine_translated="true">Избриши</string>
+  <string name="dialog_title_new_scheme" tools:machine_translated="true">Нова шема на бои</string>
+  <string name="label_scheme_name" tools:machine_translated="true">Име на шемата</string>
+  <string name="label_scheme_description" tools:machine_translated="true">Опис (опционално)</string>
+  <string name="dialog_title_delete_scheme" tools:machine_translated="true">Дали сакате да го избришете шемата?</string>
+  <string name="dialog_message_delete_scheme" tools:machine_translated="true">Дали сте сигурни дека сакате да го избришете „%1$s“? Оваа акција не може да се поништи.</string>
+  <string name="button_confirm" tools:machine_translated="true">Потврди</string>
+  <string name="button_cancel" tools:machine_translated="true">Откажи</string>
+  <string name="label_built_in_scheme" tools:machine_translated="true">Вграден</string>
+  <string name="label_custom_scheme" tools:machine_translated="true">Прилагодено</string>
+  <string name="empty_custom_schemes" tools:machine_translated="true">Не постојат прилагодени шеми. Допрете „Нова шема“ за да креирате една.</string>
+  <string name="button_export_scheme" tools:machine_translated="true">Извезете шема</string>
+  <string name="button_import_scheme" tools:machine_translated="true">Увези шема</string>
+  <string name="message_export_success" tools:machine_translated="true">Извезени %1$s</string>
+  <string name="message_import_success" tools:machine_translated="true">Увезено: %1$s</string>
+  <string name="error_export_failed" tools:machine_translated="true">Неуспешно извршен извоз на шемата: %1$s</string>
+  <string name="error_import_failed" tools:machine_translated="true">Неуспешно внесување на шемата: %1$s</string>
+  <string name="error_invalid_json" tools:machine_translated="true">Невалидна JSON-датотека</string>
+  <string name="title_palette_editor" tools:machine_translated="true">Уредете палета на бои</string>
+  <string name="button_reset_all_colors" tools:machine_translated="true">Врати ги сите поставки на стандардните вредности.</string>
+  <string name="section_ansi_colors" tools:machine_translated="true">ANSI бои (0–15)</string>
+  <string name="dialog_title_edit_color" tools:machine_translated="true">Уредете ја бојата %1$d</string>
+  <string name="dialog_title_reset_all" tools:machine_translated="true">Дали сакате да ги ресетирате сите бои?</string>
+  <string name="dialog_message_reset_all" tools:machine_translated="true">Ова ќе ги врати сите 256 бои на нивните стандардни вредности. Оваа акција не може да се поништи.</string>
+  <string name="app_is_running" tools:machine_translated="true">ConnectBot е во тек.</string>
+  <string name="label_red" tools:machine_translated="true">Црвена</string>
+  <string name="label_green" tools:machine_translated="true">Зелена</string>
+  <string name="label_blue" tools:machine_translated="true">Сина</string>
+  <string name="label_hex_color" tools:machine_translated="true">Хексадецимална боја</string>
+  <string name="section_fg_bg_colors" tools:machine_translated="true">Преден план и позадина</string>
+  <string name="label_foreground_color" tools:machine_translated="true">Преден план</string>
+  <string name="label_background_color" tools:machine_translated="true">Позадина</string>
+  <string name="label_base_scheme" tools:machine_translated="true">Основна шема:</string>
+  <string name="menu_manage_colors" tools:machine_translated="true">Управувајте ги шемите на бои</string>
+  <string name="section_color_preview" tools:machine_translated="true">Преглед</string>
+  <string name="image_description_connected" tools:machine_translated="true">Поврзан.</string>
+  <string name="image_description_disconnected" tools:machine_translated="true">Исклучен.</string>
+  <string name="image_description_toggle_control_character" tools:machine_translated="true">Вклучи/исклучи контролен знак.</string>
+  <string name="image_description_send_escape_character" tools:machine_translated="true">Испрати знак ESC.</string>
+  <string name="image_description_send_tab_character" tools:machine_translated="true">Испрати карактер TAB.</string>
+  <string name="image_description_hide_keyboard" tools:machine_translated="true">Скриј ја тастатурата.</string>
+  <string name="image_description_show_keyboard" tools:machine_translated="true">Прикажи ја виртуелната тастатура.</string>
+  <string name="image_description_up" tools:machine_translated="true">Стрелка нагоре</string>
+  <string name="image_description_down" tools:machine_translated="true">Стрелка надолу</string>
+  <string name="image_description_left" tools:machine_translated="true">Стрелка налево</string>
+  <string name="image_description_right" tools:machine_translated="true">Стрелка надесно</string>
+  <string name="button_key_esc" tools:machine_translated="true">Еск</string>
+  <string name="button_key_ctrl" tools:machine_translated="true">Ctrl</string>
+  <string name="button_key_home" tools:machine_translated="true">Почетна</string>
+  <string name="button_key_end" tools:machine_translated="true">Крај</string>
+  <string name="button_key_pgup" tools:machine_translated="true">PgUp</string>
+  <string name="button_key_pgdn" tools:machine_translated="true">Следна страница</string>
+  <string name="button_key_f1" tools:machine_translated="true">F1</string>
+  <string name="button_key_f2" tools:machine_translated="true">F2</string>
+  <string name="button_key_f3" tools:machine_translated="true">F3</string>
+  <string name="button_key_f4" tools:machine_translated="true">F4</string>
+  <string name="button_key_f5" tools:machine_translated="true">F5</string>
+  <string name="button_key_f6" tools:machine_translated="true">F6</string>
+  <string name="button_key_f7" tools:machine_translated="true">F7</string>
+  <string name="button_key_f8" tools:machine_translated="true">F8</string>
+  <string name="button_key_f9" tools:machine_translated="true">F9</string>
+  <string name="button_key_f10" tools:machine_translated="true">F10</string>
+  <string name="button_key_f11" tools:machine_translated="true">F11</string>
+  <string name="button_key_f12" tools:machine_translated="true">F12</string>
+  <string name="terminal_keyboard_text_input_button" tools:machine_translated="true">Внесување текст</string>
+  <string name="terminal_text_input_dialog_title" tools:machine_translated="true">Внесување текст</string>
+  <string name="terminal_text_input_dialog_label" tools:machine_translated="true">Внесете текст за да го испратите до терминалот.</string>
+  <string name="terminal_text_input_resize_handle" tools:machine_translated="true">Промени ја големината</string>
+  <string name="console_menu_text_input" tools:machine_translated="true">Внесување текст</string>
+  <string name="button_send" tools:machine_translated="true">Испрати</string>
+  <string name="button_ok" tools:machine_translated="true">Во ред.</string>
+  <string name="button_close" tools:machine_translated="true">Затвори</string>
+  <string name="button_back" tools:machine_translated="true">Назад</string>
+  <string name="button_navigate_up" tools:machine_translated="true">Преместете се нагоре</string>
+  <string name="button_more_options" tools:machine_translated="true">Повеќе опции</string>
+  <string name="button_host_options" tools:machine_translated="true">Опции за домаќин</string>
+  <string name="button_collapse" tools:machine_translated="true">Скриј</string>
+  <string name="error_key_load_failed" tools:machine_translated="true">Не успеа да се вчита клучот „%1$s“: %2$s</string>
+  <string name="error_connection_failed" tools:machine_translated="true">Неуспешно се воспостави врска со %1$s (%2$s): %3$s</string>
+  <string name="error_port_forward_load_failed" tools:machine_translated="true">Неуспешно е заземено пренасочувањето на портовите за %1$s: %2$s</string>
+  <string name="error_host_save_failed" tools:machine_translated="true">Неуспешно зачувување на конфигурацијата на хостот %1$s: %2$s</string>
+  <string name="error_color_scheme_load_failed" tools:machine_translated="true">Неуспешно е вчитано избраното колор-схема: %s</string>
+  <string name="host_duplicate_nickname" tools:machine_translated="true">%1$s (копија)</string>
+  <string name="empty_hosts_message" tools:machine_translated="true">Не се конфигурирани хостови.</string>
+  <string name="empty_pubkeys_message" tools:machine_translated="true">Не се пронајдени клучови.</string>
+  <string name="empty_port_forwards_message" tools:machine_translated="true">Не се конфигурирани пренасочувања на порти.</string>
+  <string name="empty_urls_message" tools:machine_translated="true">Не се пронајдени URL-адреси во мемориската област на терминалот.</string>
+  <string name="console_default_title" tools:machine_translated="true">Конзола</string>
+  <string name="host_editor_show_advanced" tools:machine_translated="true">Прикажи напредни опции</string>
+  <string name="host_editor_hide_advanced" tools:machine_translated="true">Прикажи ги напредните опции</string>
+  <string name="resize_width_label" tools:machine_translated="true">Ширина (колони)</string>
+  <string name="resize_height_label" tools:machine_translated="true">Висина (редови)</string>
+  <string name="resize_disable_force_size" tools:machine_translated="true">Исклучете го принуденото поставување на големината.</string>
+  <string name="pubkey_editor_key_type_label" tools:machine_translated="true">Тип на клуч</string>
+  <string name="pubkey_editor_options_label" tools:machine_translated="true">Опции</string>
+  <string name="pubkey_editor_encrypted_startup_warning" tools:machine_translated="true">Криптираните клучеви не можат да се отклучат при стартување.</string>
+  <string name="pubkey_type_label" tools:machine_translated="true">Тип: %s</string>
+  <string name="pubkey_encrypted_description" tools:machine_translated="true">Криптирано</string>
+  <string name="pubkey_not_encrypted_description" tools:machine_translated="true">Не е шифрирано</string>
+  <string name="pubkey_biometric_protection" tools:machine_translated="true">Заштита со отпечаток од прст</string>
+  <string name="pubkey_biometric_description" tools:machine_translated="true">Заштитете го овој клуч со отпечаток од вашиот прст.</string>
+  <string name="pubkey_biometric_not_enrolled" tools:machine_translated="true">Не е регистриран отпечаток од прст. Направете ја постапката за регистрирање отпечаток од прст во поставките на уредот за да ја користите оваа функција.</string>
+  <string name="pubkey_biometric_key_type_warning" tools:machine_translated="true">Заштита со отпечаток од прст е достапна само за RSA и EC клучеви.</string>
+  <string name="pubkey_biometric_prompt_title" tools:machine_translated="true">Потврдете ја автентичноста за да го користите клучот.</string>
+  <string name="pubkey_biometric_prompt_subtitle" tools:machine_translated="true">Допрете го сензорот за отпечаток од прст за да го отклучите „%1$s“.</string>
+  <string name="pubkey_biometric_description_icon" tools:machine_translated="true">Заштитено со отпечаток од прст</string>
+  <string name="pubkey_biometric_not_available" tools:machine_translated="true">Биометриската автентикација со отпечаток од прст не е достапна.</string>
+  <string name="portforward_nickname_placeholder" tools:machine_translated="true">Внатрешен веб-сервер</string>
+  <string name="portforward_port_range_error" tools:machine_translated="true">Бројот на портата мора да биде помеѓу 1 и 65535</string>
+  <string name="portforward_destination_placeholder" tools:machine_translated="true">localhost:80</string>
+  <string name="portforward_destination_format_error" tools:machine_translated="true">Форматот треба да биде: хост:порт (на пример, localhost:80)</string>
+  <string name="portforward_host_address" tools:machine_translated="true">Адреса на хостот</string>
+  <string name="portforward_source_addr_localhost" tools:machine_translated="true">Локален хост</string>
+  <string name="portforward_source_addr_localhost_ipv4" tools:machine_translated="true">Локален хост (само IPv4)</string>
+  <string name="portforward_source_addr_localhost_ipv6" tools:machine_translated="true">Локален хост (само IPv6)</string>
+  <string name="portforward_source_addr_all" tools:machine_translated="true">Сите адреси</string>
+  <string name="portforward_source_addr_all_ipv4" tools:machine_translated="true">Сите IPv4 адреси</string>
+  <string name="portforward_source_addr_all_ipv6" tools:machine_translated="true">Сите IPv6 адреси</string>
+  <string name="portforward_source_addr_specific" tools:machine_translated="true">Конкретна адреса</string>
+  <string name="portforward_source_addr_specific_placeholder" tools:machine_translated="true">192.168.1.1</string>
+  <string name="portforward_type_label" tools:machine_translated="true">Тип: %s</string>
+  <string name="portforward_enable" tools:machine_translated="true">Овозможи</string>
+  <string name="portforward_disable" tools:machine_translated="true">Исклучи</string>
+  <string name="portforward_enabled" tools:machine_translated="true">Овозможено пренасочување на порта</string>
+  <string name="portforward_disabled" tools:machine_translated="true">Пренасочување на портата е деактивирано.</string>
+  <string name="protocol_spinner_label" tools:machine_translated="true">Протокол</string>
+  <string name="expand" tools:machine_translated="true">Прошири</string>
+  <string name="hostpref_authagent_with_confirmation" tools:machine_translated="true">бара потврда</string>
+  <string name="hostpref_add_host" tools:machine_translated="true">Додади домаќин</string>
+  <string name="hostpref_save_host" tools:machine_translated="true">Зачувај го хостот</string>
+  <string name="hostpref_setting_title" tools:machine_translated="true">Поставки за домаќин</string>
+  <string name="pubkey_import_existing" tools:machine_translated="true">Импортирај постоечки јавен клуч.</string>
+  <string name="pubkey_import_from_clipboard" tools:machine_translated="true">Увези од привремениот простор</string>
+  <string name="pubkey_import_clipboard_key_label" tools:machine_translated="true">Содржина на приватниот клуч</string>
+  <string name="pubkey_paste_from_clipboard" tools:machine_translated="true">Вметнете од привремениот простор</string>
+  <string name="grant_permission" tools:machine_translated="true">Дозволи</string>
+  <string name="connect_anyway" tools:machine_translated="true">Поврзете се и покрај тоа</string>
+  <string name="open_settings" tools:machine_translated="true">Отворете ги поставките</string>
+  <string name="terminal_no_route" tools:machine_translated="true">Дали се обидувате да пристапите до локален хост? Дозволете ги потребните дозволи за локалната мрежа.</string>
+  <string name="loading_message" tools:machine_translated="true">Вчитување…</string>
+  <string name="migration_checking" tools:machine_translated="true">Се проверува базата на податоци…</string>
+  <string name="migration_title" tools:machine_translated="true">Миграција на базата на податоци</string>
+  <string name="migration_warning" tools:machine_translated="true">Ве молиме, не го затворајте апликацијата за време на процесот на миграција.</string>
+  <string name="migration_stats_hosts" tools:machine_translated="true">Мигрирани хостови: %d</string>
+  <string name="migration_stats_pubkeys" tools:machine_translated="true">Мигрирани SSH клучови: %d</string>
+  <string name="migration_stats_port_forwards" tools:machine_translated="true">Пренесени пренасочувања на порти: %d</string>
+  <string name="migration_stats_known_hosts" tools:machine_translated="true">Број на познати хостови кои се мигрирани: %d</string>
+  <string name="migration_failed_title" tools:machine_translated="true">Миграцијата не успеа</string>
+  <string name="migration_failed_message" tools:machine_translated="true">Дојде до грешка за време на миграцијата на базата на податоци: %s</string>
+  <string name="migration_retry" tools:machine_translated="true">Обидете повторно</string>
+  <string name="migration_failed_help" tools:machine_translated="true">Ако проблемот продолжи, ве молиме, пријавете го на %1$s и прикачете го дебаг-логот од погоре.</string>
+  <string name="migration_warnings_title" tools:machine_translated="true">Предупредувања за миграцијата</string>
+  <string name="migration_copy_warnings" tools:machine_translated="true">Копирај ги предупредувањата</string>
+  <string name="migration_debug_log_title" tools:machine_translated="true">Дневник за отстранување на грешки</string>
+  <string name="migration_copy_debug_log" tools:machine_translated="true">Копирај го дневникот за отстранување на грешки.</string>
+  <string name="disconnect_host_alert" tools:machine_translated="true">Дали сте сигурни дека сакате да се одјавите од „%1$s“?</string>
+  <string name="delete_host_confirm" tools:machine_translated="true">Дали сте сигурни дека сакате да го избришете хостот „%1$s“?</string>
+  <string name="forget_host_keys_confirm" tools:machine_translated="true">Дали сте сигурни дека сакате да ги избришете зачуваните клучни податоци за хостот за \'%1$s\'? Ќе бидете побарани да го потврдите клучниот податок за хостот при следната конекција.</string>
+  <string name="list_pubkey_edit" tools:machine_translated="true">Уредете јабничкиот клуч</string>
+  <string name="hostpref_ipversion_title" tools:machine_translated="true">IP верзија</string>
+  <string name="ipversion_auto" tools:machine_translated="true">Автоматски</string>
+  <string name="ipversion_ipv4" tools:machine_translated="true">Само IPv4</string>
+  <string name="ipversion_ipv6" tools:machine_translated="true">Само IPv6</string>
+  <string name="hostpref_jumphost_title" tools:machine_translated="true">Хост за прескокнување (ProxyJump)</string>
+  <string name="hostpref_jumphost_summary" tools:machine_translated="true">Поврзете се преку друг SSH хост</string>
+  <string name="list_jumphost_none" tools:machine_translated="true">Ништо (директна врска)</string>
+  <string name="terminal_connecting_via_jump" tools:machine_translated="true">Поврзување преку помошен сервер: %s</string>
+  <string name="terminal_jump_connected" tools:machine_translated="true">Поврзан со преодниот сервер: %s</string>
+  <string name="terminal_jump_authenticated" tools:machine_translated="true">Успешно се најавивте на сервер за пристап: %s</string>
+  <string name="terminal_jump_failed" tools:machine_translated="true">Неуспешно поврзување со хостот за прескокнување %1$s: %2$s</string>
+  <string name="terminal_jump_auth_failed" tools:machine_translated="true">Аутентикацијата за привремениот хост не успеа: %s</string>
+  <string name="terminal_jump_not_found" tools:machine_translated="true">Не е пронајден хост за пристап во зачуваната листа на хостови.</string>
+  <string name="terminal_jump_password" tools:machine_translated="true">Лозинка за примарниот сервер %s:</string>
+  <string name="view_logs" tools:machine_translated="true">Прегледајте дневници</string>
+  <string name="logs_title" tools:machine_translated="true">Дневници на апликациите</string>
+  <string name="copy_logs" tools:machine_translated="true">Копирај ги логовите</string>
+  <string name="logs_copied" tools:machine_translated="true">Дневниците се копирани во привремениот простор за складирање.</string>
+  <string name="logs_bug_report_info" tools:machine_translated="true">За да пријавите грешка, копирајте ги овие логови и отворете нов проблем на https://connectbot.org/bug.</string>
+  <string name="no_logs_available" tools:machine_translated="true">Нема достапни записи</string>
+  <string name="help_section_about" tools:machine_translated="true">За програмата</string>
+  <string name="title_contact" tools:machine_translated="true">Контакт и поддршка</string>
+  <string name="help_section_contact" tools:machine_translated="true">Контакт и поддршка</string>
+  <string name="help_website" tools:machine_translated="true">Веб-страница</string>
+  <string name="help_github" tools:machine_translated="true">Изворен код</string>
+  <string name="help_report_bug" tools:machine_translated="true">Пријавете грешка</string>
+  <string name="help_section_donate" tools:machine_translated="true">Поддржете го развојот</string>
+  <string name="help_donate_github" tools:machine_translated="true">Гибхаб спонзори</string>
+  <string name="help_donate_coffee" tools:machine_translated="true">Понудете ми кафе</string>
+  <string name="colorscheme_default_description" tools:machine_translated="true">Стандардни бои за терминалот</string>
+  <string name="colorscheme_solarized_dark_description" tools:machine_translated="true">Прецизни бои за машини и луѓе</string>
+  <string name="colorscheme_solarized_light_description" tools:machine_translated="true">Соларизирана тема со светла позадина.</string>
+  <string name="colorscheme_dracula_description" tools:machine_translated="true">Темна тема за терминалот</string>
+  <string name="colorscheme_nord_description" tools:machine_translated="true">Арктичка, северно-сина палета на бои</string>
+  <string name="colorscheme_gruvbox_dark_description" tools:machine_translated="true">Ретро-стилизирана шема на бои</string>
+  <string name="colorscheme_monokai_description" tools:machine_translated="true">Тема инспирирана од Sublime Text</string>
+  <string name="colorscheme_tomorrow_night_description" tools:machine_translated="true">Чиста и удобна темна тема.</string>
+  <string name="pref_profiles_category" tools:machine_translated="true">Профили</string>
+  <string name="pref_default_profile_title" tools:machine_translated="true">Стандарден профил</string>
+  <string name="pref_default_profile_none" tools:machine_translated="true">Нема (користете ги поставките на хостот)</string>
+  <string name="pref_alwaysvisible_summary" tools:machine_translated="true">Направете ги специјалните копчиња секогаш видливи.</string>
+  <string name="pref_customterminal_title" tools:machine_translated="true">Прилагодени типови на терминал</string>
+  <string name="pref_customterminal_summary" tools:machine_translated="true">Додадете прилагодени вредности за променливата TERM за оддалечените сервери.</string>
+  <string name="dialog_customterminal_title" tools:machine_translated="true">Додадете приспособен тип на терминал.</string>
+  <string name="dialog_customterminal_hint" tools:machine_translated="true">Тип на терминал (на пример, rxvt-unicode)</string>
+  <string name="dialog_custom_value_label" tools:machine_translated="true">Внесете прилагодена вредност</string>
+  <string name="list_camera_ctrlaspace_description" tools:machine_translated="true">Ctrl+A, потоа интервал.</string>
+  <string name="list_camera_ctrla_description" tools:machine_translated="true">Ctrl+A</string>
+  <string name="list_camera_esc_description" tools:machine_translated="true">Esc</string>
+  <string name="list_camera_esc_a_description" tools:machine_translated="true">Esc+A</string>
+  <string name="list_camera_none_description" tools:machine_translated="true">Ништо</string>
+  <string name="list_camera_text_input_description" tools:machine_translated="true">Внесување текст</string>
+  <string name="list_menu_export_hosts" tools:machine_translated="true">Извезете ги сите хостови</string>
+  <string name="list_menu_import_hosts" tools:machine_translated="true">Увези домаќини</string>
+  <string name="export_hosts_success" tools:machine_translated="true">Извезени се %1$d домаќини и %2$d профили.</string>
+  <string name="import_hosts_success" tools:machine_translated="true">Увезени се %1$d хостови (%2$d пропуштени) и %3$d профили (%4$d пропуштени)</string>
+  <string name="export_hosts_failed" tools:machine_translated="true">Неуспешно извршен извоз на хостови: %s</string>
+  <string name="import_hosts_failed" tools:machine_translated="true">Неуспешно внесување на хостовите: %s</string>
+  <string name="shortcut_customize_title" tools:machine_translated="true">Прилагодете ја прекуShortcut-от</string>
+  <string name="shortcut_icon_color" tools:machine_translated="true">Боја на иконата</string>
+  <string name="shortcut_icon_style" tools:machine_translated="true">Стил на икона</string>
+  <string name="shortcut_use_host_color" tools:machine_translated="true">Користете ја бојата на хостот</string>
+  <string name="shortcut_create" tools:machine_translated="true">Креирај преку пат</string>
+  <string name="icon_style_terminal" tools:machine_translated="true">Терминал</string>
+  <string name="icon_style_server" tools:machine_translated="true">Сервер</string>
+  <string name="icon_style_cloud" tools:machine_translated="true">Облак</string>
+  <string name="icon_style_key" tools:machine_translated="true">Клуч</string>
+  <string name="pref_auth_on_launch_title" tools:machine_translated="true">Аутентикација при стартување</string>
+  <string name="pref_auth_on_launch_summary" tools:machine_translated="true">Задолжително е да се користи отпечаток од прст, препознавање на лице или ПИН-код на уредот при отворање на апликацијата.</string>
+  <string name="pref_security_category" tools:machine_translated="true">Безбедност</string>
+  <string name="auth_screen_title" tools:machine_translated="true">ConnectBot е заклучен</string>
+  <string name="auth_screen_unlock_button" tools:machine_translated="true">Допрете за отклучување</string>
+  <string name="auth_prompt_title" tools:machine_translated="true">Отклучете го ConnectBot.</string>
+  <string name="auth_prompt_subtitle" tools:machine_translated="true">Потврдете ја вашата идентификација за да продолжите.</string>
+  <string name="auth_banner_title" tools:machine_translated="true">Порака за автентикација од %1$s</string>
+  <string name="terminal_auth_banner_header" tools:machine_translated="true">[%1$s] Порака за автентикација:</string>
+  <string name="pref_imetogglekey_title" tools:machine_translated="true">Прикажи прекинувач за IME.</string>
+  <string name="pref_imetogglekey_summary" tools:machine_translated="true">Додадете копче за IME во редот со специјалните тастери, кое ќе го активира/деактивира режимот за составување за јазици кои бараат буфер за составување (јапонски, кинески, корејски итн.).</string>
+  <string name="pref_ime_shortcut_mode_title" tools:machine_translated="true">Преки патишта за целосен IME при притискање на Ctrl/Alt</string>
+  <string name="pref_ime_shortcut_mode_disabled" tools:machine_translated="true">Без заобиколно решение</string>
+  <string name="pref_ime_shortcut_mode_type_null" tools:machine_translated="true">Необработени настани од тастатурата</string>
+  <string name="pref_ime_shortcut_mode_force_ascii" tools:machine_translated="true">Принудно користење на ASCII (препорачано)</string>
+  <string name="pref_swipe_sessions_title" tools:machine_translated="true">Повлечете за да префрлате меѓу сесиите.</string>
+  <string name="pref_swipe_sessions_summary" tools:machine_translated="true">Овозможете хоризонтално лизгање за да ги менувате сесиите на терминалот. Опцијата е исклучена по дифолт за да се подобри пристапноста.</string>
+  <string name="console_switch_session" tools:machine_translated="true">Премини на друга сесија.</string>
+  <string name="console_previous_session" tools:machine_translated="true">Претходна сесија</string>
+  <string name="console_next_session" tools:machine_translated="true">Следна сесија</string>
+  <string name="button_key_alt" tools:machine_translated="true">Alt</string>
+  <string name="image_description_toggle_alt_key" tools:machine_translated="true">Вклучи/исклучи го копчето Alt.</string>
+  <string name="button_key_ime" tools:machine_translated="true">ИМЕ</string>
+  <string name="image_description_toggle_compose_mode" tools:machine_translated="true">Вклучете/исклучете режимот за составување за внесување преку IME.</string>
+  <string name="console_menu_compose_mode" tools:machine_translated="true">Режим за составување (IME)</string>
+  <string name="hostpref_profile_edit" tools:machine_translated="true">Уреди го избраниот профил.</string>
+  <string name="terminal_mosh_installing" tools:machine_translated="true">Се подготвува поддршката за Mosh...</string>
+  <string name="terminal_mosh_starting" tools:machine_translated="true">Почнува поврзувањето со Mosh...</string>
+  <string name="terminal_mosh_install_timeout" tools:machine_translated="true">Предупредување: Инсталацијата на Mosh го надмина дозволеното време.</string>
+  <string name="terminal_mosh_launching_server" tools:machine_translated="true">Покренување на „mosh-server“ на далечниот хост...</string>
+  <string name="terminal_mosh_server_failed" tools:machine_translated="true">Не успеа да се стартува mosh-server на далечниот хост.</string>
+  <string name="terminal_mosh_client_failed" tools:machine_translated="true">Не успеа да се стартува клиентот на Mosh.</string>
+  <string name="terminal_mosh_connected" tools:machine_translated="true">Воспоставена е врската со Mosh.</string>
+  <string name="terminal_mosh_error" tools:machine_translated="true">Грешка во Mosh: %1$s</string>
+  <string name="hostpref_mosh_server_title" tools:machine_translated="true">Команда за серверот на Мош</string>
+  <string name="hostpref_mosh_server_summary" tools:machine_translated="true">Користеничка патека или команда за mosh-server (оставете го полето празно за да се користи стандардната вредност).</string>
+  <string name="hostpref_mosh_port_title" tools:machine_translated="true">UDP порт за Mosh</string>
+  <string name="hostpref_mosh_port_summary" tools:machine_translated="true">Фиксирана UDP порта за „mosh“ (0 за автоматски опсег од 60000 до 61000).</string>
+  <string name="hostpref_locale_title" tools:machine_translated="true">Локација</string>
+  <string name="hostpref_locale_summary" tools:machine_translated="true">Локација за сесијата на „Mosh“ (на пример, en_US.UTF-8).</string>
+  <string name="mosh_feature_title" tools:machine_translated="true">Mosh</string>
+  <string name="pref_mosh_release_title" tools:machine_translated="true">Верзијата на Mosh и изворниот код</string>
+  <string name="pref_mosh_installing" tools:machine_translated="true">Се подготвува поддршката за Mosh...</string>
+  <string name="editor_discard_changes_title" tools:machine_translated="true">Да се откажат промените?</string>
+  <string name="editor_discard_changes_message" tools:machine_translated="true">Вашите измени нема да бидат зачувани ако излезете без да ги снимите.</string>
+  <string name="editor_discard" tools:machine_translated="true">Откажи</string>
+  <string name="editor_save" tools:machine_translated="true">Зачувајте</string>
+  <string name="import_json_file_too_large" tools:machine_translated="true">JSON-датотеката е преголема за да се вчита (максимум 8 МБ).</string>
+  <string name="import_file_unavailable" tools:machine_translated="true">Не може да се отвори избраниот файл.</string>
+  <string name="profile_inline_images" tools:machine_translated="true">Вградени слики</string>
+  <string name="inline_images_off" tools:machine_translated="true">Исклучено</string>
+  <string name="inline_images_ask" tools:machine_translated="true">Прашајте</string>
+  <string name="inline_images_on" tools:machine_translated="true">Вклучено</string>
+  <string name="inline_images_prompt_title" tools:machine_translated="true">Прикажи слики во текстот?</string>
+  <string name="inline_images_prompt_message" tools:machine_translated="true">Дозволете на овој хост да прикажува слики во тек за време на остатокот од оваа сесија?</string>
+  <string name="automation_load_failed" tools:machine_translated="true">Не можеше да се вчита автоматизацијата.</string>
+  <string name="automation_save_failed" tools:machine_translated="true">Не можеше да се зачува автоматизацијата.</string>
+  <string name="automation_invalid_action" tools:machine_translated="true">Проверете го текстот, шаблонот, времетраењето или избраното пренасочување на портата.</string>
+  <string name="automation_action_failed" tools:machine_translated="true">Акцијата не успеа.</string>
+  <string name="automation_timed_out" tools:machine_translated="true">Истече времето за чекање на текст.</string>
+  <string name="automation_buffer_overflow" tools:machine_translated="true">Премногу податоци пристигнаа пред автоматизацијата да започне со нивна обработка.</string>
+  <string name="automation_no_session" tools:machine_translated="true">Оваа постапка бара отворена терминална сесија.</string>
+  <string name="automation_forward_missing" tools:machine_translated="true">Пренасочувањето на портата е избришано или недостапува.</string>
+  <string name="automation_forward_unsupported" tools:machine_translated="true">Оваа врска не поддржува пренасочување на порти.</string>
+  <string name="automation_wait_text" tools:machine_translated="true">Чекај низа</string>
+  <string name="automation_send_text" tools:machine_translated="true">Испратете низа.</string>
+  <string name="automation_send_key" tools:machine_translated="true">Испратете специјален тастер.</string>
+  <string name="automation_delay" tools:machine_translated="true">Почекајте.</string>
+  <string name="automation_disconnect" tools:machine_translated="true">Искинете ја врската.</string>
+  <string name="automation_enable_forward" tools:machine_translated="true">Овозможете пренасочување на портата.</string>
+  <string name="automation_disable_forward" tools:machine_translated="true">Исклучете го пренасочувањето на портата.</string>
+  <string name="automation_add" tools:machine_translated="true">Додади акција</string>
+  <string name="automation_save" tools:machine_translated="true">Зачувајте</string>
+  <string name="automation_edit" tools:machine_translated="true">Уреди</string>
+  <string name="automation_delete" tools:machine_translated="true">Избриши</string>
+  <string name="automation_move_up" tools:machine_translated="true">Премести нагоре.</string>
+  <string name="automation_move_down" tools:machine_translated="true">Преместете надолу.</string>
+  <string name="automation_drag" tools:machine_translated="true">Повлечете за да го промените редоследот.</string>
+  <string name="automation_cancel" tools:machine_translated="true">Откажи</string>
+  <string name="automation_text" tools:machine_translated="true">Текст</string>
+  <string name="automation_regex" tools:machine_translated="true">Регуларен израз</string>
+  <string name="automation_regex_help" tools:machine_translated="true">Го споредува влезниот текст без ANSI форматирање. Регуларните изрази ја поддржуваат синтаксата на RE2; lookaround и повратните референци не се поддржани.</string>
+  <string name="automation_duration" tools:machine_translated="true">Времетраење (секунди)</string>
+  <string name="automation_timeout" tools:machine_translated="true">Време за чекање (секунди)</string>
+  <string name="automation_key" tools:machine_translated="true">Копче</string>
+  <string name="automation_forward" tools:machine_translated="true">Пренасочување на портата</string>
+  <string name="automation_failure" tools:machine_translated="true">При неуспех.</string>
+  <string name="automation_stop" tools:machine_translated="true">Прекинете ја автоматизацијата.</string>
+  <string name="automation_continue" tools:machine_translated="true">Продолжете</string>
+  <string name="automation_save_host" tools:machine_translated="true">Зачувајте го хостот за да конфигурирате автоматизација.</string>
+  <string name="automation_progress" tools:machine_translated="true">Автоматизација: %1$d / %2$d</string>
+  <string name="automation_failure_step" tools:machine_translated="true">Акција број %1$d: %2$s</string>
+  <string name="automation_cancel_run" tools:machine_translated="true">Откажи ја автоматизацијата.</string>
+  <string name="automation_key_enter" tools:machine_translated="true">Enter</string>
+  <string name="automation_key_tab" tools:machine_translated="true">Таб</string>
+  <string name="automation_key_escape" tools:machine_translated="true">Esc</string>
+  <string name="automation_key_backspace" tools:machine_translated="true">Назад едно место</string>
+  <string name="automation_key_delete" tools:machine_translated="true">Избриши</string>
+  <string name="automation_key_up" tools:machine_translated="true">Стрелка нагоре</string>
+  <string name="automation_key_down" tools:machine_translated="true">Стрелка надолу</string>
+  <string name="automation_key_left" tools:machine_translated="true">Лева стрелка</string>
+  <string name="automation_key_right" tools:machine_translated="true">Стрелка надесно.</string>
+  <string name="automation_key_home" tools:machine_translated="true">Home</string>
+  <string name="automation_key_end" tools:machine_translated="true">Крај</string>
+  <string name="automation_key_insert" tools:machine_translated="true">Вметни</string>
+  <string name="automation_key_page_up" tools:machine_translated="true">Page Up</string>
+  <string name="automation_key_page_down" tools:machine_translated="true">Следна страница</string>
+  <string name="automation_key_function" tools:machine_translated="true">F%1$s</string>
+  <string name="automation_key_shift" tools:machine_translated="true">Shift (клавиш)</string>
+  <string name="automation_seconds" tools:machine_translated="true">%.3f секунди</string>
+  <plurals name="automation_count" tools:machine_translated="true">
+    <item quantity="one">%1$d акција</item>
+    <item quantity="other">%1$d акции</item>
+  </plurals>
+  <string name="host_status_unread_output" tools:machine_translated="true">Непрочитан излез</string>
+  <string name="host_status_user_disconnected" tools:machine_translated="true">Ја прекинавте врската со овој хост.</string>
+  <string name="host_status_session_exit" tools:machine_translated="true">Отдалечената сесија заврши.</string>
+  <string name="host_status_remote_closed" tools:machine_translated="true">Серверот ја прекина врската. Можете повторно да се поврзете.</string>
+  <string name="host_status_connection_lost" tools:machine_translated="true">Врската беше прекината. Можете повторно да се поврзете.</string>
+  <string name="host_status_network_lost" tools:machine_translated="true">Мрежната врска беше прекината. Повторно поврзете се кога мрежата ќе биде достапна.</string>
+  <string name="host_status_auth_failed" tools:machine_translated="true">Аутентикацијата не успеа. Проверете го вашето корисничко име, лозинка или клуч пред да се повторите да се поврзете.</string>
+  <string name="host_status_connection_ended" tools:machine_translated="true">Врската е прекината.</string>
+  <string name="host_status_action_required" tools:machine_translated="true">Потребна е интервенција за поврзувањето.</string>
+  <string name="host_status_unread_explanation" tools:machine_translated="true">%1$s Отворете ја конзолата за да го прочитате остатокот од излезот.</string>
+  <string name="hostpref_mosh_network_timeout_title" tools:machine_translated="true">Временско ограничување на мрежата на Mosh (секунди)</string>
+  <string name="hostpref_mosh_network_timeout_summary" tools:machine_translated="true">Време без ажурирања од клиентот пред серверот да се исклучи. Оставете го полето празно за да се користи поставката на серверот или една недела; користете 0 за да се деактивира рокот на важност.</string>
+  <string name="hostpref_mosh_network_timeout_error" tools:machine_translated="true">Внесете цел број од 0 до 2147483647 или оставете го полето празно.</string>
+  <string name="notification_channel_sessions" tools:machine_translated="true">Активни сесии</string>
+  <string name="notification_channel_attention" tools:machine_translated="true">Сесии кои бараат внимание.</string>
+  <string name="notification_channel_bells" tools:machine_translated="true">Звучни сигнали од терминалот</string>
+  <string name="notification_channel_connections" tools:machine_translated="true">Прекинати врски</string>
+  <string name="pref_notification_channels_title" tools:machine_translated="true">Управувајте ги каналите за известувања во поставките.</string>
+  <string name="notification_summary" tools:machine_translated="true">%1$s · %2$s</string>
+  <string name="notification_connected" tools:machine_translated="true">Поврзан</string>
+  <string name="notification_connecting" tools:machine_translated="true">Поврзување…</string>
+  <string name="notification_disconnected" tools:machine_translated="true">Прекинато</string>
+  <string name="notification_bell" tools:machine_translated="true">Звучен сигнал од терминалот.</string>
+  <string name="notification_session_detail" tools:machine_translated="true">%1$s: %2$s</string>
+  <string name="notification_event_time" tools:machine_translated="true">%1$s · %2$s</string>
+  <string name="notification_mark_seen" tools:machine_translated="true">Означи како прочитано</string>
+  <string name="notification_mute_bells" tools:machine_translated="true">Исклучете ги звучните сигнали.</string>
+  <string name="pref_connection_lost_notification_title" tools:machine_translated="true">Известувања за прекината врска</string>
+  <string name="pref_connection_lost_notification_summary" tools:machine_translated="true">Прикажувајте известување без звук кога се прекинува сесија што не ја следите, а тоа се случува неочекувано.</string>
+  <plurals name="notification_connected_sessions" tools:machine_translated="true">
+		<item quantity="one">%d сесии се поврзани.</item>
+		<item quantity="other">%d сесии се поврзани.</item>
+	</plurals>
+  <plurals name="notification_attention_sessions" tools:machine_translated="true">
+		<item quantity="one">%d бара внимание.</item>
+		<item quantity="other">%d бараат внимание.</item>
+	</plurals>
+  <plurals name="notification_more_sessions" tools:machine_translated="true">
+		<item quantity="one">+%d повеќе сесии</item>
+		<item quantity="other">+%d повеќе сесии</item>
+	</plurals>
+  <string name="pref_connection_alerts_title" tools:machine_translated="true">Известувања за поврзување</string>
+  <string name="pref_connection_alerts_summary" tools:machine_translated="true">Прикажи звучен сигнал и известувања за прекин на поврзувањето.</string>
+  <string name="pref_connection_alerts_disabled_summary" tools:machine_translated="true">Известувањата за поврзување се исклучени. Поддршката за поврзување во позадина останува активирана.</string>
+  <string name="pref_service_notification_visibility" tools:machine_translated="true">Android го контролира прикажувањето на известувањето за активната конекција, независно од известувањата за конекција.</string>
+  <string name="pref_notifications_blocked" tools:machine_translated="true">Android ги блокираше известувањата за ConnectBot. Поддршката за позадинска конекција останува активирана.</string>
+  <string name="connection_alert_permission_title" tools:machine_translated="true">Известувања за поврзување</string>
+  <string name="connection_alert_permission_message" tools:machine_translated="true">Овозможете ги известувањата за да ги видите поврзаните уреди и да добивате известувања за звучен сигнал и прекин на поврзувањето. Поврзувањата сепак можат да продолжат да работат во позадина дури и без оваа дозвола.</string>
+  <string name="connection_alert_permission_denied_title" tools:machine_translated="true">Овозможете известувања</string>
+  <string name="connection_alert_permission_denied_message" tools:machine_translated="true">Овозможете известувања за ConnectBot во поставките на Android за да ги видите поврзаните уреди и да добивате известувања за звук и прекин на поврзувањето. Поддршката за позадинска поврзаност останува овозможена.</string>
+  <string name="profile_bold_as_bright" tools:machine_translated="true">Задебелено како светло.</string>
+  <string name="profile_bold_as_bright_summary" tools:machine_translated="true">Користете светли ANSI-бои за текст во болд. Се применува на новите сесии на терминалот.</string>
+  <string name="known_hosts_title" tools:machine_translated="true">Познати хостови</string>
+  <string name="hostpref_known_hosts_title" tools:machine_translated="true">Познати клучеви на хостот</string>
+  <string name="hostpref_known_hosts_summary" tools:machine_translated="true">Прегледајте, увезете или отстранете ги клучовите за кои се доделени доверливи права за овој хост.</string>
+  <string name="known_hosts_empty" tools:machine_translated="true">Не се пронајдени познати хостови.</string>
+  <string name="known_host_algorithm" tools:machine_translated="true">Алгоритам: %1$s</string>
+  <string name="known_host_delete" tools:machine_translated="true">Избриши познат хост</string>
+  <string name="known_host_delete_confirm" tools:machine_translated="true">Избриши</string>
+  <string name="known_host_delete_title" tools:machine_translated="true">Дали да го избришам познатиот хост?</string>
+  <string name="known_host_delete_message" tools:machine_translated="true">Клучот за %1$s ќе треба повторно да се потврди следниот пат кога ќе се поврзете.</string>
+  <string name="known_hosts_error" tools:machine_translated="true">Не може да се ажурира листата на познати хостови.</string>
+  <string name="known_host_import" tools:machine_translated="true">Импортирај јавен клуч на хост.</string>
+  <string name="known_host_import_title" tools:machine_translated="true">Импортирај јавeн клуч на хостот.</string>
+  <string name="known_host_import_key_label" tools:machine_translated="true">Јавен клуч на OpenSSH</string>
+  <string name="known_host_import_help" tools:machine_translated="true">Вметнете го целиот јавен клуч, на пример „ssh-ed25519 AAAA…“. Самиот отпечаток не може да се внесе.</string>
+  <string name="known_host_import_invalid" tools:machine_translated="true">Внесете валиден јавен клуч на OpenSSH. Алгоритмот и кодираниот клуч мора да се совпаѓаат.</string>
+  <string name="known_host_import_confirm" tools:machine_translated="true">Увези</string>
+  <string name="logs_exit_history" tools:machine_translated="true">Неодамнешни завршени процеси</string>
+  <string name="logs_exit_history_empty" tools:machine_translated="true">Нема достапни записи за завршување на процесите.</string>
+  <string name="logs_exit_history_unavailable" tools:machine_translated="true">Не е достапна историјата на завршување на процесите.</string>
+  <string name="logs_exit_description_unavailable" tools:machine_translated="true">Нема достапен опис.</string>
+  <string name="logs_exit_details" tools:machine_translated="true">Време: %1$s\nПроцес: %2$s (PID %3$d)\nПричина: %4$s (%5$d)\nСтатус/сигнал: %6$d\nОпис: %7$s\nПоследно измерена меморија: PSS %8$d kB, RSS %9$d kB</string>
+  <string name="save_tombstone" tools:machine_translated="true">Зачувај извештај за пад</string>
+  <string name="tombstone_save_info" tools:machine_translated="true">Зачувајте го најновиот достапен извештај за пад на нативниот код на место што ќе го изберете.</string>
+  <string name="tombstone_saved" tools:machine_translated="true">Извештајот за пад е зачуван.</string>
+  <string name="tombstone_unavailable" tools:machine_translated="true">Нема достапен извештај за пад на нативниот код. Android можеби веќе го отстранил.</string>
+  <string name="tombstone_save_failed" tools:machine_translated="true">Не можеше да се зачува извештајот за пад.</string>
+  <string name="pubkey_import_save_failed" tools:machine_translated="true">Не можеше да се зачува клучот. Обидете се со друго име или обидете се повторно.</string>
+  <string name="shortcut_create_failed" tools:machine_translated="true">Не можеше да се создаде кратенка. Ве молиме, обидете се повторно.</string>
+  <string name="terminal_jump_cycle" tools:machine_translated="true">Веригата на преодни хостови содржи циклус. Проверете ги поставките за преодниот хост.</string>
+  <string name="terminal_jump_too_deep" tools:machine_translated="true">Веригата на преодни хостови го надминува лимитот од 32 хостови.</string>
+  <string name="telnet_echo_title" tools:machine_translated="true">Локално прикажување на внесениот текст.</string>
+  <string name="telnet_echo_summary" tools:machine_translated="true">Изберете дали внесениот текст треба да се прикажува локално. Ако опцијата е постојано вклучена, текстот може да се повторува кога серверот го враќа.</string>
+  <string name="telnet_echo_auto" tools:machine_translated="true">Автоматски</string>
+  <string name="telnet_echo_on" tools:machine_translated="true">Секогаш вклучено.</string>
+  <string name="telnet_echo_off" tools:machine_translated="true">Секогаш исклучено.</string>
+  <string name="telnet_negotiation_title" tools:machine_translated="true">Почеток на преговарањето.</string>
+  <string name="telnet_negotiation_summary" tools:machine_translated="true">Преговарајте за карактеристиките на терминалот при поврзување или почекајте серверот да ги побара.</string>
+  <string name="telnet_negotiation_interactive" tools:machine_translated="true">Преговарај при поврзување.</string>
+  <string name="telnet_negotiation_passive" tools:machine_translated="true">Почекајте го серверот.</string>
+  <string name="telnet_nonbinary_title" tools:machine_translated="true">Небинарни податоци</string>
+  <string name="telnet_nonbinary_summary" tools:machine_translated="true">Ако серверот одбива бинарен режим, дозволете употреба на стари осумбитни бајти или задолжете употреба на ASCII. И двете страни мора да користат исто кодирање.</string>
+  <string name="telnet_nonbinary_legacy" tools:machine_translated="true">Овозможете употреба на стари осумбитни бајти.</string>
+  <string name="telnet_nonbinary_ascii" tools:machine_translated="true">Задолжително користете ASCII.</string>
+  <string name="telnet_newline_title" tools:machine_translated="true">Залепени крај на редови</string>
+  <string name="telnet_newline_summary" tools:machine_translated="true">Надвор од бинарниот режим, претворете ги налепаните LF карактери во CRLF или задржете ги LF. Ова важи и за автоматизиран текст.</string>
+  <string name="telnet_newline_crlf" tools:machine_translated="true">Претвори LF во CRLF.</string>
+  <string name="telnet_newline_lf" tools:machine_translated="true">Зачувај го LF</string>
+  <string name="telnet_ascii_input_rejected" tools:machine_translated="true">Внесените податоци не беа испратени. Оваа врска бара користење на ASCII кодирање додека серверот не овозможи бинарен режим.</string>
+  <string name="telnet_input_rejected" tools:machine_translated="true">Не можеше да се испрати внесот до овој Telnet сервер.</string>
+  <string name="terminal_connection_failed" tools:machine_translated="true">Врската не успеа.</string>
+  <string name="terminal_connected" tools:machine_translated="true">Успешно поврзано.</string>
+  <string name="terminal_auth_success" tools:machine_translated="true">Успешна автентикација.</string>
+  <string name="terminal_session_failed" tools:machine_translated="true">Не може да се отвори SSH сесија.</string>
+  <string name="terminal_pty_rejected" tools:machine_translated="true">SSH-серверот го одби барањето за терминал.</string>
+  <string name="terminal_shell_rejected" tools:machine_translated="true">SSH-серверот го одби барањето за отворање на командна обвивка.</string>
+  <string name="console_menu_connection_info" tools:machine_translated="true">Информации за поврзувањето</string>
+  <string name="connection_info_protocol" tools:machine_translated="true">Протокол</string>
+  <string name="connection_info_host" tools:machine_translated="true">Домаќин</string>
+  <string name="connection_info_port" tools:machine_translated="true">Порт</string>
+  <string name="connection_info_ssh_port" tools:machine_translated="true">SSH порта</string>
+  <string name="connection_info_username" tools:machine_translated="true">Корисничко име</string>
+  <string name="connection_info_status" tools:machine_translated="true">Статус</string>
+  <string name="connection_info_connecting" tools:machine_translated="true">Поврзување.</string>
+  <string name="connection_info_connected" tools:machine_translated="true">Поврзан</string>
+  <string name="connection_info_disconnected" tools:machine_translated="true">Прекинато поврзување.</string>
+  <string name="connection_info_local_address" tools:machine_translated="true">Локална адреса</string>
+  <string name="connection_info_ssh_bootstrap" tools:machine_translated="true">Детали за почетната SSH постапка, која се користи за стартување на Mosh, а не за активната Mosh врска.</string>
+  <string name="connection_info_ssh_negotiation" tools:machine_translated="true">Детали за преговорите преку SSH-врската.</string>
+  <string name="connection_info_unavailable" tools:machine_translated="true">Деталите за преговарањето преку SSH не се достапни.</string>
+  <string name="connection_info_key_exchange" tools:machine_translated="true">Размена на клучеви</string>
+  <string name="connection_info_host_key" tools:machine_translated="true">Клуч на хостот на серверот.</string>
+  <string name="connection_info_cipher_outbound" tools:machine_translated="true">Криптирање: од клиентот до серверот.</string>
+  <string name="connection_info_cipher_inbound" tools:machine_translated="true">Криптирање: од серверот до клиентот.</string>
+  <string name="connection_info_mac_outbound" tools:machine_translated="true">Целост: од клиентот до серверот.</string>
+  <string name="connection_info_mac_inbound" tools:machine_translated="true">Целост: од сервер до клиент.</string>
+  <string name="connection_info_integrated_mac" tools:machine_translated="true">Интегрирано со шифрирање.</string>
+  <string name="connection_info_post_quantum" tools:machine_translated="true">Размена на клуч по квантната ера</string>
+  <string name="connection_info_yes" tools:machine_translated="true">Да</string>
+  <string name="connection_info_no" tools:machine_translated="true">Не.</string>
+  <string name="connection_info_port_forwards" tools:machine_translated="true">Пренасочување на порти</string>
+  <string name="connection_info_configured_source" tools:machine_translated="true">Конфигуриран извор.</string>
+  <string name="connection_info_bound_port" tools:machine_translated="true">Доделен порт</string>
+  <string name="connection_info_not_bound" tools:machine_translated="true">Не е поврзано.</string>
+  <string name="connection_info_forward_status" tools:machine_translated="true">Статус на пренасочување</string>
+  <string name="connection_info_forward_active" tools:machine_translated="true">Активно</string>
+  <string name="connection_info_forward_inactive" tools:machine_translated="true">Неактивен</string>
+  <string name="connection_info_forward_destination" tools:machine_translated="true">Дестинација</string>
+  <string name="crypto_policy_title" tools:machine_translated="true">Криптографска политика</string>
+  <string name="crypto_policy_default" tools:machine_translated="true">Стандардно</string>
+  <string name="crypto_policy_future" tools:machine_translated="true">Во иднина</string>
+  <string name="crypto_policy_legacy" tools:machine_translated="true">Поставена верзија</string>
+  <string name="crypto_policy_fips" tools:machine_translated="true">FIPS алгоритми</string>
+  <string name="crypto_policy_custom" tools:machine_translated="true">Прилагодено</string>
+  <string name="crypto_policy_default_subtitle" tools:machine_translated="true">Препорачани алгоритми и големини на клучот.</string>
+  <string name="crypto_policy_future_subtitle" tools:machine_translated="true">Задолжително е користење на метод за размена на клуч кој е отпорен на квантни напади.</string>
+  <string name="crypto_policy_fips_subtitle" tools:machine_translated="true">Ограничете ги алгоритмите; не се валидирани според стандардите FIPS.</string>
+  <string name="crypto_policy_legacy_subtitle" tools:machine_translated="true">Овозможете користење на постари алгоритми за да се обезбеди компатибилност.</string>
+  <string name="crypto_policy_custom_subtitle" tools:machine_translated="true">Изберете алгоритми и минимални големини на клуч.</string>
+  <string name="crypto_policy_default_summary" tools:machine_translated="true">Современи алгоритми и барања за големина на клуч, поддржани од библиотеката SSH.</string>
+  <string name="crypto_policy_future_summary" tools:machine_translated="true">Задолжително е користење хибридна размена на клучни кодови отпорни на квантни напади, клучни кодови за шифрирање од 256 бита и посилни RSA клучни кодови.</string>
+  <string name="crypto_policy_fips_summary" tools:machine_translated="true">Ограничува изборот на алгоритми; не воспоставува валидација според стандардот FIPS.</string>
+  <string name="crypto_policy_legacy_summary" tools:machine_translated="true">Овозможува користење на постари алгоритми и пократки RSA и DH клучови за да се обезбеди компатибилност. Поновите алгоритми остануваат преферирани.</string>
+  <string name="crypto_policy_custom_summary" tools:machine_translated="true">Прилагодете ги стандардните поставки. Изборите на алгоритми и минималните големини на клучовите се независни.</string>
+  <string name="crypto_minimum_rsa" tools:machine_translated="true">Минимален број на битови за RSA.</string>
+  <string name="crypto_minimum_dh" tools:machine_translated="true">Минимален број на битови за DH.</string>
+  <string name="crypto_inherit_bits" tools:machine_translated="true">Преземи ги стандардните вредности (%1$d бити)</string>
+  <string name="crypto_minimum_summary" tools:machine_translated="true">Оставете го полето празно за да се примени стандардната постава. Се применува дури и за алгоритми кои се експлицитно овозможени.</string>
+  <string name="crypto_minimum_invalid" tools:machine_translated="true">Внесете најмалку 1024 бита. DH не смее да надмине 8192 бита.</string>
+  <string name="crypto_category_kex" tools:machine_translated="true">Алгоритми за размена на клучови</string>
+  <string name="crypto_category_cipher" tools:machine_translated="true">Алгоритми за шифрирање</string>
+  <string name="crypto_category_mac" tools:machine_translated="true">Алгоритми за автентикација на пораки</string>
+  <string name="crypto_category_hostkey" tools:machine_translated="true">Алгоритми за хост клуч</string>
+  <string name="crypto_category_pubkey" tools:machine_translated="true">Алгоритми за автентикација со јавен клуч.</string>
+  <string name="crypto_mode_title" tools:machine_translated="true">Режим на избор</string>
+  <string name="crypto_mode_default" tools:machine_translated="true">Преземи ги стандардните поставки.</string>
+  <string name="crypto_mode_delta" tools:machine_translated="true">Измени ги стандардните поставки.</string>
+  <string name="crypto_mode_exact" tools:machine_translated="true">Користете само овие.</string>
+  <string name="crypto_apply" tools:machine_translated="true">Примени</string>
+  <string name="crypto_expression" tools:machine_translated="true">Израз на алгоритмот</string>
+  <string name="crypto_expression_help" tools:machine_translated="true">Имиња одделени со запета. Во „Измени ги стандардните поставки“, ставете префик пред секое име со ^ (прво), + (додај) или - (исклучи).</string>
+  <string name="crypto_expression_invalid" tools:machine_translated="true">Користете уникатни имиња за SSH и еден режим на избор. Точните листи не смеат да бидат празни.</string>
+  <string name="crypto_effective_order" tools:machine_translated="true">Ефективен редослед на приоритети.</string>
+  <string name="crypto_algorithm_unavailable" tools:machine_translated="true">Не е достапен на оваа направа; задржан во вашата конфигурација.</string>
+  <string name="crypto_algorithm_filtered" tools:machine_translated="true">Исклучено поради минималната големина на клучот.</string>
+  <string name="crypto_algorithm_default" tools:machine_translated="true">Овозможено по стандард.</string>
+  <string name="crypto_algorithm_optional" tools:machine_translated="true">Достапен; не е овозможен во стандардните поставки.</string>
+  <string name="crypto_prepend" tools:machine_translated="true">Преферирај го првиот</string>
+  <string name="crypto_append" tools:machine_translated="true">Додај</string>
+  <string name="crypto_exclude" tools:machine_translated="true">Исклучи</string>
+  <string name="crypto_inherit" tools:machine_translated="true">Следете ги стандардните поставки.</string>
+  <string name="crypto_reason_unsupported" tools:machine_translated="true">не е имплементирано во оваа библиотека.</string>
+  <string name="crypto_reason_unavailable" tools:machine_translated="true">не е достапно со инсталираните крипто провајдери.</string>
+  <string name="crypto_reason_dh_small" tools:machine_translated="true">Групата DH е помала од конфигурираниот минимум.</string>
+  <string name="crypto_reason_rsa_small" tools:machine_translated="true">Клучот или сертификатот не ги исполнува критериумите на RSA или политиката за сертификати.</string>
+  <string name="crypto_connection_warning" tools:machine_translated="true">Предупредување — %1$s: %2$s: %3$s е пропуштено (%4$s).</string>
+  <string name="crypto_no_algorithms" tools:machine_translated="true">Криптографската политика не дозволува користење на ниту еден %1$s.</string>
+  <string name="crypto_policy_failed" tools:machine_translated="true">Криптографската политика не успеа за %1$s: %2$s</string>
+  <string name="crypto_policy_host" tools:machine_translated="true">Криптографска политика — %1$s</string>
+  <string name="crypto_minimums" tools:machine_translated="true">Минимални големини на клучот</string>
+  <string name="crypto_minimum_values" tools:machine_translated="true">RSA: %1$d бити; DH во конечно поле: %2$d бити</string>
+  <string name="crypto_show_effective_order" tools:machine_translated="true">Прикажи ја ефективната преференца во редослед.</string>
+  <string name="crypto_hide_effective_order" tools:machine_translated="true">Прикажи ги само избраните алгоритми.</string>
+  <string name="crypto_change_algorithm_state" tools:machine_translated="true">Променете ја состојбата за %1$s.</string>
+  <string name="crypto_states_help" tools:machine_translated="true">^ Да се даде предност на првото · + Додади · ✓ Следи ги стандардните поставки · − Исклучи</string>
+  <string name="keyboard_key_ctrl" tools:machine_translated="true">Ctrl</string>
+  <string name="keyboard_key_alt" tools:machine_translated="true">Alt</string>
+  <string name="keyboard_key_shift" tools:machine_translated="true">Shift</string>
+  <string name="keyboard_key_escape" tools:machine_translated="true">Esc</string>
+  <string name="keyboard_key_tab" tools:machine_translated="true">Таб</string>
+  <string name="keyboard_key_enter" tools:machine_translated="true">Внеси</string>
+  <string name="keyboard_key_backspace" tools:machine_translated="true">Трагање наназад</string>
+  <string name="keyboard_key_delete" tools:machine_translated="true">Избриши</string>
+  <string name="keyboard_key_insert" tools:machine_translated="true">Вметнете</string>
+  <string name="keyboard_key_arrow_up" tools:machine_translated="true">↑</string>
+  <string name="keyboard_key_arrow_down" tools:machine_translated="true">↓</string>
+  <string name="keyboard_key_arrow_left" tools:machine_translated="true">←</string>
+  <string name="keyboard_key_arrow_right" tools:machine_translated="true">→</string>
+  <string name="keyboard_key_home" tools:machine_translated="true">Почетна</string>
+  <string name="keyboard_key_end" tools:machine_translated="true">Крај.</string>
+  <string name="keyboard_key_page_up" tools:machine_translated="true">Страница нагоре.</string>
+  <string name="keyboard_key_page_down" tools:machine_translated="true">PgDn</string>
+  <string name="keyboard_key_text_input" tools:machine_translated="true">Внесување текст</string>
+  <string name="keyboard_key_toggle_compose" tools:machine_translated="true">Комбинирај</string>
+  <string name="keyboard_key_toggle_ime" tools:machine_translated="true">Клавијатура</string>
+  <string name="keyboard_key_f1" tools:machine_translated="true">F1</string>
+  <string name="keyboard_key_f2" tools:machine_translated="true">F2</string>
+  <string name="keyboard_key_f3" tools:machine_translated="true">F3</string>
+  <string name="keyboard_key_f4" tools:machine_translated="true">F4</string>
+  <string name="keyboard_key_f5" tools:machine_translated="true">F5</string>
+  <string name="keyboard_key_f6" tools:machine_translated="true">F6</string>
+  <string name="keyboard_key_f7" tools:machine_translated="true">F7</string>
+  <string name="keyboard_key_f8" tools:machine_translated="true">F8</string>
+  <string name="keyboard_key_f9" tools:machine_translated="true">F9</string>
+  <string name="keyboard_key_f10" tools:machine_translated="true">F10</string>
+  <string name="keyboard_key_f11" tools:machine_translated="true">F11</string>
+  <string name="keyboard_key_f12" tools:machine_translated="true">F12</string>
+  <string name="keyboard_settings_title" tools:machine_translated="true">Клавијатура за терминал</string>
+  <string name="keyboard_layouts" tools:machine_translated="true">Конфигурации на тастатурата</string>
+  <string name="keyboard_macros" tools:machine_translated="true">Заеднички макроси</string>
+  <string name="keyboard_missing_macro" tools:machine_translated="true">Недостасува макро.</string>
+  <string name="keyboard_unsupported" tools:machine_translated="true">Неподдржана конфигурација.</string>
+  <string name="keyboard_action_failed" tools:machine_translated="true">Акцијата со тастатурата не успеа.</string>
+  <string name="keyboard_move_up" tools:machine_translated="true">Подвижете се нагоре.</string>
+  <string name="keyboard_move_down" tools:machine_translated="true">Преместете надолу.</string>
+  <string name="keyboard_move_left" tools:machine_translated="true">Помести се налево.</string>
+  <string name="keyboard_move_right" tools:machine_translated="true">Помести десно.</string>
+  <string name="keyboard_off" tools:machine_translated="true">Исклучено.</string>
+  <string name="keyboard_once" tools:machine_translated="true">Следен клавиш</string>
+  <string name="keyboard_locked" tools:machine_translated="true">Заклучено.</string>
+  <string name="keyboard_new_layout" tools:machine_translated="true">Нова поставка</string>
+  <string name="keyboard_new_macro" tools:machine_translated="true">Нова макроапликација</string>
+  <string name="keyboard_copy_suffix" tools:machine_translated="true">(копирај)</string>
+  <string name="keyboard_back" tools:machine_translated="true">Назад</string>
+  <string name="keyboard_error" tools:machine_translated="true">Не можеше да се примени промената: %1$s</string>
+  <string name="keyboard_add_layout" tools:machine_translated="true">Додадете распоред.</string>
+  <string name="keyboard_add_macro" tools:machine_translated="true">Додај макро.</string>
+  <string name="keyboard_edit" tools:machine_translated="true">Уреди</string>
+  <string name="keyboard_duplicate" tools:machine_translated="true">Дупликат</string>
+  <string name="keyboard_delete" tools:machine_translated="true">Избриши</string>
+  <string name="keyboard_default" tools:machine_translated="true">Користете го како стандардна поставка за апликацијата.</string>
+  <string name="keyboard_used_by" tools:machine_translated="true">Се користи во: %1$s</string>
+  <string name="keyboard_confirm" tools:machine_translated="true">Потврдете.</string>
+  <string name="keyboard_confirm_message" tools:machine_translated="true">Дали да се примени оваа деструктивна промена? Зачуваните измени во изгледот може да бидат изгубени. Зачуваните макроси се задржуваат при ресетирање на изгледот.</string>
+  <string name="keyboard_cancel" tools:machine_translated="true">Откажи</string>
+  <string name="keyboard_name" tools:machine_translated="true">Име</string>
+  <string name="keyboard_width" tools:machine_translated="true">Ширина на копчето (dp, за сите копчиња)</string>
+  <string name="keyboard_height" tools:machine_translated="true">Висина на копчето (dp, за сите копчиња)</string>
+  <string name="keyboard_grid_help" tools:machine_translated="true">Допрете го копчето за да го уредите. Допрете и задржете, а потоа повлечете го за да го преместите. Повлечете го помеѓу секциите за да го прикачите или отстраните од прикачувањето. Големината на копчето се применува на секое копче.</string>
+  <string name="keyboard_drag_button" tools:machine_translated="true">Повлечете за да го промените редоследот на копчето.</string>
+  <string name="keyboard_add_button" tools:machine_translated="true">Додај јавка</string>
+  <string name="keyboard_visible" tools:machine_translated="true">Видливо</string>
+  <string name="keyboard_row" tools:machine_translated="true">Ред (почнувајќи од 0)</string>
+  <string name="keyboard_column" tools:machine_translated="true">Колона (почнувајќи од 0)</string>
+  <string name="keyboard_row_span" tools:machine_translated="true">Опфат на редот</string>
+  <string name="keyboard_column_span" tools:machine_translated="true">Опфат на колоната</string>
+  <string name="keyboard_remove_button" tools:machine_translated="true">Отстрани го копчето</string>
+  <string name="keyboard_save" tools:machine_translated="true">Зачувајте</string>
+  <string name="keyboard_reset" tools:machine_translated="true">Врати ги стандардните поставки.</string>
+  <string name="keyboard_use_default" tools:machine_translated="true">Користете ги стандардните поставки на апликацијата.</string>
+  <string name="keyboard_visual_editor" tools:machine_translated="true">Визуелен едитор</string>
+  <string name="keyboard_text_editor" tools:machine_translated="true">Текстуален едитор</string>
+  <string name="keyboard_macro_help" tools:machine_translated="true">Една акција по ред: key ctrl+b, text \"hello\", key enter, bytes 1b 5b 41. Текстот користи JSON низи за избегнување на специјални знаци.</string>
+  <string name="keyboard_steps" tools:machine_translated="true">Чекори за макроа.</string>
+  <string name="keyboard_add_text" tools:machine_translated="true">Додадете текст.</string>
+  <string name="keyboard_add_key" tools:machine_translated="true">Додај јавка</string>
+  <string name="keyboard_add_bytes" tools:machine_translated="true">Додај бајти.</string>
+  <string name="keyboard_text" tools:machine_translated="true">Текст за испраќање</string>
+  <string name="keyboard_bytes" tools:machine_translated="true">Точни бајти (шеснаесетнаесен систем)</string>
+  <string name="keyboard_character" tools:machine_translated="true">Карактер</string>
+  <string name="terminal_key_space" tools:machine_translated="true">Простор</string>
+  <string name="terminal_key_keypad" tools:machine_translated="true">Клавијатура, %1$s</string>
+  <string name="keyboard_button_label" tools:machine_translated="true">Ознака на копчето</string>
+  <string name="keyboard_preset_citrus" tools:machine_translated="true">Цитрус</string>
+  <string name="keyboard_preset_citrus_subtitle" tools:machine_translated="true">Компактни контроли за терминал</string>
+  <string name="keyboard_preset_last_stop" tools:machine_translated="true">Последна станица</string>
+  <string name="keyboard_preset_last_stop_subtitle" tools:machine_translated="true">Просторни контроли на терминалот.</string>
+  <string name="keyboard_preset_claw" tools:machine_translated="true">Канџа</string>
+  <string name="keyboard_preset_claw_subtitle" tools:machine_translated="true">Оптимизирано за Claude Code.</string>
+  <string name="keyboard_preset_scribe" tools:machine_translated="true">Скриба</string>
+  <string name="keyboard_preset_scribe_subtitle" tools:machine_translated="true">Оптимизирано за Codex CLI.</string>
+  <string name="keyboard_choose_preset" tools:machine_translated="true">Изберете претпоставена конфигурација за тастатурата.</string>
+  <string name="keyboard_original_layout" tools:machine_translated="true">Класичен CB</string>
+  <string name="keyboard_fit_to_width" tools:machine_translated="true">Прилагоди ја ширината</string>
+  <string name="keyboard_layer" tools:machine_translated="true">Слој %1$d</string>
+  <string name="keyboard_layer_short" tools:machine_translated="true">Слој %1$d</string>
+  <string name="keyboard_add_layer_switch" tools:machine_translated="true">Префрлување на слојот</string>
+  <string name="keyboard_layer_destination" tools:machine_translated="true">Дестинација на слојот</string>
+  <string name="keyboard_layer_next" tools:machine_translated="true">Следниот слој што не е празен.</string>
+  <string name="keyboard_fn" tools:machine_translated="true">FN</string>
+  <string name="keyboard_layer_empty" tools:machine_translated="true">Дестинацискиот слој е празен.</string>
+  <string name="keyboard_action_stop" tools:machine_translated="true">Запрете</string>
+  <string name="keyboard_action_history" tools:machine_translated="true">Краток преглед на историјата</string>
+  <string name="keyboard_action_mode" tools:machine_translated="true">Режим</string>
+  <string name="keyboard_action_newline" tools:machine_translated="true">Нов ред</string>
+  <string name="keyboard_action_log" tools:machine_translated="true">Дневник</string>
+  <string name="keyboard_action_edit" tools:machine_translated="true">Уреди</string>
+  <string name="keyboard_action_copy" tools:machine_translated="true">Копирај</string>
+  <string name="keyboard_key_paste" tools:machine_translated="true">Вметни</string>
+  <string name="keyboard_shortcut_description" tools:machine_translated="true">%1$s (%2$s)</string>
+  <string name="keyboard_action_stop_full" tools:machine_translated="true">Прекинете</string>
+  <string name="keyboard_action_history_full" tools:machine_translated="true">Пребарувај ја историјата</string>
+  <string name="keyboard_action_mode_full" tools:machine_translated="true">Циклус на режими на дозволи</string>
+  <string name="keyboard_action_newline_full" tools:machine_translated="true">Вметни нов ред</string>
+  <string name="keyboard_action_log_full" tools:machine_translated="true">Вклучи/исклучи транскрипт</string>
+  <string name="keyboard_action_edit_full" tools:machine_translated="true">Отвори надворешен уредувач.</string>
+  <string name="keyboard_action_copy_full" tools:machine_translated="true">Копирај го одговорот</string>
+  <string name="macro_assign" tools:machine_translated="true">Додели макро.</string>
+  <string name="macro_import" tools:machine_translated="true">Импортирај макро</string>
+  <string name="macro_export" tools:machine_translated="true">Извезете макрос</string>
+  <string name="macro_none" tools:machine_translated="true">Нема зачувани макроси.</string>
+  <string name="automation_run_macro" tools:machine_translated="true">Изврши макро.</string>
+  <string name="macro_choose" tools:machine_translated="true">Изберете макро.</string>
+  <string name="macro_manage" tools:machine_translated="true">Управувајте ги макросите.</string>
+  <string name="keyboard_selected" tools:machine_translated="true">Избрано</string>
+  <string name="keyboard_app_default" tools:machine_translated="true">Подефинирано за апликацијата</string>
+  <string name="keyboard_select" tools:machine_translated="true">Користете го ова.</string>
+  <string name="keyboard_change" tools:machine_translated="true">Промени ја поставката на тастатурата.</string>
+  <string name="keyboard_customize" tools:machine_translated="true">Прилагодете</string>
+  <string name="keyboard_edit_shared" tools:machine_translated="true">Уредете ја споделената поставка.</string>
+  <string name="keyboard_make_default" tools:machine_translated="true">Користете го како стандардна поставка за апликацијата.</string>
+  <string name="keyboard_saving" tools:machine_translated="true">Зачувување…</string>
+  <string name="keyboard_context_name" tools:machine_translated="true">%1$s — %2$s</string>
+  <string name="keyboard_copy_name" tools:machine_translated="true">Прилагодено</string>
+  <string name="keyboard_reset_inherited" tools:machine_translated="true">Користете наследена тастатура.</string>
+  <string name="keyboard_inherit_named" tools:machine_translated="true">%1$s — %2$s</string>
+  <string name="keyboard_from_profile" tools:machine_translated="true">Од профилот „%1$s“</string>
+  <string name="keyboard_advanced" tools:machine_translated="true">Напредно</string>
+  <string name="keyboard_usage_layout" tools:machine_translated="true">Клавијатура: %1$s</string>
+  <string name="keyboard_usage_automation" tools:machine_translated="true">Автоматизација по најавување: %1$s</string>
+  <string name="keyboard_usage_profile" tools:machine_translated="true">Профил: %1$s</string>
+  <string name="keyboard_usage_host" tools:machine_translated="true">Домаќин: %1$s</string>
+  <string name="keyboard_delete_layout_title" tools:machine_translated="true">Дали да се избрише поставката „%1$s“?</string>
+  <string name="keyboard_delete_macro_title" tools:machine_translated="true">Дали да се избрише макрото „%1$s“?</string>
+  <string name="keyboard_delete_layout_message" tools:machine_translated="true">Домаќините и профилите кои го користат овој распоред ќе ја користат нивната наследена тастатура. Ако ова е стандардниот распоред на апликацијата, тогаш друг распоред станува стандарден.</string>
+  <string name="keyboard_delete_macro_message" tools:machine_translated="true">Ова ја отстранува макро-командата од споделената библиотека.</string>
+  <string name="keyboard_reset_message" tools:machine_translated="true">Дали да се вратат оригиналните тастери и димензии на оваа поставка? Промените ќе се применат кога ќе ја зачувате. Зачуваните макроси ќе останат.</string>
+  <string name="macro_shared_title" tools:machine_translated="true">Уредите споделена макроа?</string>
+  <string name="macro_shared_message" tools:machine_translated="true">Оваа макро-команда се користи и на други места. Направете посебна копија или уредете ја споделената верзија за сите нејзини корисници.</string>
+  <string name="macro_make_copy" tools:machine_translated="true">Направете копија.</string>
+  <string name="macro_edit_shared" tools:machine_translated="true">Уредете ја споделената макроа.</string>
+  <string name="macro_global_save_notice" tools:machine_translated="true">Зачувување на измените: Оваа макро-команда ќе биде зачувана насекаде каде што се користи, дури и ако подоцна го отфрлите околниот уредувач.</string>
+  <string name="macro_remove_uses_first" tools:machine_translated="true">Отстранете ги или пренаменете ги овие употреби пред да го избришете ова макро.</string>
+  <string name="keyboard_session_only" tools:machine_translated="true">Оваа сесија</string>
+  <string name="keyboard_read_only" tools:machine_translated="true">Овој хост е само за читање. Неговата тастатура не може да се менува.</string>
+  <string name="keyboard_manage_layouts" tools:machine_translated="true">Управувајте ги распоредите</string>
+  <string name="keyboard_done" tools:machine_translated="true">Готово.</string>
+  <string name="automation_draft_host" tools:machine_translated="true">Овие чекори ќе бидат зачувани заедно со новиот хост.</string>
+  <string name="automation_no_forwards_new_host" tools:machine_translated="true">Зачувајте го овој хост и додајте пренасочување на порти пред да ги користите пренасочувачките операции.</string>
+  <string name="keyboard_action_type" tools:machine_translated="true">Акција</string>
+  <string name="keyboard_action_key" tools:machine_translated="true">Клуч</string>
+  <string name="keyboard_action_macro" tools:machine_translated="true">Макро</string>
+  <string name="keyboard_action_modifier" tools:machine_translated="true">Модификатор</string>
+  <string name="keyboard_action_app" tools:machine_translated="true">Акција во апликацијата</string>
+  <string name="keyboard_action_layer" tools:machine_translated="true">Премини на слој</string>
+  <string name="keyboard_usage_shared_layout" tools:machine_translated="true">Заедничка поставка: зачувување на ажурирањата за сите корисници.</string>
+  <string name="keyboard_layout_unavailable" tools:machine_translated="true">Оваа поставка на тастатурата не е достапна.</string>
+  <string name="keyboard_grid_advanced_help" tools:machine_translated="true">Редовите и колоните започнуваат од 0 во секоја секција. Квадратчињата за тастерите зафаќаат еден ред. Опцијата „Опфат на колона“ ја поставува вредноста за тој број клетки кои ги зафаќа тастерот.</string>
+  <string name="keyboard_appearance" tools:machine_translated="true">Изглед</string>
+  <string name="keyboard_background_color" tools:machine_translated="true">Боја на позадината</string>
+  <string name="keyboard_text_color" tools:machine_translated="true">Боја на текстот</string>
+  <string name="keyboard_outline_color" tools:machine_translated="true">Боја на контурата</string>
+  <string name="keyboard_color_value" tools:machine_translated="true">%1$s: %2$s</string>
+  <string name="keyboard_theme_color" tools:machine_translated="true">Стандардна тема</string>
+  <string name="keyboard_background_opacity" tools:machine_translated="true">Непроѕирност на позадината: %1$d%%</string>
+  <string name="keyboard_outlined" tools:machine_translated="true">Означено со контура</string>
+  <string name="keyboard_outline_thickness" tools:machine_translated="true">Дебелина на контура: %1$.1f dp</string>
+  <string name="keyboard_reset_appearance" tools:machine_translated="true">Врати го изгледот на почетните поставки.</string>
+  <string name="keyboard_appearance_state_help" tools:machine_translated="true">Активните модификатори и преклопниците користат истакнување на темата.</string>
+  <string name="keyboard_behavior" tools:machine_translated="true">Однесување</string>
+  <string name="keyboard_repeat_on_hold" tools:machine_translated="true">Повторувај додека се задржува</string>
+  <string name="keyboard_repeat_default" tools:machine_translated="true">Користете стандардно повторување.</string>
+  <string name="keyboard_haptics_app_setting" tools:machine_translated="true">Поставување на апликацијата</string>
+  <string name="keyboard_haptics_on" tools:machine_translated="true">Вклучено</string>
+  <string name="keyboard_haptics_off" tools:machine_translated="true">Исклучено</string>
+  <string name="keyboard_haptics_value" tools:machine_translated="true">Тактилен одговор: %1$s</string>
+  <string name="keyboard_pinned_section" tools:machine_translated="true">Прикачени клавиши</string>
+  <string name="keyboard_scrolling_section" tools:machine_translated="true">Клучеви што може да се прелистуваат.</string>
+  <string name="keyboard_drop_section" tools:machine_translated="true">Превлечете ги клучевите овде.</string>
+  <string name="keyboard_pin_to_right" tools:machine_translated="true">Прицврстете го на десната страна.</string>
+  <string name="keyboard_navigation_summary" tools:machine_translated="true">Изберете распореди, прилагодете ги копчињата и управувајте со макросите.</string>
+  <string name="keyboard_edit_layout_title" tools:machine_translated="true">Уреди го распоредот.</string>
+  <string name="keyboard_edit_key_title" tools:machine_translated="true">Уреди го насловот на копчето.</string>
+  <string name="keyboard_layout_settings" tools:machine_translated="true">Поставки за распоредот</string>
+  <string name="keyboard_mode_scrollable" tools:machine_translated="true">Можно да се прелистува.</string>
+  <string name="keyboard_mode_fit" tools:machine_translated="true">Прилагоди ја ширината.</string>
+  <string name="keyboard_dimensions_summary" tools:machine_translated="true">%1$s · %2$s × %3$s dp</string>
+  <string name="keyboard_canvas_title" tools:machine_translated="true">Клавијатура</string>
+  <string name="keyboard_canvas_hint" tools:machine_translated="true">Допрете за да уредите · Долго притиснете и повлечете за да го преместите</string>
+  <string name="keyboard_pinned_hint" tools:machine_translated="true">Фиксираните тастери остануваат на крајот од тастатурата (на левата страна во интерфејси од десно кон лево).</string>
+  <string name="keyboard_scrolling_hint" tools:machine_translated="true">Превлечете го копчето во областа „Прикачени копчиња“ за да го поставите на крајот од тастатурата. Превлечете го повторно во областа „Копчиња за листање“ за да го отстраните од областа „Прикачени копчиња“.</string>
+  <string name="keyboard_group_expanded" tools:machine_translated="true">Проширено</string>
+  <string name="keyboard_group_collapsed" tools:machine_translated="true">Свиткано/Скроено</string>
+  <string name="keyboard_edit_copy" tools:machine_translated="true">Уредете ја копијата.</string>
+  <string name="keyboard_continue_editing" tools:machine_translated="true">Продолжете со уредувањето.</string>
+  <string name="keyboard_copy_help" tools:machine_translated="true">Креира распоред за %1$s. Другите корисници го задржуваат нивниот сегашен распоред.</string>
+  <string name="keyboard_parent_save_hint" tools:machine_translated="true">Промените ќе се применат кога ќе го зачувате овој хост или профил.</string>
+  <string name="keyboard_key_save_hint" tools:machine_translated="true">Зачувувањето на оваа поставка ги ажурира нацртите за распоредот. Зачувајте го распоредот за да ги задржите вашите промени.</string>
+  <string name="keyboard_placement" tools:machine_translated="true">Поставување.</string>
+  <string name="keyboard_show_key" tools:machine_translated="true">Прикажи ја клавишата.</string>
+  <string name="keyboard_pin_choice" tools:machine_translated="true">Фиксирано на крајот.</string>
+  <string name="keyboard_change_shortcut" tools:machine_translated="true">Променете ја пречинката.</string>
+  <string name="keyboard_action_help" tools:machine_translated="true">Изберете што прави овој тастер кога ќе се притисне.</string>
+  <string name="keyboard_appearance_summary" tools:machine_translated="true">Позадина, текст и контура.</string>
+  <string name="keyboard_behavior_summary" tools:machine_translated="true">%1$s · Хаптична повратна врска: %2$s</string>
+  <string name="keyboard_repeat_off" tools:machine_translated="true">Притиснете еднаш.</string>
+  <string name="keyboard_repeat_on" tools:machine_translated="true">Се повторува додека се задржува.</string>
+  <string name="keyboard_advanced_summary" tools:machine_translated="true">Ред, колона и ширина на копчето.</string>
+  <string name="keyboard_usage_count" tools:machine_translated="true">Користено од %1$d</string>
+  <string name="keyboard_remove_key_message" tools:machine_translated="true">Дали да го отстраниме овој тастер од скицата на распоредот?</string>
+  <string name="keyboard_key_discard_title" tools:machine_translated="true">Примени ги промените на тастерите?</string>
+  <string name="keyboard_key_discard_message" tools:machine_translated="true">Примени ги овие промени на распоредот или откажи ги.</string>
+  <string name="keyboard_apply_key" tools:machine_translated="true">Примени ги промените.</string>
+  <string name="keyboard_library_edit" tools:machine_translated="true">Уреди го изгледот</string>
+  <string name="keyboard_key_type" tools:machine_translated="true">Клуч или преку пат</string>
+  <string name="keyboard_preview_label" tools:machine_translated="true">Преглед</string>
+  <string name="keyboard_own_layout" tools:machine_translated="true">Прилагоден избор</string>
+  <string name="keyboard_inherited_selection" tools:machine_translated="true">Користете наследен распоред.</string>
+  <string name="keyboard_more_layout_actions" tools:machine_translated="true">Акции за поставување</string>
+  <string name="keyboard_outline_preview" tools:machine_translated="true">Преглед на боите</string>
+  <string name="keyboard_empty_layer" tools:machine_translated="true">Додадете тастер за да го активирате овој слој.</string>
+  <string name="keyboard_immediate_hint" tools:machine_translated="true">Промените ќе се применат на овој терминал кога ќе го зачувате распоредот.</string>
+  <string name="keyboard_shared_confirm" tools:machine_translated="true">Зачувувањето на оваа поставка ги ажурира сите нејзини корисници. Можете да уредите копија наместо тоа.</string>
+  <string name="keyboard_shared_title" tools:machine_translated="true">Уреди ја споделената поставка?</string>
+  <string name="keyboard_this_configuration" tools:machine_translated="true">оваа конфигурација</string>
+  <string name="keyboard_builtin_presets" tools:machine_translated="true">Вградени предлошки</string>
+  <string name="keyboard_builtin_presets_help" tools:machine_translated="true">Вградените претпоставки остануваат непроменети. При уредувањето се креира ваша лична копија.</string>
+  <string name="keyboard_builtin_preset" tools:machine_translated="true">Вградена претходно дефинирана поставка.</string>
+  <string name="pref_zmodem_title" tools:machine_translated="true">Овозможете пренос на податоци преку Z-Modem.</string>
+  <string name="pref_zmodem_summary" tools:machine_translated="true">Откривање на барања за пренос и преземање на датотеки од далечински компјутер преку SSH и Telnet.</string>
+  <string name="zmodem_title" tools:machine_translated="true">Пренос на датотека преку Z-Modem.</string>
+  <string name="zmodem_progress" tools:machine_translated="true">%1$s: %2$d бајти</string>
+  <string name="zmodem_cancel" tools:machine_translated="true">Откажи пренос</string>
+  <string name="zmodem_select" tools:machine_translated="true">Изберете датотеки или папка за преземање.</string>
+  <string name="zmodem_failed" tools:machine_translated="true">Преносот на датотеката не успеа.</string>
+  <string name="zmodem_dismiss" tools:machine_translated="true">Затвори</string>
+  <string name="zmodem_progress_total" tools:machine_translated="true">%1$s: %2$d / %3$d бајти</string>
+  <string name="zmodem_cancelling" tools:machine_translated="true">Прекинување на преносот…</string>
 </resources>

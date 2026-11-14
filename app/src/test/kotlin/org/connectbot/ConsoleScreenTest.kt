@@ -1,0 +1,994 @@
+/*
+ * ConnectBot: simple, powerful, open-source SSH client for Android
+ * Copyright 2026 Kenny Root
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.connectbot
+
+import android.content.Context
+import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_BEHIND
+import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR
+import android.view.View
+import android.view.ViewGroup
+import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavType
+import androidx.navigation.compose.ComposeNavigator
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.testing.TestNavHostController
+import androidx.preference.PreferenceManager
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import org.connectbot.data.EntityIds
+import org.connectbot.data.entity.Host
+import org.connectbot.data.keyboard.KeyboardItem
+import org.connectbot.data.keyboard.KeyboardLayout
+import org.connectbot.data.keyboard.KeyboardRepository
+import org.connectbot.fido2.Fido2Manager
+import org.connectbot.service.DisconnectReason
+import org.connectbot.service.ModifierLevel
+import org.connectbot.service.ModifierState
+import org.connectbot.service.PromptManager
+import org.connectbot.service.TerminalBridge
+import org.connectbot.service.TerminalEmulatorKeyDispatcher
+import org.connectbot.service.TerminalKeyListener
+import org.connectbot.service.TerminalManager
+import org.connectbot.terminal.DelKeyMode
+import org.connectbot.terminal.ProgressState
+import org.connectbot.terminal.TerminalDimensions
+import org.connectbot.terminal.TerminalEmulator
+import org.connectbot.terminal.TerminalEmulatorFactory
+import org.connectbot.ui.LocalTerminalManager
+import org.connectbot.ui.navigation.navigateToConsole
+import org.connectbot.ui.navigation.safePopBackStack
+import org.connectbot.ui.screens.console.ConsoleScreen
+import org.connectbot.ui.screens.console.ConsoleUiState
+import org.connectbot.ui.screens.console.ConsoleViewModel
+import org.connectbot.ui.screens.console.FontSizeNotice
+import org.connectbot.ui.screens.console.SessionPickerDialog
+import org.connectbot.ui.theme.ConnectBotTheme
+import org.connectbot.util.HostConstants
+import org.connectbot.util.PreferenceConstants
+import org.connectbot.util.TerminalFontWeight
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Ignore
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
+import java.util.UUID
+import javax.inject.Inject
+
+@HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
+class ConsoleScreenTest {
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1)
+    val composeTestRule = createAndroidComposeRule<HiltComponentActivity>()
+
+    @Inject lateinit var keyboardRepository: KeyboardRepository
+
+    private lateinit var navController: TestNavHostController
+
+    @Before
+    fun setUp() {
+        hiltRule.inject()
+    }
+
+    @After
+    fun tearDown() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit()
+    }
+
+    private fun mockTerminalBridge(): TerminalBridge {
+        val bridge = mock(TerminalBridge::class.java)
+        val fido2Manager = mock(Fido2Manager::class.java)
+        `when`(fido2Manager.waitingForNfcSigning).thenReturn(MutableStateFlow(false))
+        `when`(fido2Manager.signingRequest).thenReturn(MutableStateFlow(null))
+        `when`(fido2Manager.nfcSigningTagLost).thenReturn(MutableStateFlow(false))
+        `when`(bridge.fido2Manager).thenReturn(fido2Manager)
+        return bridge
+    }
+
+    private fun setContent(
+        mockTerminalManager: TerminalManager? = null,
+        mockConsoleViewModel: ConsoleViewModel? = null,
+        lifecycleOwner: LifecycleOwner = composeTestRule.activity,
+        onAutomaticBack: () -> Unit = {},
+        keyboardController: SoftwareKeyboardController? = null,
+    ) {
+        composeTestRule.setContent {
+            val context = LocalContext.current
+            navController = remember {
+                TestNavHostController(context).apply {
+                    navigatorProvider.addNavigator(ComposeNavigator())
+                }
+            }
+            ConnectBotTheme {
+                CompositionLocalProvider(
+                    LocalTerminalManager provides mockTerminalManager,
+                    LocalLifecycleOwner provides lifecycleOwner,
+                    LocalSoftwareKeyboardController provides (keyboardController ?: LocalSoftwareKeyboardController.current),
+                ) {
+                    NavHost(navController = navController, startDestination = "start") {
+                        composable("start") { Text("Host list") }
+                        composable(
+                            route = "console/{hostId}",
+                            arguments = listOf(navArgument("hostId") { type = NavType.StringType }),
+                        ) {
+                            if (mockConsoleViewModel != null) {
+                                ConsoleScreen(
+                                    onNavigateBack = {
+                                        onAutomaticBack()
+                                        navController.safePopBackStack()
+                                    },
+                                    onNavigateToPortForwards = {},
+                                    viewModel = mockConsoleViewModel,
+                                )
+                            } else {
+                                ConsoleScreen(
+                                    onNavigateBack = {
+                                        onAutomaticBack()
+                                        navController.safePopBackStack()
+                                    },
+                                    onNavigateToPortForwards = {},
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToConsoleScreen(hostId: UUID = EntityIds.NONE) {
+        composeTestRule.runOnUiThread {
+            navController.navigate("console/$hostId")
+        }
+    }
+
+    @Test
+    fun fontSizeShortcutRefreshesNoticeAndSavesCapturedProfile() {
+        val profile = TerminalBridge.ActiveProfile(EntityIds.DEFAULT_PROFILE, EntityIds.DEFAULT_PROFILE)
+        val size = MutableStateFlow(14f)
+        val activeProfile = MutableStateFlow<TerminalBridge.ActiveProfile?>(profile)
+        val emulator = TerminalEmulatorFactory.create()
+        val dimensions = MutableStateFlow<TerminalDimensions?>(emulator.dimensions)
+        val bridge = mockTerminalBridge()
+        `when`(bridge.host).thenReturn(Host(id = UUID(0, 1), nickname = "first"))
+        `when`(bridge.terminalEmulator).thenReturn(emulator)
+        `when`(bridge.fontSizeFlow).thenReturn(size)
+        `when`(bridge.fontWeightFlow).thenReturn(MutableStateFlow(TerminalFontWeight.NORMAL))
+        `when`(bridge.activeProfile).thenReturn(activeProfile)
+        `when`(bridge.terminalDimensions).thenReturn(dimensions)
+        `when`(bridge.delKeyModeFlow).thenReturn(MutableStateFlow(DelKeyMode.Delete))
+        `when`(bridge.transportMessages).thenReturn(MutableSharedFlow())
+        `when`(bridge.keyboardErrors).thenReturn(MutableSharedFlow())
+        `when`(bridge.promptManager).thenReturn(PromptManager())
+        `when`(bridge.keyHandler).thenReturn(TerminalKeyListener(TerminalEmulatorKeyDispatcher(emulator)))
+        org.mockito.Mockito.doAnswer {
+            size.value += 2f
+            null
+        }.`when`(bridge).increaseFontSize()
+
+        val state = MutableStateFlow(ConsoleUiState(bridges = listOf(bridge), isLoading = false))
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(state)
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        runBlocking { `when`(viewModel.saveFontSize(bridge, profile, 18)).thenReturn(true) }
+        setContent(mockConsoleViewModel = viewModel)
+        navigateToConsoleScreen(bridge.host.id)
+        composeTestRule.onNodeWithTag("terminal").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).assertDoesNotExist()
+        composeTestRule.mainClock.autoAdvance = false
+        try {
+            composeTestRule.onNodeWithTag("terminal").performKeyInput {
+                keyDown(Key.VolumeUp)
+                keyUp(Key.VolumeUp)
+            }
+            composeTestRule.mainClock.advanceTimeBy(100)
+            composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).assertIsDisplayed()
+            composeTestRule.mainClock.advanceTimeBy(4_000)
+            composeTestRule.onNodeWithTag("terminal").performKeyInput {
+                keyDown(Key.VolumeUp)
+                keyUp(Key.VolumeUp)
+            }
+            composeTestRule.mainClock.advanceTimeBy(2_000)
+            val resized = emulator.dimensions.copy(rows = 30, columns = 100)
+            composeTestRule.runOnIdle { dimensions.value = resized }
+            composeTestRule.mainClock.advanceTimeBy(100)
+            composeTestRule.onNodeWithText(
+                composeTestRule.activity.getString(R.string.console_font_size_dimensions, 18, 100, 30),
+            ).assertIsDisplayed()
+            composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).performClick()
+            composeTestRule.waitForIdle()
+            runBlocking { org.mockito.Mockito.verify(viewModel).saveFontSize(bridge, profile, 18) }
+
+            composeTestRule.onNodeWithTag("terminal").performKeyInput {
+                keyDown(Key.VolumeUp)
+                keyUp(Key.VolumeUp)
+            }
+            composeTestRule.mainClock.advanceTimeBy(5_200)
+            composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).assertDoesNotExist()
+
+            composeTestRule.onNodeWithTag("terminal").performKeyInput {
+                keyDown(Key.VolumeUp)
+                keyUp(Key.VolumeUp)
+            }
+            composeTestRule.mainClock.advanceTimeBy(100)
+            composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).assertIsDisplayed()
+            composeTestRule.runOnIdle { activeProfile.value = TerminalBridge.ActiveProfile(UUID(0, 2), UUID(0, 2)) }
+            composeTestRule.mainClock.advanceTimeBy(100)
+            composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).assertDoesNotExist()
+
+            composeTestRule.onNodeWithTag("terminal").performKeyInput {
+                keyDown(Key.VolumeUp)
+                keyUp(Key.VolumeUp)
+            }
+            composeTestRule.mainClock.advanceTimeBy(100)
+            composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).assertIsDisplayed()
+            val other = mockTerminalBridge()
+            `when`(other.host).thenReturn(Host(id = UUID(0, 2), nickname = "second"))
+            `when`(other.terminalEmulator).thenReturn(emulator)
+            `when`(other.fontSizeFlow).thenReturn(MutableStateFlow(10f))
+            `when`(other.fontWeightFlow).thenReturn(MutableStateFlow(TerminalFontWeight.NORMAL))
+            `when`(other.activeProfile).thenReturn(MutableStateFlow(profile))
+            `when`(other.delKeyModeFlow).thenReturn(MutableStateFlow(DelKeyMode.Delete))
+            `when`(other.transportMessages).thenReturn(MutableSharedFlow())
+            `when`(other.keyboardErrors).thenReturn(MutableSharedFlow())
+            `when`(other.promptManager).thenReturn(PromptManager())
+            `when`(other.keyHandler).thenReturn(TerminalKeyListener(TerminalEmulatorKeyDispatcher(emulator)))
+            composeTestRule.runOnIdle {
+                state.value = ConsoleUiState(bridges = listOf(bridge, other), currentBridgeIndex = 1, isLoading = false)
+            }
+            composeTestRule.mainClock.advanceTimeBy(100)
+            composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).assertDoesNotExist()
+        } finally {
+            composeTestRule.mainClock.autoAdvance = true
+        }
+    }
+
+    @Test
+    fun fontSizeNoticeShowsDimensionsAndSavesOnlyOnAction() {
+        val dimensions = TerminalEmulatorFactory.create().dimensions
+        val currentDimensions = mutableStateOf(dimensions)
+        var saved = false
+        composeTestRule.setContent {
+            ConnectBotTheme {
+                FontSizeNotice(size = 14, dimensions = currentDimensions.value, canSave = true, onSave = { saved = true })
+            }
+        }
+
+        val message = composeTestRule.activity.getString(
+            R.string.console_font_size_dimensions,
+            14,
+            dimensions.columns,
+            dimensions.rows,
+        )
+        composeTestRule.onNodeWithText(message).assertIsDisplayed()
+        val resized = dimensions.copy(rows = 30, columns = 100)
+        composeTestRule.runOnIdle { currentDimensions.value = resized }
+        composeTestRule.onNodeWithText(
+            composeTestRule.activity.getString(R.string.console_font_size_dimensions, 14, 100, 30),
+        ).assertIsDisplayed()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.console_font_size_shared_profile)).assertIsDisplayed()
+        assertFalse(saved)
+        composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).performClick()
+        assertTrue(saved)
+    }
+
+    @Test
+    fun fontSizeNoticeCannotSaveWithoutAProfile() {
+        composeTestRule.setContent {
+            ConnectBotTheme {
+                FontSizeNotice(size = 14, dimensions = null, canSave = false, onSave = {})
+            }
+        }
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.console_font_size_current, 14)).assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.console_font_size_save_description)).assertIsNotEnabled()
+    }
+
+    @Test
+    fun sessionPicker_sameHostInTwoSessions_rendersAndSelectsEachSession() {
+        val first = mockTerminalBridge()
+        val second = mockTerminalBridge()
+        val host = Host(id = UUID(0, 1), nickname = "Original session")
+        `when`(first.host).thenReturn(host)
+        `when`(second.host).thenReturn(host.copy(nickname = "Updated session"))
+        var selectedIndex = -1
+
+        composeTestRule.setContent {
+            ConnectBotTheme {
+                SessionPickerDialog(
+                    bridges = listOf(first, second),
+                    currentBridgeIndex = 0,
+                    onDismiss = {},
+                    onSelectBridge = { selectedIndex = it },
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("\u2022 Original session").assertIsDisplayed().performClick()
+        composeTestRule.runOnIdle { assertEquals(0, selectedIndex) }
+        composeTestRule.onNodeWithText("Updated session").assertIsDisplayed().performClick()
+        composeTestRule.runOnIdle { assertEquals(1, selectedIndex) }
+    }
+
+    @Test
+    fun notificationNavigation_switchesSessionsWithoutReusingTheirViewModelEntry() {
+        composeTestRule.setContent {
+            val context = LocalContext.current
+            navController = remember {
+                TestNavHostController(context).apply {
+                    navigatorProvider.addNavigator(ComposeNavigator())
+                }
+            }
+            NavHost(navController, startDestination = "start") {
+                composable("start") {}
+                composable("console/{hostId}", arguments = listOf(navArgument("hostId") { type = NavType.StringType })) {}
+            }
+        }
+        composeTestRule.runOnIdle {
+            navController.navigateToConsole(EntityIds.NONE)
+            val firstEntry = navController.currentBackStackEntry!!.id
+            navController.navigateToConsole(UUID(0, -2))
+            val secondEntry = navController.currentBackStackEntry!!.id
+            assertFalse(firstEntry == secondEntry)
+            assertEquals(UUID(0, -2).toString(), navController.currentBackStackEntry!!.arguments!!.getString("hostId"))
+            navController.navigateToConsole(UUID(0, -2))
+            assertEquals(secondEntry, navController.currentBackStackEntry!!.id)
+            navController.popBackStack()
+            assertEquals(firstEntry, navController.currentBackStackEntry!!.id)
+        }
+    }
+
+    @Test
+    fun consoleScreen_remoteDisconnect_showsReconnectAfterBridgeStateChanges() {
+        val bridge = mockTerminalBridge()
+        `when`(bridge.transportMessages).thenReturn(MutableSharedFlow())
+        `when`(bridge.keyboardErrors).thenReturn(MutableSharedFlow())
+        val host = Host(id = UUID(0, 1), nickname = "test-host")
+        val emulator = TerminalEmulatorFactory.create()
+        `when`(bridge.host).thenReturn(host)
+        `when`(bridge.terminalEmulator).thenReturn(emulator)
+        `when`(bridge.fontSizeFlow).thenReturn(MutableStateFlow(14f))
+        `when`(bridge.fontWeightFlow).thenReturn(MutableStateFlow(TerminalFontWeight.NORMAL))
+        `when`(bridge.delKeyModeFlow).thenReturn(MutableStateFlow(DelKeyMode.Backspace))
+        `when`(bridge.promptManager).thenReturn(PromptManager())
+        val keyHandler = TerminalKeyListener(TerminalEmulatorKeyDispatcher(emulator))
+        `when`(bridge.keyHandler).thenReturn(keyHandler)
+        `when`(bridge.isDisconnected).thenReturn(false)
+        `when`(bridge.isConnecting).thenReturn(false)
+        val states = MutableStateFlow(ConsoleUiState(bridges = listOf(bridge), isLoading = false))
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(states)
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        setContent(mockConsoleViewModel = viewModel)
+        navigateToConsoleScreen(UUID(0, 1))
+
+        val reconnect = composeTestRule.activity.getString(R.string.console_menu_reconnect)
+        composeTestRule.onNodeWithText(reconnect).assertDoesNotExist()
+        composeTestRule.runOnUiThread {
+            `when`(bridge.isDisconnected).thenReturn(true)
+            `when`(bridge.disconnectReason).thenReturn(DisconnectReason.REMOTE_EOF)
+            states.value = states.value.copy(revision = states.value.revision + 1)
+        }
+        composeTestRule.onNodeWithText(reconnect).assertIsDisplayed()
+
+        composeTestRule.runOnUiThread {
+            `when`(bridge.isConnecting).thenReturn(true)
+            states.value = states.value.copy(revision = states.value.revision + 1)
+        }
+        composeTestRule.onNodeWithText(reconnect).assertDoesNotExist()
+    }
+
+    @Test
+    fun consoleScreen_fido2Failure_keepsDetailsVisibleUntilReconnect() {
+        val bridge = mockTerminalBridge()
+        `when`(bridge.transportMessages).thenReturn(MutableSharedFlow())
+        `when`(bridge.keyboardErrors).thenReturn(MutableSharedFlow())
+        val host = Host(id = UUID(0, 1), nickname = "test-host")
+        val emulator = TerminalEmulatorFactory.create()
+        `when`(bridge.host).thenReturn(host)
+        `when`(bridge.terminalEmulator).thenReturn(emulator)
+        `when`(bridge.fontSizeFlow).thenReturn(MutableStateFlow(14f))
+        `when`(bridge.fontWeightFlow).thenReturn(MutableStateFlow(TerminalFontWeight.NORMAL))
+        `when`(bridge.delKeyModeFlow).thenReturn(MutableStateFlow(DelKeyMode.Backspace))
+        `when`(bridge.promptManager).thenReturn(PromptManager())
+        val keyHandler = TerminalKeyListener(TerminalEmulatorKeyDispatcher(emulator))
+        `when`(bridge.keyHandler).thenReturn(keyHandler)
+        `when`(bridge.isDisconnected).thenReturn(false)
+        `when`(bridge.isConnecting).thenReturn(false)
+        val states = MutableStateFlow(ConsoleUiState(bridges = listOf(bridge), isLoading = false))
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(states)
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        setContent(mockConsoleViewModel = viewModel)
+        navigateToConsoleScreen(UUID(0, 1))
+
+        val reconnect = composeTestRule.activity.getString(R.string.console_menu_reconnect)
+        composeTestRule.onNodeWithText(reconnect).assertDoesNotExist()
+        composeTestRule.runOnUiThread {
+            `when`(bridge.isDisconnected).thenReturn(true)
+            `when`(bridge.disconnectReason).thenReturn(DisconnectReason.IO_ERROR)
+            `when`(bridge.authenticationFailure).thenReturn("FIDO2 PIN is invalid. 2 attempts remaining.")
+            states.value = states.value.copy(revision = states.value.revision + 1)
+        }
+        composeTestRule.onNodeWithText(reconnect).assertIsDisplayed()
+        val title = composeTestRule.activity.getString(R.string.console_authentication_failed_title)
+        composeTestRule.onNodeWithText(title).assertIsDisplayed()
+        val detail = "FIDO2 PIN is invalid. 2 attempts remaining."
+        composeTestRule.onNodeWithText(detail).assertIsDisplayed()
+        composeTestRule.mainClock.advanceTimeBy(10_000)
+        composeTestRule.onNodeWithText(detail).assertIsDisplayed()
+
+        composeTestRule.runOnUiThread {
+            `when`(bridge.isConnecting).thenReturn(true)
+            states.value = states.value.copy(revision = states.value.revision + 1)
+        }
+        composeTestRule.onNodeWithText(reconnect).assertDoesNotExist()
+        composeTestRule.onNodeWithText(detail).assertDoesNotExist()
+    }
+
+    @Test
+    fun consoleScreen_emptyOnEntry_returnsToHostList() {
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(MutableStateFlow(ConsoleUiState(isLoading = false)))
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        setContent(mockConsoleViewModel = viewModel)
+        navigateToConsoleScreen()
+
+        composeTestRule.onNodeWithText("Host list").assertIsDisplayed()
+        composeTestRule.runOnIdle {
+            assertEquals("start", navController.currentDestination?.route)
+        }
+    }
+
+    @Test
+    fun consoleScreen_disconnectInBackground_navigatesAfterResumeDispatch() {
+        val owner = object : LifecycleOwner {
+            override val lifecycle = LifecycleRegistry(this)
+        }
+        val states = MutableStateFlow(ConsoleUiState())
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(states)
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        var dispatchingResume = false
+        var backCount = 0
+        composeTestRule.runOnUiThread {
+            owner.lifecycle.currentState = Lifecycle.State.RESUMED
+        }
+        setContent(
+            mockConsoleViewModel = viewModel,
+            lifecycleOwner = owner,
+            onAutomaticBack = {
+                assertFalse("Navigation must run after lifecycle dispatch", dispatchingResume)
+                backCount++
+            },
+        )
+        navigateToConsoleScreen()
+        composeTestRule.waitForIdle()
+        composeTestRule.runOnUiThread {
+            owner.lifecycle.currentState = Lifecycle.State.CREATED
+            states.value = ConsoleUiState(isLoading = false)
+        }
+        composeTestRule.runOnIdle {
+            assertEquals(0, backCount)
+            assertEquals("console/{hostId}", navController.currentDestination?.route)
+        }
+        composeTestRule.runOnUiThread {
+            dispatchingResume = true
+            owner.lifecycle.currentState = Lifecycle.State.RESUMED
+            dispatchingResume = false
+        }
+        composeTestRule.onNodeWithText("Host list").assertIsDisplayed()
+        composeTestRule.runOnIdle {
+            assertEquals(1, backCount)
+            assertEquals("start", navController.currentDestination?.route)
+        }
+    }
+
+    @Test
+    fun consoleScreen_doesNotWarnAboutConnectionsWhenAlertsAreOff() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+            .putBoolean(PreferenceConstants.CONNECTION_ALERTS, false)
+            .putBoolean(PreferenceConstants.NOTIFICATION_PERMISSION_DENIED, true)
+            .commit()
+        setContent()
+        navigateToConsoleScreen()
+        composeTestRule.onNodeWithText("Connection may drop in background").assertDoesNotExist()
+    }
+
+    @Test
+    fun consoleScreen_hidesTopAppBar_whenPreferenceSet() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+            .putBoolean(PreferenceConstants.TITLEBARHIDE, true)
+            .commit()
+
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule.onNodeWithTag("top_app_bar").assertIsNotDisplayed()
+    }
+
+    @Test
+    fun consoleScreen_displaysTopAppBarByDefault() {
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule
+            .onNodeWithTag("top_app_bar")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun consoleScreen_displaysBackButton() {
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule
+            .onNodeWithContentDescription("Back")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun consoleScreen_backButtonNavigatesUp() {
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule
+            .onNodeWithContentDescription("Back")
+            .performClick()
+
+        composeTestRule.runOnIdle {
+            assertTrue(navController.currentBackStackEntry?.destination?.route == "start")
+        }
+    }
+
+    private class RecordingKeyboardController : SoftwareKeyboardController {
+        var visible = false
+        override fun show() {
+            visible = true
+        }
+        override fun hide() {
+            visible = false
+        }
+    }
+
+    @Test
+    fun consoleScreen_backButtonHidesKeyboardBeforeNavigating() {
+        val keyboard = RecordingKeyboardController()
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(MutableStateFlow(ConsoleUiState()))
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        var navigationCount = 0
+        setContent(
+            mockConsoleViewModel = viewModel,
+            keyboardController = keyboard,
+            onAutomaticBack = {
+                assertFalse("Hide the keyboard before leaving the console", keyboard.visible)
+                navigationCount++
+            },
+        )
+        navigateToConsoleScreen()
+        composeTestRule.runOnIdle { keyboard.show() }
+        composeTestRule.onNodeWithContentDescription("Back").performClick()
+        composeTestRule.onNodeWithText("Host list").assertIsDisplayed()
+        composeTestRule.runOnIdle { assertEquals(1, navigationCount) }
+    }
+
+    @Test
+    fun consoleScreen_lastSessionClosedHidesKeyboardBeforeNavigating() {
+        val keyboard = RecordingKeyboardController()
+        val states = MutableStateFlow(ConsoleUiState())
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(states)
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        var navigationCount = 0
+        setContent(
+            mockConsoleViewModel = viewModel,
+            keyboardController = keyboard,
+            onAutomaticBack = {
+                assertFalse("Hide the keyboard before leaving the console", keyboard.visible)
+                navigationCount++
+            },
+        )
+        navigateToConsoleScreen()
+        composeTestRule.runOnIdle {
+            keyboard.show()
+            states.value = ConsoleUiState(isLoading = false)
+        }
+        composeTestRule.onNodeWithText("Host list").assertIsDisplayed()
+        composeTestRule.runOnIdle { assertEquals(1, navigationCount) }
+    }
+
+    @Test
+    fun autoHiddenKeyboardStaysHiddenAfterScrollRegionDisposal() {
+        PreferenceManager.getDefaultSharedPreferences(composeTestRule.activity)
+            .edit().putBoolean(PreferenceConstants.KEY_ALWAYS_VISIBLE, false).commit()
+        val layout = KeyboardLayout(name = "Auto-hide test", fitToWidth = true)
+        val item = KeyboardItem(layoutId = layout.id, target = "escape")
+        val previousDefault = runBlocking {
+            val original = keyboardRepository.configuration.first { it.layouts.isNotEmpty() }.settings?.defaultLayoutId
+            keyboardRepository.save(layout, listOf(item))
+            keyboardRepository.setDefault(layout.id)
+            original
+        }
+        val bridge = mockTerminalBridge()
+        val emulator = TerminalEmulatorFactory.create()
+        `when`(bridge.host).thenReturn(Host(isTemporary = true, nickname = "Text input"))
+        `when`(bridge.terminalEmulator).thenReturn(emulator)
+        `when`(bridge.transportMessages).thenReturn(MutableSharedFlow())
+        `when`(bridge.keyboardErrors).thenReturn(MutableSharedFlow())
+        `when`(bridge.fontSizeFlow).thenReturn(MutableStateFlow(14f))
+        `when`(bridge.fontWeightFlow).thenReturn(MutableStateFlow(TerminalFontWeight.NORMAL))
+        `when`(bridge.delKeyModeFlow).thenReturn(MutableStateFlow(DelKeyMode.Backspace))
+        `when`(bridge.promptManager).thenReturn(PromptManager())
+        `when`(bridge.keyHandler).thenReturn(TerminalKeyListener(TerminalEmulatorKeyDispatcher(emulator)))
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(MutableStateFlow(ConsoleUiState(bridges = listOf(bridge), isLoading = false)))
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        try {
+            setContent(mockConsoleViewModel = viewModel)
+            composeTestRule.mainClock.autoAdvance = false
+            navigateToConsoleScreen(bridge.host.id)
+            composeTestRule.waitUntil(5000) {
+                composeTestRule.mainClock.advanceTimeByFrame()
+                composeTestRule.onAllNodesWithTag("keyboard_button_${item.id}").fetchSemanticsNodes().isNotEmpty()
+            }
+            composeTestRule.mainClock.advanceTimeBy(500)
+            composeTestRule.onNodeWithTag("keyboard_button_${item.id}").assertIsDisplayed()
+            // Include the timeout and exit transition, then check another timeout period.
+            repeat(2) {
+                composeTestRule.mainClock.advanceTimeBy(6000)
+                composeTestRule.waitForIdle()
+                composeTestRule.onNodeWithTag("keyboard_button_${item.id}").assertDoesNotExist()
+            }
+        } finally {
+            composeTestRule.mainClock.autoAdvance = true
+            runBlocking {
+                if (previousDefault != null) keyboardRepository.setDefault(previousDefault)
+                keyboardRepository.deleteLayout(layout.id)
+            }
+        }
+    }
+
+    @Test
+    fun customKeyboardTextInputButtonOpensExistingDialog() {
+        val layout = KeyboardLayout(name = "Optional text input")
+        val item = KeyboardItem(layoutId = layout.id, kind = "app", target = "text_input")
+        val previousDefault = runBlocking {
+            val original = keyboardRepository.configuration.first { it.layouts.isNotEmpty() }.settings?.defaultLayoutId
+            keyboardRepository.save(layout, listOf(item))
+            keyboardRepository.setDefault(layout.id)
+            original
+        }
+        val bridge = mockTerminalBridge()
+        val emulator = TerminalEmulatorFactory.create()
+        `when`(bridge.host).thenReturn(Host(isTemporary = true, nickname = "Text input"))
+        `when`(bridge.terminalEmulator).thenReturn(emulator)
+        `when`(bridge.transportMessages).thenReturn(MutableSharedFlow())
+        `when`(bridge.keyboardErrors).thenReturn(MutableSharedFlow())
+        `when`(bridge.fontSizeFlow).thenReturn(MutableStateFlow(14f))
+        `when`(bridge.fontWeightFlow).thenReturn(MutableStateFlow(TerminalFontWeight.NORMAL))
+        `when`(bridge.delKeyModeFlow).thenReturn(MutableStateFlow(DelKeyMode.Backspace))
+        `when`(bridge.promptManager).thenReturn(PromptManager())
+        `when`(bridge.keyHandler).thenReturn(TerminalKeyListener(TerminalEmulatorKeyDispatcher(emulator)))
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(MutableStateFlow(ConsoleUiState(bridges = listOf(bridge), isLoading = false)))
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        try {
+            setContent(mockConsoleViewModel = viewModel)
+            navigateToConsoleScreen(bridge.host.id)
+            composeTestRule.waitUntil(5000) {
+                composeTestRule.onAllNodesWithTag("keyboard_button_${item.id}").fetchSemanticsNodes().isNotEmpty()
+            }
+            composeTestRule.onNodeWithTag("keyboard_button_${item.id}").performClick()
+            composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.terminal_text_input_dialog_label)).assertIsDisplayed()
+        } finally {
+            runBlocking {
+                if (previousDefault != null) keyboardRepository.setDefault(previousDefault)
+                keyboardRepository.deleteLayout(layout.id)
+            }
+        }
+    }
+
+    @Test
+    fun consoleScreen_displaysTitleBarTextInputButton() {
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule
+            .onNodeWithTag("title_bar_text_input")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun consoleScreen_displaysPasteButton() {
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule
+            .onNodeWithContentDescription("Paste")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    @Ignore("rotation is disabled until stability is addressed")
+    fun consoleScreen_setsLandscapeOrientation_whenPreferenceSet() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(
+            PreferenceConstants.ROTATION,
+            PreferenceConstants.ROTATION_LANDSCAPE,
+        ).commit()
+
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule.runOnIdle {
+            assertEquals(SCREEN_ORIENTATION_LANDSCAPE, composeTestRule.activity.requestedOrientation)
+        }
+    }
+
+    @Test
+    @Ignore("rotation is disabled until stability is addressed")
+    fun consoleScreen_setsPortraitOrientation_whenPreferenceSet() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(
+            PreferenceConstants.ROTATION,
+            PreferenceConstants.ROTATION_PORTRAIT,
+        ).commit()
+
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule.runOnIdle {
+            assertEquals(SCREEN_ORIENTATION_PORTRAIT, composeTestRule.activity.requestedOrientation)
+        }
+    }
+
+    @Test
+    @Ignore("rotation is disabled until stability is addressed")
+    fun consoleScreen_setsSensorOrientation_whenAutoPreferenceSet() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(
+            PreferenceConstants.ROTATION,
+            PreferenceConstants.ROTATION_AUTO,
+        ).commit()
+
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule.runOnIdle {
+            assertEquals(SCREEN_ORIENTATION_SENSOR, composeTestRule.activity.requestedOrientation)
+        }
+    }
+
+    @Test
+    @Ignore("rotation is disabled until stability is addressed")
+    fun consoleScreen_setsPortraitOrientation_whenDefaultPreferenceAndNoHardwareKeyboard() {
+        setContent()
+        navigateToConsoleScreen()
+
+        composeTestRule.runOnIdle {
+            assertEquals(SCREEN_ORIENTATION_PORTRAIT, composeTestRule.activity.requestedOrientation)
+        }
+    }
+
+    @Test
+    @Ignore("rotation is disabled until stability is addressed")
+    fun consoleScreen_restoresOriginalOrientation_onNavigateBack() {
+        // Set an initial orientation that's different from what ConsoleScreen might set
+        composeTestRule.runOnUiThread {
+            composeTestRule.activity.requestedOrientation = SCREEN_ORIENTATION_BEHIND
+        }
+
+        setContent()
+        navigateToConsoleScreen()
+
+        // Verify orientation changed
+        composeTestRule.runOnIdle {
+            // Default rotation is portrait (without keyboard in tests)
+            assertEquals(SCREEN_ORIENTATION_PORTRAIT, composeTestRule.activity.requestedOrientation)
+        }
+
+        // Navigate back
+        composeTestRule
+            .onNodeWithContentDescription("Back")
+            .performClick()
+
+        // Verify orientation restored
+        composeTestRule.runOnIdle {
+            assertEquals(SCREEN_ORIENTATION_BEHIND, composeTestRule.activity.requestedOrientation)
+        }
+    }
+
+    @Test
+    fun consoleScreen_keepsScreenAwake_whenPreferenceEnabledAndConnectionActive() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+            .putBoolean(PreferenceConstants.KEEP_ALIVE, true)
+            .commit()
+
+        val mockViewModel = mock(ConsoleViewModel::class.java)
+        val mockBridge = mockTerminalBridge()
+        `when`(mockBridge.isDisconnected).thenReturn(false)
+
+        val uiStateFlow = MutableStateFlow(
+            ConsoleUiState(
+                bridges = listOf(mockBridge),
+                currentBridgeIndex = 0,
+                isLoading = true,
+            ),
+        )
+        val networkStatusMessages = MutableSharedFlow<String>()
+
+        `when`(mockViewModel.uiState).thenReturn(uiStateFlow)
+        `when`(mockViewModel.networkStatusMessages).thenReturn(networkStatusMessages)
+
+        setContent(mockConsoleViewModel = mockViewModel)
+        navigateToConsoleScreen(hostId = UUID(0, 1))
+
+        composeTestRule.runOnIdle {
+            val rootLayout = composeTestRule.activity.findViewById<View>(android.R.id.content)
+            assertTrue("Screen should be kept awake", hasKeepScreenOn(rootLayout))
+        }
+    }
+
+    @Test
+    fun consoleScreen_doesNotKeepScreenAwake_whenPreferenceDisabled() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+            .putBoolean(PreferenceConstants.KEEP_ALIVE, false)
+            .commit()
+
+        val mockViewModel = mock(ConsoleViewModel::class.java)
+        val mockBridge = mockTerminalBridge()
+        `when`(mockBridge.isDisconnected).thenReturn(false)
+
+        val uiStateFlow = MutableStateFlow(
+            ConsoleUiState(
+                bridges = listOf(mockBridge),
+                currentBridgeIndex = 0,
+                isLoading = true,
+            ),
+        )
+        val networkStatusMessages = MutableSharedFlow<String>()
+
+        `when`(mockViewModel.uiState).thenReturn(uiStateFlow)
+        `when`(mockViewModel.networkStatusMessages).thenReturn(networkStatusMessages)
+
+        setContent(mockConsoleViewModel = mockViewModel)
+        navigateToConsoleScreen(hostId = UUID(0, 1))
+
+        composeTestRule.runOnIdle {
+            val rootLayout = composeTestRule.activity.findViewById<View>(android.R.id.content)
+            assertFalse("Screen should not be kept awake when preference is disabled", hasKeepScreenOn(rootLayout))
+        }
+    }
+
+    @Test
+    fun consoleScreen_doesNotKeepScreenAwake_whenDisconnected() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+            .putBoolean(PreferenceConstants.KEEP_ALIVE, true)
+            .commit()
+
+        val mockViewModel = mock(ConsoleViewModel::class.java)
+        val mockBridge = mockTerminalBridge()
+        `when`(mockBridge.isDisconnected).thenReturn(true)
+
+        val uiStateFlow = MutableStateFlow(
+            ConsoleUiState(
+                bridges = listOf(mockBridge),
+                currentBridgeIndex = 0,
+                isLoading = true,
+            ),
+        )
+        val networkStatusMessages = MutableSharedFlow<String>()
+
+        `when`(mockViewModel.uiState).thenReturn(uiStateFlow)
+        `when`(mockViewModel.networkStatusMessages).thenReturn(networkStatusMessages)
+
+        setContent(mockConsoleViewModel = mockViewModel)
+        navigateToConsoleScreen(hostId = UUID(0, 1))
+
+        composeTestRule.runOnIdle {
+            val rootLayout = composeTestRule.activity.findViewById<View>(android.R.id.content)
+            assertFalse("Screen should not be kept awake when disconnected", hasKeepScreenOn(rootLayout))
+        }
+    }
+
+    private fun hasKeepScreenOn(view: View): Boolean {
+        if (view.keepScreenOn) return true
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                if (hasKeepScreenOn(view.getChildAt(i))) return true
+            }
+        }
+        return false
+    }
+
+    @Test
+    fun consoleScreen_connectionInfoMenu_opensAndDismissesPanel() {
+        val bridge = mockTerminalBridge()
+        `when`(bridge.transportMessages).thenReturn(MutableSharedFlow())
+        `when`(bridge.keyboardErrors).thenReturn(MutableSharedFlow())
+        val host = Host(id = UUID(0, 1), nickname = "test-host", hostname = "server.example")
+        val emulator = TerminalEmulatorFactory.create()
+        `when`(bridge.host).thenReturn(host)
+        `when`(bridge.terminalEmulator).thenReturn(emulator)
+        `when`(bridge.fontSizeFlow).thenReturn(MutableStateFlow(14f))
+        `when`(bridge.fontWeightFlow).thenReturn(MutableStateFlow(TerminalFontWeight.NORMAL))
+        `when`(bridge.delKeyModeFlow).thenReturn(MutableStateFlow(DelKeyMode.Backspace))
+        `when`(bridge.promptManager).thenReturn(PromptManager())
+        `when`(bridge.keyHandler).thenReturn(TerminalKeyListener(TerminalEmulatorKeyDispatcher(emulator)))
+        val viewModel = mock(ConsoleViewModel::class.java)
+        `when`(viewModel.uiState).thenReturn(MutableStateFlow(ConsoleUiState(bridges = listOf(bridge), isLoading = false)))
+        `when`(viewModel.networkStatusMessages).thenReturn(MutableSharedFlow())
+        `when`(viewModel.connectionDetails()).thenReturn(
+            org.connectbot.ui.screens.console.ConnectionDetails(host, org.connectbot.ui.screens.console.ConnectionStatus.CONNECTED, null, null),
+        )
+        setContent(mockConsoleViewModel = viewModel)
+        navigateToConsoleScreen(UUID(0, 1))
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        composeTestRule.onNodeWithContentDescription(context.getString(R.string.button_more_options)).performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.console_menu_connection_info)).performClick()
+        composeTestRule.onNodeWithText("server.example").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.button_close)).performClick()
+        composeTestRule.onNodeWithText("server.example").assertDoesNotExist()
+    }
+}

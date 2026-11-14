@@ -1,0 +1,414 @@
+/*
+ * ConnectBot: simple, powerful, open-source SSH client for Android
+ * Copyright 2025-2026 Kenny Root
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.connectbot.data.dao
+
+import android.content.Context
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
+import org.assertj.core.api.Assertions.assertThat
+import org.connectbot.data.ConnectBotDatabase
+import org.connectbot.data.EntityIds
+import org.connectbot.data.entity.Host
+import org.connectbot.data.entity.Profile
+import org.connectbot.util.HostConstants
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.util.UUID
+
+@RunWith(AndroidJUnit4::class)
+class ProfileDaoTest {
+
+    private lateinit var database: ConnectBotDatabase
+    private lateinit var profileDao: ProfileDao
+    private lateinit var hostDao: HostDao
+
+    @Before
+    fun setUp() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        database = Room.inMemoryDatabaseBuilder(context, ConnectBotDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        profileDao = database.profileDao()
+        hostDao = database.hostDao()
+    }
+
+    @After
+    fun tearDown() {
+        database.close()
+    }
+
+    @Test
+    fun insertAndRetrieveProfile() = runTest {
+        val profile = createTestProfile(name = "TestProfile")
+
+        val id = profileDao.insert(profile)
+        assertThat(id).isNotEqualTo(EntityIds.NONE)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved).isNotNull()
+        assertThat(retrieved?.name).isEqualTo("TestProfile")
+        assertThat(retrieved?.fontSize).isEqualTo(10)
+        assertThat(retrieved?.encoding).isEqualTo("UTF-8")
+    }
+
+    @Test
+    fun observeAllProfiles() = runTest {
+        val profile1 = createTestProfile(name = "Alpha")
+        val profile2 = createTestProfile(name = "Beta")
+        val profile3 = createTestProfile(name = "Gamma")
+
+        profileDao.insert(profile1)
+        profileDao.insert(profile2)
+        profileDao.insert(profile3)
+
+        val profiles = profileDao.observeAll().first()
+        assertThat(profiles).hasSize(3)
+        assertThat(profiles.map { it.name }).containsExactly("Alpha", "Beta", "Gamma")
+    }
+
+    @Test
+    fun observeProfileById() = runTest {
+        val profile = createTestProfile(name = "Observable")
+        val id = profileDao.insert(profile)
+
+        val observed = profileDao.observeById(id).first()
+        assertThat(observed).isNotNull()
+        assertThat(observed?.name).isEqualTo("Observable")
+    }
+
+    @Test
+    fun getAllProfiles() = runTest {
+        val profile1 = createTestProfile(name = "First")
+        val profile2 = createTestProfile(name = "Second")
+
+        profileDao.insert(profile1)
+        profileDao.insert(profile2)
+
+        val all = profileDao.getAll()
+        assertThat(all).hasSize(2)
+        assertThat(all.map { it.name }).containsExactly("First", "Second")
+    }
+
+    @Test
+    fun getDefault() = runTest {
+        // Insert the default profile
+        val defaultProfile = Profile(
+            id = EntityIds.DEFAULT_PROFILE,
+            name = "Default",
+        )
+        profileDao.insert(defaultProfile)
+
+        val retrieved = profileDao.getDefault()
+        assertThat(retrieved).isNotNull()
+        assertThat(retrieved?.id).isEqualTo(EntityIds.DEFAULT_PROFILE)
+        assertThat(retrieved?.name).isEqualTo("Default")
+    }
+
+    @Test
+    fun updateProfile() = runTest {
+        val profile = createTestProfile(name = "Original", fontSize = 10)
+        val id = profileDao.insert(profile)
+
+        val updated = profile.copy(id = id, name = "Modified", fontSize = 14)
+        profileDao.update(updated)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.name).isEqualTo("Modified")
+        assertThat(retrieved?.fontSize).isEqualTo(14)
+    }
+
+    @Test
+    fun updateFontSizePreservesOtherFieldsAndChecksHostAssignment() = runTest {
+        val profile = createTestProfile(name = "Shared", fontSize = 10, encoding = "UTF-8")
+        val other = createTestProfile(name = "Other", fontSize = 12)
+        profileDao.insert(profile)
+        profileDao.insert(other)
+        val host = createTestHost(nickname = "shared-host", profileId = profile.id)
+        hostDao.insert(host)
+
+        // An unrelated concurrent edit must survive the size-only update.
+        profileDao.update(profile.copy(encoding = "ISO-8859-1"))
+        assertThat(profileDao.updateFontSize(profile.id, host.id, profile.id, 18)).isEqualTo(1)
+        assertThat(profileDao.getById(profile.id)).isEqualTo(profile.copy(fontSize = 18, encoding = "ISO-8859-1"))
+
+        hostDao.update(host.copy(profileId = other.id))
+        assertThat(profileDao.updateFontSize(profile.id, host.id, profile.id, 20)).isEqualTo(0)
+        assertThat(profileDao.getById(profile.id)?.fontSize).isEqualTo(18)
+        assertThat(profileDao.getById(other.id)?.fontSize).isEqualTo(12)
+    }
+
+    @Test
+    fun updateFontSizeHandlesDefaultAssignmentTemporaryHostAndMissingProfile() = runTest {
+        val profile = Profile.createDefault()
+        profileDao.insert(profile)
+        val host = createTestHost(nickname = "default-host", profileId = null)
+        hostDao.insert(host)
+
+        assertThat(profileDao.updateFontSize(profile.id, host.id, null, 14)).isEqualTo(1)
+        assertThat(profileDao.updateFontSize(profile.id, null, null, 16)).isEqualTo(1)
+        assertThat(profileDao.getById(profile.id)?.fontSize).isEqualTo(16)
+        assertThat(profileDao.updateFontSize(UUID.randomUUID(), null, null, 20)).isEqualTo(0)
+    }
+
+    @Test
+    fun insertOrUpdateInsertsNewProfile() = runTest {
+        val profile = createTestProfile(name = "NewProfile")
+        val id = profileDao.insertOrUpdate(profile)
+
+        assertThat(id).isNotEqualTo(EntityIds.NONE)
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.name).isEqualTo("NewProfile")
+    }
+
+    @Test
+    fun insertOrUpdateUpdatesExistingProfile() = runTest {
+        val profile = createTestProfile(name = "ExistingProfile")
+        val id = profileDao.insert(profile)
+
+        val updated = profile.copy(id = id, fontSize = 16)
+        val returnedId = profileDao.insertOrUpdate(updated)
+
+        assertThat(returnedId).isEqualTo(id)
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.fontSize).isEqualTo(16)
+    }
+
+    @Test
+    fun deleteProfile() = runTest {
+        val profile = createTestProfile(name = "ToDelete")
+        val id = profileDao.insert(profile)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved).isNotNull()
+
+        profileDao.delete(retrieved!!)
+
+        val afterDelete = profileDao.getById(id)
+        assertThat(afterDelete).isNull()
+    }
+
+    @Test
+    fun deleteProfileById() = runTest {
+        // Insert another profile to verify deletion preserves unrelated rows
+        val dummy = createTestProfile(name = "Dummy")
+        profileDao.insert(dummy)
+
+        val profile = createTestProfile(name = "ToDeleteById")
+        val id = profileDao.insert(profile)
+
+        val deletedCount = profileDao.deleteById(id)
+        assertThat(deletedCount).isEqualTo(1)
+
+        val afterDelete = profileDao.getById(id)
+        assertThat(afterDelete).isNull()
+    }
+
+    @Test
+    fun deleteByIdDeletesAnyProfile() = runTest {
+        // Insert a profile with id = UUID(0, 1)
+        val profile = Profile(id = UUID(0, 1), name = "Default")
+        profileDao.insert(profile)
+
+        // All profiles can now be deleted (no more built-in protection)
+        val deletedCount = profileDao.deleteById(UUID(0, 1))
+        assertThat(deletedCount).isEqualTo(1)
+
+        val retrieved = profileDao.getById(UUID(0, 1))
+        assertThat(retrieved).isNull()
+    }
+
+    @Test
+    fun nameExistsReturnsTrueForExistingName() = runTest {
+        val profile = createTestProfile(name = "ExistingName")
+        profileDao.insert(profile)
+
+        val exists = profileDao.nameExists("ExistingName")
+        assertThat(exists).isTrue()
+    }
+
+    @Test
+    fun nameExistsReturnsFalseForNonExistingName() = runTest {
+        val exists = profileDao.nameExists("NonExistent")
+        assertThat(exists).isFalse()
+    }
+
+    @Test
+    fun nameExistsIsCaseInsensitive() = runTest {
+        val profile = createTestProfile(name = "TestProfile")
+        profileDao.insert(profile)
+
+        assertThat(profileDao.nameExists("testprofile")).isTrue()
+        assertThat(profileDao.nameExists("TESTPROFILE")).isTrue()
+        assertThat(profileDao.nameExists("TeStPrOfIlE")).isTrue()
+    }
+
+    @Test
+    fun nameExistsCanExcludeProfileId() = runTest {
+        val profile = createTestProfile(name = "ProfileToRename")
+        val id = profileDao.insert(profile)
+
+        // Should return false when excluding the profile's own ID (allows renaming to same name)
+        val existsExcludingSelf = profileDao.nameExists("ProfileToRename", id)
+        assertThat(existsExcludingSelf).isFalse()
+
+        // Should return true when not excluding
+        val existsWithoutExclusion = profileDao.nameExists("ProfileToRename")
+        assertThat(existsWithoutExclusion).isTrue()
+    }
+
+    @Test
+    fun getHostsUsingProfileReturnsCorrectCount() = runTest {
+        val profile = createTestProfile(name = "UsedProfile")
+        val profileId = profileDao.insert(profile)
+
+        // Create hosts using this profile
+        val host1 = createTestHost(nickname = "host1", profileId = profileId)
+        val host2 = createTestHost(nickname = "host2", profileId = profileId)
+        val host3 = createTestHost(nickname = "host3", profileId = null)
+
+        hostDao.insert(host1)
+        hostDao.insert(host2)
+        hostDao.insert(host3)
+
+        val count = profileDao.getHostsUsingProfile(profileId)
+        assertThat(count).isEqualTo(2)
+    }
+
+    @Test
+    fun getHostsUsingProfileReturnsZeroForUnusedProfile() = runTest {
+        val profile = createTestProfile(name = "UnusedProfile")
+        val profileId = profileDao.insert(profile)
+
+        val count = profileDao.getHostsUsingProfile(profileId)
+        assertThat(count).isEqualTo(0)
+    }
+
+    @Test
+    fun fontSizeStored() = runTest {
+        val profile = createTestProfile(name = "font-test", fontSize = 14)
+        val id = profileDao.insert(profile)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.fontSize).isEqualTo(14)
+    }
+
+    @Test
+    fun encodingStored() = runTest {
+        val profile = createTestProfile(name = "encoding-test", encoding = "ISO-8859-1")
+        val id = profileDao.insert(profile)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.encoding).isEqualTo("ISO-8859-1")
+    }
+
+    @Test
+    fun delKeyStored() = runTest {
+        val profile = createTestProfile(name = "del-test", delKey = "backspace")
+        val id = profileDao.insert(profile)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.delKey).isEqualTo("backspace")
+    }
+
+    @Test
+    fun colorSchemeIdStored() = runTest {
+        val profile = createTestProfile(name = "color-test", colorSchemeId = UUID(0, 5))
+        val id = profileDao.insert(profile)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.colorSchemeId).isEqualTo(UUID(0, 5))
+    }
+
+    @Test
+    fun fontFamilyStored() = runTest {
+        val profile = createTestProfile(name = "font-family-test", fontFamily = "Roboto Mono")
+        val id = profileDao.insert(profile)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.fontFamily).isEqualTo("Roboto Mono")
+    }
+
+    @Test
+    fun iconColorStored() = runTest {
+        val profile = createTestProfile(name = "icon-test", iconColor = "#FF5722")
+        val id = profileDao.insert(profile)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.iconColor).isEqualTo("#FF5722")
+    }
+
+    @Test
+    fun emulationStored() = runTest {
+        val profile = createTestProfile(name = "emulation-test", emulation = "xterm")
+        val id = profileDao.insert(profile)
+
+        val retrieved = profileDao.getById(id)
+        assertThat(retrieved?.emulation).isEqualTo("xterm")
+    }
+
+    @Test
+    fun profilesAreOrderedByName() = runTest {
+        val profile1 = createTestProfile(name = "Zebra")
+        val profile2 = createTestProfile(name = "Alpha")
+        val profile3 = createTestProfile(name = "Beta")
+
+        profileDao.insert(profile1)
+        profileDao.insert(profile2)
+        profileDao.insert(profile3)
+
+        val profiles = profileDao.getAll()
+        assertThat(profiles.map { it.name }).containsExactly("Alpha", "Beta", "Zebra")
+    }
+
+    private fun createTestProfile(
+        name: String,
+        iconColor: String? = null,
+        colorSchemeId: UUID = EntityIds.DEFAULT_SCHEME,
+        fontFamily: String? = null,
+        fontSize: Int = 10,
+        delKey: String = "del",
+        encoding: String = "UTF-8",
+        emulation: String = "xterm-256color",
+    ): Profile = Profile(
+        name = name,
+        iconColor = iconColor,
+        colorSchemeId = colorSchemeId,
+        fontFamily = fontFamily,
+        fontSize = fontSize,
+        delKey = delKey,
+        encoding = encoding,
+        emulation = emulation,
+    )
+
+    private fun createTestHost(
+        nickname: String,
+        profileId: UUID?,
+    ): Host = Host(
+        nickname = nickname,
+        protocol = "ssh",
+        username = "user",
+        hostname = "example.com",
+        port = 22,
+        profileId = profileId,
+    )
+}

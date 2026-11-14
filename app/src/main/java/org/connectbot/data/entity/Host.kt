@@ -1,0 +1,266 @@
+/*
+ * ConnectBot: simple, powerful, open-source SSH client for Android
+ * Copyright 2025-2026 Kenny Root
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.connectbot.data.entity
+
+import android.net.Uri
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import org.connectbot.data.EntityIds
+import org.connectbot.data.keyboard.KeyboardLayout
+import org.connectbot.util.HostConstants
+import java.util.UUID
+
+/**
+ * SSH/Telnet/Local connection configuration entity.
+ */
+@Entity(
+    tableName = "hosts",
+    foreignKeys = [ForeignKey(entity = KeyboardLayout::class, parentColumns = ["id"], childColumns = ["keyboard_layout_id"], onDelete = ForeignKey.SET_NULL)],
+    indices = [
+        Index(value = ["repository_id", "nickname"], unique = true),
+        Index(value = ["keyboard_layout_id"]),
+        Index(value = ["protocol", "username", "hostname", "port"]),
+    ],
+)
+data class Host(
+    @PrimaryKey
+    val id: UUID = UUID.randomUUID(),
+
+    @ColumnInfo(name = "repository_id", defaultValue = "'" + EntityIds.LOCAL_TEXT + "'")
+    val repositoryId: UUID = EntityIds.LOCAL,
+
+    @ColumnInfo(name = "temporary", defaultValue = "0")
+    val isTemporary: Boolean = false,
+
+    @Embedded
+    val crypto: HostCryptoConfig = HostCryptoConfig(),
+
+    val nickname: String = "",
+
+    val protocol: String = "ssh",
+
+    val username: String = "",
+
+    val hostname: String = "",
+
+    val port: Int = 22,
+
+    @ColumnInfo(name = "host_key_algo")
+    val hostKeyAlgo: String? = null,
+
+    @ColumnInfo(name = "last_connect")
+    val lastConnect: Long = 0,
+
+    val color: String? = null,
+
+    @ColumnInfo(name = "use_keys")
+    val useKeys: Boolean = true,
+
+    @ColumnInfo(name = "use_auth_agent")
+    val useAuthAgent: String? = "no",
+
+    @ColumnInfo(name = "post_login")
+    val postLogin: String? = null,
+
+    @ColumnInfo(name = "pubkey_id")
+    val pubkeyId: UUID = HostConstants.PUBKEYID_ANY,
+
+    @ColumnInfo(name = "want_session")
+    val wantSession: Boolean = true,
+
+    val compression: Boolean = false,
+
+    @ColumnInfo(name = "stay_connected")
+    val stayConnected: Boolean = false,
+
+    @ColumnInfo(name = "quick_disconnect")
+    val quickDisconnect: Boolean = false,
+
+    @ColumnInfo(name = "scrollback_lines")
+    val scrollbackLines: Int = 140,
+
+    @ColumnInfo(name = "use_ctrl_alt_as_meta_key")
+    val useCtrlAltAsMetaKey: Boolean = false,
+
+    /**
+     * Optional jump host ID for ProxyJump support.
+     * When set, connections to this host will be tunneled through the jump host.
+     * A value of null means no jump host (direct connection).
+     */
+    @ColumnInfo(name = "jump_host_id")
+    val jumpHostId: UUID? = null,
+
+    /**
+     * Profile ID for terminal-specific settings (font, colors, encoding, etc.).
+     * Defaults to the stable UUID of the Local default profile.
+     */
+    @ColumnInfo(name = "profile_id")
+    val profileId: UUID? = EntityIds.DEFAULT_PROFILE,
+
+    /** Null inherits the profile keyboard, then the app default. */
+    @ColumnInfo(name = "keyboard_layout_id")
+    val keyboardLayoutId: UUID? = null,
+
+    /**
+     * IP version preference for connections.
+     * Values: "IPV4_AND_IPV6" (default), "IPV4_ONLY", "IPV6_ONLY"
+     */
+    @ColumnInfo(name = "ip_version", defaultValue = "IPV4_AND_IPV6")
+    val ipVersion: String = "IPV4_AND_IPV6",
+
+    /**
+     * Mosh UDP port. 0 means use mosh default (60000-61000 range).
+     * Set to a specific port to use a fixed port for firewall compatibility.
+     */
+    @ColumnInfo(name = "mosh_port", defaultValue = "0")
+    val moshPort: Int = 0,
+
+    /** Network timeout in seconds; null uses the server default, and 0 disables expiry. */
+    @ColumnInfo(name = "mosh_network_timeout")
+    val moshNetworkTimeout: Int? = null,
+
+    /**
+     * Custom mosh-server command. null means use standard "mosh-server".
+     * Can specify full path or custom arguments.
+     */
+    @ColumnInfo(name = "mosh_server")
+    val moshServer: String? = null,
+
+    /**
+     * Locale to use for mosh sessions.
+     * Mosh requires locale to be set properly for UTF-8 support.
+     */
+    @ColumnInfo(name = "locale", defaultValue = "en_US.UTF-8")
+    val locale: String = "en_US.UTF-8",
+
+    @ColumnInfo(name = "telnet_echo_mode", defaultValue = "'AUTO'")
+    val telnetEchoMode: TelnetEchoMode = TelnetEchoMode.AUTO,
+
+    @ColumnInfo(name = "telnet_negotiation_mode", defaultValue = "'INTERACTIVE'")
+    val telnetNegotiationMode: TelnetNegotiationMode = TelnetNegotiationMode.INTERACTIVE,
+
+    @ColumnInfo(name = "telnet_nonbinary_policy", defaultValue = "'EIGHT_BIT_COMPATIBILITY'")
+    val telnetNonBinaryPolicy: TelnetNonBinaryPolicy = TelnetNonBinaryPolicy.EIGHT_BIT_COMPATIBILITY,
+
+    @ColumnInfo(name = "telnet_newline_policy", defaultValue = "'LF_TO_CRLF'")
+    val telnetNewlinePolicy: TelnetNewlinePolicy = TelnetNewlinePolicy.LF_TO_CRLF,
+) {
+    /**
+     * Get the URI representation of this host (Java interop helper).
+     */
+    fun getUri(): Uri {
+        val builder = Uri.Builder()
+            .scheme(protocol)
+
+        // Build authority based on protocol
+        when (protocol) {
+            "local" -> {
+                builder.fragment(nickname)
+            }
+
+            "ssh", "mosh", "telnet" -> {
+                // Build authority with hostname and port
+                val authority = buildString {
+                    if (username.isNotEmpty() && (protocol == "ssh" || protocol == "mosh")) {
+                        append(username)
+                        append('@')
+                    }
+                    append(hostname)
+                    if (port > 0) {
+                        append(':')
+                        append(port)
+                    }
+                }
+                builder.authority(authority)
+                builder.fragment(nickname)
+            }
+        }
+
+        if (!isTemporary) builder.appendQueryParameter("hostId", id.toString())
+        return builder.build()
+    }
+
+    companion object {
+        /**
+         * Create a new SSH host with default values (Java interop helper).
+         */
+        @JvmStatic
+        fun createSshHost(nickname: String, hostname: String, port: Int, username: String): Host = Host(
+            id = UUID.randomUUID(),
+            nickname = nickname,
+            protocol = "ssh",
+            username = username,
+            hostname = hostname,
+            port = port,
+        )
+
+        /**
+         * Create a new Telnet host with default values (Java interop helper).
+         */
+        @JvmStatic
+        fun createTelnetHost(nickname: String, hostname: String, port: Int): Host = Host(
+            id = UUID.randomUUID(),
+            nickname = nickname,
+            protocol = "telnet",
+            username = "",
+            hostname = hostname,
+            port = port,
+        )
+
+        /**
+         * Create a new Local host with default values (Java interop helper).
+         */
+        @JvmStatic
+        fun createLocalHost(nickname: String): Host = Host(
+            id = UUID.randomUUID(),
+            nickname = nickname,
+            protocol = "local",
+            username = "",
+            hostname = "",
+            port = 0,
+        )
+
+        /**
+         * Create a new Mosh host with default values (Java interop helper).
+         */
+        @JvmStatic
+        fun createMoshHost(
+            nickname: String,
+            hostname: String,
+            port: Int,
+            username: String,
+            moshPort: Int = 0,
+            moshServer: String? = null,
+            locale: String = "en_US.UTF-8",
+        ): Host = Host(
+            id = UUID.randomUUID(),
+            nickname = nickname,
+            protocol = "mosh",
+            username = username,
+            hostname = hostname,
+            port = port,
+            moshPort = moshPort,
+            moshServer = moshServer,
+            locale = locale,
+        )
+    }
+}
